@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movies Hub - Bean's Hub</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* 90s Movie Theater Theme - Red Velvet & Gold */
+        --primary: #b91c1c;
+        --primary-light: #dc2626;
+        --primary-dark: #991b1b;
+        --accent: #fbbf24;
+        --background: radial-gradient(
+          ellipse at center,
+          #1f1611 0%,
+          #2c1810 35%,
+          #0f0a08 100%
+        );
+        --surface: rgba(139, 69, 19, 0.2);
+        --surface-hover: rgba(139, 69, 19, 0.3);
+        --text: #fef3c7;
+        --text-secondary: #fde68a;
+        --text-muted: #d1a65c;
+        --border: rgba(185, 28, 28, 0.4);
+        --shadow: rgba(185, 28, 28, 0.3);
+        --velvet: linear-gradient(
+          135deg,
+          #7f1d1d 0%,
+          #991b1b 50%,
+          #b91c1c 100%
+        );
+        --gold: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+        --theater-glow: rgba(251, 191, 36, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--background);
+        min-height: 100vh;
+        color: var(--text);
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Theater ambiance - subtle film grain */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 25% 25%,
+            rgba(251, 191, 36, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(185, 28, 28, 0.03) 0%,
+            transparent 50%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+          );
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* Spotlight effects */
+      .spotlight {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(251, 191, 36, 0.1) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 2;
+        animation: spotlight-pulse 8s ease-in-out infinite;
+      }
+
+      .spotlight:nth-child(1) {
+        top: -150px;
+        left: 10%;
+        animation-delay: -2s;
+      }
+
+      .spotlight:nth-child(2) {
+        top: 30%;
+        right: -150px;
+        animation-delay: -5s;
+      }
+
+      @keyframes spotlight-pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.2);
+        }
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: linear-gradient(
+          180deg,
+          rgba(15, 10, 8, 0.95) 0%,
+          rgba(31, 22, 17, 0.9) 100%
+        );
+        backdrop-filter: blur(20px);
+        border-bottom: 2px solid var(--border);
+        padding: 1rem 1rem 0.8rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+      }
+
+      .back-btn {
+        background: var(--velvet);
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .back-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(185, 28, 28, 0.4);
+      }
+
+      .page-title {
+        font-family: "Pacifico", cursive;
+        font-size: 1.6rem;
+        background: var(--gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-align: center;
+        flex: 1;
+        margin: 0 1rem;
+        text-shadow: 0 0 10px var(--theater-glow);
+      }
+
+      .watch-later-counter {
+        background: var(--velvet);
+        color: var(--text);
+        border: 2px solid var(--accent);
+        border-radius: 20px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .watch-later-counter:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(185, 28, 28, 0.4);
+      }
+
+      /* Main content */
+      .main {
+        padding-top: 5rem;
+        padding-bottom: 2rem;
+        min-height: 100vh;
+        position: relative;
+        z-index: 3;
+      }
+
+      .container {
+        padding: 0 1rem;
+        max-width: 100%;
+      }
+
+      /* Watch Later Section - Theater Seats Style */
+      .watch-later-section {
+        margin: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .watch-later-container {
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.3) 0%,
+          rgba(120, 53, 15, 0.2) 100%
+        );
+        border: 2px solid var(--primary);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(251, 191, 36, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .watch-later-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gold);
+        box-shadow: 0 0 10px var(--theater-glow);
+      }
+
+      .watch-later-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: var(--gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-shadow: 0 0 10px var(--theater-glow);
+      }
+
+      .watch-later-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .watch-later-item {
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.4) 0%,
+          rgba(153, 27, 27, 0.3) 100%
+        );
+        border: 2px solid rgba(185, 28, 28, 0.6);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      .watch-later-item:hover {
+        transform: translateY(-4px) scale(1.02);
+        border-color: var(--accent);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--theater-glow);
+      }
+
+      .watch-later-item img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .watch-later-item:hover img {
+        transform: scale(1.05);
+      }
+
+      .watch-later-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(220, 38, 38, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .watch-later-remove:hover {
+        background: #991b1b;
+        transform: scale(1.2);
+      }
+
+      .watch-later-content {
+        padding: 1rem;
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.2) 0%,
+          rgba(120, 53, 15, 0.1) 100%
+        );
+      }
+
+      .watch-later-item-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Recommendations Modal - Theater Style */
+      .recommendations-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .recommendations-modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .recommendations-content {
+        background: linear-gradient(
+          135deg,
+          rgba(31, 22, 17, 0.95) 0%,
+          rgba(15, 10, 8, 0.9) 100%
+        );
+        border: 3px solid var(--primary);
+        border-radius: 24px;
+        padding: 2rem;
+        max-width: 900px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+          inset 0 1px 0 rgba(251, 191, 36, 0.3);
+      }
+
+      .recommendations-modal.show .recommendations-content {
+        transform: scale(1);
+      }
+
+      .recommendations-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 1rem;
+      }
+
+      .recommendations-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: var(--gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .close-recommendations {
+        background: var(--velvet);
+        color: white;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .close-recommendations:hover {
+        background: var(--primary-light);
+        transform: scale(1.1);
+      }
+
+      .original-movie {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        );
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        align-items: center;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+
+      .original-movie img {
+        width: 100px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(251, 191, 36, 0.3);
+      }
+
+      .original-movie-info {
+        flex: 1;
+      }
+
+      .original-movie-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .original-movie-year {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin-bottom: 0.8rem;
+      }
+
+      .original-movie-rating {
+        display: inline-block;
+        background: var(--velvet);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid var(--accent);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.2rem;
+      }
+
+      .recommendation-card {
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        );
+        border: 2px solid rgba(185, 28, 28, 0.5);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      .recommendation-card:hover {
+        transform: translateY(-4px) scale(1.02);
+        border-color: var(--accent);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--theater-glow);
+      }
+
+      .recommendation-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .recommendation-card:hover img {
+        transform: scale(1.05);
+      }
+
+      .recommendation-info {
+        padding: 1rem;
+      }
+
+      .recommendation-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+
+      .recommendation-year {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .recommendation-rating {
+        font-size: 0.75rem;
+        background: var(--velvet);
+        color: white;
+        padding: 0.3rem 0.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-block;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .loading-recommendations {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-muted);
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(251, 191, 36, 0.3);
+        border-top: 3px solid var(--accent);
+        border-radius: 50%;
+        animation: spin-loading 1.2s linear infinite;
+        margin-right: 8px;
+      }
+
+      @keyframes spin-loading {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Filter section - Theater Controls */
+      .filters-section {
+        margin: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .filter-container {
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.3) 0%,
+          rgba(120, 53, 15, 0.2) 100%
+        );
+        border: 2px solid var(--border);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(251, 191, 36, 0.2);
+        position: relative;
+      }
+
+      .filter-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gold);
+        box-shadow: 0 0 10px var(--theater-glow);
+        border-radius: 20px 20px 0 0;
+      }
+
+      .filter-title {
+        font-size: 1rem;
+        font-weight: 600;
+        background: var(--gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .filter-btn {
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.4) 0%,
+          rgba(139, 69, 19, 0.3) 100%
+        );
+        border: 2px solid rgba(185, 28, 28, 0.5);
+        border-radius: 16px;
+        padding: 0.8rem 1rem;
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .filter-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(251, 191, 36, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .filter-btn:hover::before {
+        left: 100%;
+      }
+
+      .filter-btn:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(153, 27, 27, 0.6) 0%,
+          rgba(185, 28, 28, 0.4) 100%
+        );
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+
+      .filter-btn.active {
+        background: var(--velvet);
+        border-color: var(--accent);
+        color: var(--text);
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--theater-glow);
+      }
+
+      .type-selector {
+        display: flex;
+        gap: 0.8rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .type-btn {
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.4) 0%,
+          rgba(139, 69, 19, 0.3) 100%
+        );
+        border: 2px solid rgba(185, 28, 28, 0.5);
+        border-radius: 24px;
+        padding: 0.8rem 1.5rem;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .type-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(251, 191, 36, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .type-btn:hover::before {
+        left: 100%;
+      }
+
+      .type-btn:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(153, 27, 27, 0.6) 0%,
+          rgba(185, 28, 28, 0.4) 100%
+        );
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .type-btn.active {
+        background: var(--velvet);
+        border-color: var(--accent);
+        color: var(--text);
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--theater-glow);
+      }
+
+      .search-container {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 0.8rem 1.2rem;
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.2) 0%,
+          rgba(139, 69, 19, 0.1) 100%
+        );
+        color: var(--text);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: linear-gradient(
+          135deg,
+          rgba(153, 27, 27, 0.3) 0%,
+          rgba(185, 28, 28, 0.2) 100%
+        );
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3),
+          0 0 15px var(--theater-glow);
+      }
+
+      .search-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .search-btn {
+        background: var(--velvet);
+        border: 2px solid var(--accent);
+        border-radius: 16px;
+        padding: 0.8rem 1.5rem;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .search-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(185, 28, 28, 0.4);
+      }
+
+      /* Movies section - Theater Posters */
+      .movies-section {
+        margin: 0 1rem;
+      }
+
+      .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .movie-card {
+        background: linear-gradient(
+          135deg,
+          rgba(127, 29, 29, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        );
+        border: 2px solid rgba(185, 28, 28, 0.5);
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        position: relative;
+      }
+
+      .movie-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 30px var(--theater-glow);
+        border-color: var(--accent);
+      }
+
+      .movie-poster {
+        position: relative;
+        height: 320px;
+        overflow: hidden;
+      }
+
+      .movie-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .movie-card:hover .movie-poster img {
+        transform: scale(1.08);
+      }
+
+      .rating-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 0.4rem 0.6rem;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+      }
+
+      .rating-good {
+        background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+        color: white;
+        border: 1px solid rgba(34, 197, 94, 0.5);
+      }
+
+      .rating-okay {
+        background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        color: white;
+        border: 1px solid rgba(249, 115, 22, 0.5);
+      }
+
+      .rating-poor {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        color: white;
+        border: 1px solid rgba(239, 68, 68, 0.5);
+      }
+
+      .year-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.8) 0%,
+          rgba(0, 0, 0, 0.9) 100%
+        );
+        color: var(--accent);
+        padding: 0.4rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+      }
+
+      .type-badge {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: var(--velvet);
+        color: var(--text);
+        padding: 0.4rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid var(--accent);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .watch-later-btn {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .watch-later-btn:hover {
+        background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+        transform: scale(1.15);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+      }
+
+      .watch-later-btn.added {
+        background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+        border-color: rgba(34, 197, 94, 0.5);
+      }
+
+      .watch-later-btn.added:hover {
+        background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+      }
+
+      .movie-content {
+        padding: 1.2rem;
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.2) 0%,
+          rgba(120, 53, 15, 0.1) 100%
+        );
+      }
+
+      .movie-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.6rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+
+      .movie-overview {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        line-height: 1.4;
+        margin-bottom: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .movie-meta {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .meta-tag {
+        background: linear-gradient(
+          135deg,
+          rgba(185, 28, 28, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        );
+        color: var(--accent);
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Load more button - Theater Ticket Style */
+      .load-more-section {
+        margin: 0 1rem 2rem;
+        text-align: center;
+      }
+
+      .load-more-btn {
+        background: var(--velvet);
+        border: 3px solid var(--accent);
+        padding: 1.2rem 2.5rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--text);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        min-width: 240px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .load-more-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(251, 191, 36, 0.3),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+
+      .load-more-btn:hover::before {
+        left: 100%;
+      }
+
+      .load-more-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 48px rgba(185, 28, 28, 0.5);
+      }
+
+      /* Toast notification - Theater Style */
+      .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: linear-gradient(
+          135deg,
+          rgba(31, 22, 17, 0.95) 0%,
+          rgba(15, 10, 8, 0.9) 100%
+        );
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 500;
+        z-index: 1000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        border-color: #22c55e;
+        background: linear-gradient(
+          135deg,
+          rgba(22, 163, 74, 0.2) 0%,
+          rgba(31, 22, 17, 0.95) 100%
+        );
+      }
+
+      .toast.error {
+        border-color: #ef4444;
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.2) 0%,
+          rgba(31, 22, 17, 0.95) 100%
+        );
+      }
+
+      /* Add theater curtain effect */
+      .theater-curtain {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(180deg, var(--velvet) 0%, transparent 100%);
+        z-index: 50;
+        box-shadow: 0 0 20px rgba(185, 28, 28, 0.3);
+      }
+
+      .theater-curtain::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--accent) 0px,
+          var(--accent) 10px,
+          var(--primary) 10px,
+          var(--primary) 20px
+        );
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .spotlight {
+          display: none;
+        }
+
+        .recommendations-content {
+          padding: 1.5rem;
+          margin: 0.5rem;
+        }
+
+        .recommendations-grid {
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 1rem;
+        }
+
+        .original-movie {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .original-movie img {
+          width: 120px;
+          height: 180px;
+        }
+
+        .movies-grid {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 1rem;
+        }
+
+        .watch-later-grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .filter-grid {
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 0.6rem;
+        }
+
+        .filter-btn {
+          padding: 0.6rem 0.8rem;
+          font-size: 0.8rem;
+        }
+
+        .type-btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.85rem;
+        }
+
+        .search-container {
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        .search-btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header {
+          padding: 0.8rem 1rem 0.6rem;
+        }
+
+        .page-title {
+          font-size: 1.4rem;
+        }
+
+        .back-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+
+        .main {
+          padding-top: 4.5rem;
+        }
+
+        .filter-container,
+        .watch-later-container {
+          padding: 1.2rem;
+        }
+
+        .movie-content {
+          padding: 1rem;
+        }
+
+        .movie-title {
+          font-size: 0.9rem;
+        }
+
+        .movie-overview {
+          font-size: 0.75rem;
+        }
+
+        .movie-poster {
+          height: 280px;
+        }
+
+        .movies-grid {
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+
+        .type-selector {
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .type-btn {
+          width: 100%;
+        }
+
+        .toast {
+          bottom: 1rem;
+          right: 1rem;
+          left: 1rem;
+          transform: translateY(100%);
+        }
+
+        .toast.show {
+          transform: translateY(0);
+        }
+
+        .load-more-btn {
+          padding: 1rem 2rem;
+          font-size: 1rem;
+          min-width: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Theater ambiance effects -->
+    <div class="spotlight"></div>
+    <div class="spotlight"></div>
+    <div class="theater-curtain"></div>
+
+    <header class="header">
+      <div class="header-content">
+        <a href="index.html" class="back-btn">
+          <span>←</span>
+          <span>Hub</span>
+        </a>
+        <h1 class="page-title">Theater Lobby</h1>
+        <button class="watch-later-counter" id="watchLaterCounter">
+          ❤️ <span id="watchLaterCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <!-- Watch Later Section -->
+        <section class="watch-later-section" id="watchLaterSection">
+          <div class="watch-later-container">
+            <div class="watch-later-title">
+              🎭 My Theater Seats
+              <span
+                style="font-size: 0.8rem; color: var(--text-muted)"
+                id="watchLaterSubtitle"
+              >
+                Your reserved collection
+              </span>
+            </div>
+            <div class="watch-later-grid" id="watchLaterGrid">
+              <div
+                style="
+                  text-align: center;
+                  color: var(--text-muted);
+                  padding: 1.5rem;
+                  grid-column: 1 / -1;
+                "
+              >
+                🍿 Reserve your seats by clicking the ❤️ button on any movie!
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter Controls Section -->
+        <section class="filters-section">
+          <div class="filter-container" id="genreFilters">
+            <!-- Type selector -->
+            <div class="filter-title">🎭 Show Type:</div>
+            <div class="type-selector">
+              <button class="type-btn active" data-type="movie">
+                🎬 Movies
+              </button>
+              <button class="type-btn" data-type="tv">📺 TV Shows</button>
+            </div>
+
+            <!-- Genre filters -->
+            <div class="filter-title">🎪 Genre:</div>
+            <div class="filter-grid" id="genreButtons">
+              <!-- Genre buttons will be dynamically inserted here -->
+            </div>
+
+            <!-- Search -->
+            <div class="filter-title">🔍 Find Your Show:</div>
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                id="movieSearchInput"
+                placeholder="Search the theater archives..."
+              />
+              <button class="search-btn" id="movieSearchBtn">🎞️ Search</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Movies Grid -->
+        <section class="movies-section">
+          <div class="movies-grid" id="movieCards">
+            <div class="empty-state">
+              <div class="loading-spinner"></div>
+              <span>Loading theater listings...</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Load More Section -->
+        <section
+          class="load-more-section"
+          id="loadMoreSection"
+          style="display: none"
+        >
+          <button class="load-more-btn" id="loadMoreBtn">
+            🎫 More Showings
+          </button>
+        </section>
+      </div>
+    </main>
+
+    <!-- Recommendations Modal -->
+    <div class="recommendations-modal" id="recommendationsModal">
+      <div class="recommendations-content">
+        <div class="recommendations-header">
+          <div class="recommendations-title" id="recommendationsTitle">
+            🎬 Theater Recommendations
+          </div>
+          <button
+            class="close-recommendations"
+            onclick="closeRecommendations()"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="original-movie" id="originalMovieInfo">
+          <!-- Original movie info will be inserted here -->
+        </div>
+
+        <div class="recommendations-grid" id="recommendationsGrid">
+          <div class="loading-recommendations">
+            <div class="loading-spinner"></div>
+            <span>Loading recommendations from the vault...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer"></div>
+
+    <script>
+      // TMDB API Configuration
+      const TMDB_CONFIG = {
+        apiKey: "3fd2be6f0c70a2a598f084ddfb75487c",
+        baseUrl: "https://api.themoviedb.org/3",
+        imageBaseUrl: "https://image.tmdb.org/t/p/w500",
+        imageBaseUrlSmall: "https://image.tmdb.org/t/p/w300",
+      };
+
+      // IndexedDB setup for Watch Later
+      class WatchLaterDB {
+        constructor() {
+          this.dbName = "MoviesHubDB";
+          this.version = 1;
+          this.db = null;
+        }
+
+        async init() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.version);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+              this.db = request.result;
+              resolve(this.db);
+            };
+
+            request.onupgradeneeded = (event) => {
+              this.db = event.target.result;
+              if (!this.db.objectStoreNames.contains("watchLater")) {
+                const store = this.db.createObjectStore("watchLater", {
+                  keyPath: "id",
+                });
+                store.createIndex("title", "title", { unique: false });
+                store.createIndex("type", "type", { unique: false });
+              }
+            };
+          });
+        }
+
+        async add(item) {
+          const transaction = this.db.transaction(["watchLater"], "readwrite");
+          const store = transaction.objectStore("watchLater");
+          return store.add({
+            ...item,
+            addedAt: new Date().toISOString(),
+            clickCount: 0,
+          });
+        }
+
+        async remove(id) {
+          const transaction = this.db.transaction(["watchLater"], "readwrite");
+          const store = transaction.objectStore("watchLater");
+          return store.delete(id);
+        }
+
+        async getAll() {
+          const transaction = this.db.transaction(["watchLater"], "readonly");
+          const store = transaction.objectStore("watchLater");
+          return new Promise((resolve, reject) => {
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
+        }
+
+        async exists(id) {
+          const transaction = this.db.transaction(["watchLater"], "readonly");
+          const store = transaction.objectStore("watchLater");
+          return new Promise((resolve, reject) => {
+            const request = store.get(id);
+            request.onsuccess = () => resolve(!!request.result);
+            request.onerror = () => reject(request.error);
+          });
+        }
+
+        async updateClickCount(id, clickCount) {
+          const transaction = this.db.transaction(["watchLater"], "readwrite");
+          const store = transaction.objectStore("watchLater");
+          const getRequest = store.get(id);
+
+          return new Promise((resolve, reject) => {
+            getRequest.onsuccess = () => {
+              const item = getRequest.result;
+              if (item) {
+                item.clickCount = clickCount;
+                const putRequest = store.put(item);
+                putRequest.onsuccess = () => resolve(item);
+                putRequest.onerror = () => reject(putRequest.error);
+              } else {
+                reject(new Error("Item not found"));
+              }
+            };
+            getRequest.onerror = () => reject(getRequest.error);
+          });
+        }
+      }
+
+      // Movie state management
+      let movieState = {
+        currentGenre: "popular",
+        currentPage: 1,
+        totalPages: 1,
+        currentMovies: [],
+        genres: {},
+        isLoading: false,
+        lastFetch: 0,
+        selectedCategory: "movie",
+        watchLaterDB: new WatchLaterDB(),
+        watchLaterItems: [],
+      };
+
+      // Genre mappings from TMDB
+      const GENRE_CATEGORIES = {
+        popular: { name: "🔥 Now Showing", endpoint: "popular", icon: "" },
+        trending: { name: "⭐ Trending", endpoint: "trending", icon: "" },
+        topRated: { name: "🏆 Top Rated", endpoint: "top_rated", icon: "" },
+        upcoming: { name: "🎬 Coming Soon", endpoint: "upcoming", icon: "" },
+        action: { name: "💥 Action", genreId: 28, icon: "" },
+        comedy: { name: "😂 Comedy", genreId: 35, icon: "" },
+        drama: { name: "🎭 Drama", genreId: 18, icon: "" },
+        horror: { name: "👻 Horror", genreId: 27, icon: "" },
+        romance: { name: "💕 Romance", genreId: 10749, icon: "" },
+        scifi: { name: "🚀 Sci-Fi", genreId: 878, icon: "" },
+        fantasy: { name: "🧙 Fantasy", genreId: 14, icon: "" },
+        thriller: { name: "🔪 Thriller", genreId: 53, icon: "" },
+        animation: { name: "🎨 Animation", genreId: 16, icon: "" },
+        family: { name: "👨‍👩‍👧‍👦 Family", genreId: 10751, icon: "" },
+      };
+
+      // Initialize Watch Later functionality
+      async function initWatchLater() {
+        try {
+          await movieState.watchLaterDB.init();
+          await loadWatchLaterItems();
+          console.log("✅ Watch Later DB initialized");
+        } catch (error) {
+          console.error("❌ Watch Later DB initialization failed:", error);
+          showToast("Failed to load theater seats", "error");
+        }
+      }
+
+      // Load watch later items
+      async function loadWatchLaterItems() {
+        try {
+          movieState.watchLaterItems = await movieState.watchLaterDB.getAll();
+          renderWatchLaterSection();
+          updateWatchLaterCounter();
+        } catch (error) {
+          console.error("Error loading watch later items:", error);
+        }
+      }
+
+      // Handle watch later item click - always show recommendations
+      async function handleWatchLaterClick(item, element) {
+        try {
+          // Always show recommendations on click
+          showRecommendations(item);
+          showToast(
+            `🎬 Loading recommendations for "${item.title}"`,
+            "success"
+          );
+        } catch (error) {
+          console.error("Error handling watch later click:", error);
+          showToast("Failed to process click", "error");
+        }
+      }
+
+      // Fetch recommendations from TMDB
+      async function fetchRecommendations(movieId, type = "movie") {
+        try {
+          const url = `${TMDB_CONFIG.baseUrl}/${type}/${movieId}/recommendations?api_key=${TMDB_CONFIG.apiKey}&page=1`;
+
+          console.log(
+            `🎯 Fetching recommendations for ${type} ID ${movieId}...`
+          );
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`TMDB API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (!data.results || data.results.length === 0) {
+            // If no recommendations, try similar movies/shows
+            const similarUrl = `${TMDB_CONFIG.baseUrl}/${type}/${movieId}/similar?api_key=${TMDB_CONFIG.apiKey}&page=1`;
+            const similarResponse = await fetch(similarUrl);
+
+            if (similarResponse.ok) {
+              const similarData = await similarResponse.json();
+              return similarData.results || [];
+            }
+            return [];
+          }
+
+          console.log(`✅ Found ${data.results.length} recommendations`);
+
+          // Process recommendations
+          const processedRecommendations = data.results
+            .slice(0, 12)
+            .map((item) => ({
+              id: item.id,
+              title: item.title || item.name,
+              overview: item.overview || "No description available.",
+              year: item.release_date
+                ? new Date(item.release_date).getFullYear()
+                : item.first_air_date
+                ? new Date(item.first_air_date).getFullYear()
+                : "TBA",
+              rating: item.vote_average
+                ? Math.round(item.vote_average * 10) / 10
+                : "N/A",
+              voteCount: item.vote_count || 0,
+              image: item.poster_path
+                ? `${TMDB_CONFIG.imageBaseUrlSmall}${item.poster_path}`
+                : getPlaceholderImage(),
+              tmdbUrl: `https://www.themoviedb.org/${type}/${item.id}`,
+              type: type,
+            }));
+
+          return processedRecommendations;
+        } catch (error) {
+          console.error("❌ Error fetching recommendations:", error);
+          return [];
+        }
+      }
+
+      // Get placeholder image for movies without posters
+      function getPlaceholderImage() {
+        return `https://images.unsplash.com/photo-1489599735188-900089b31391?w=300&h=450&fit=crop&q=80`;
+      }
+
+      // Show recommendations modal
+      async function showRecommendations(originalMovie) {
+        const modal = document.getElementById("recommendationsModal");
+        const title = document.getElementById("recommendationsTitle");
+        const originalInfo = document.getElementById("originalMovieInfo");
+        const grid = document.getElementById("recommendationsGrid");
+
+        if (!modal || !title || !originalInfo || !grid) return;
+
+        // Set title
+        title.textContent = `🎬 Recommendations for "${originalMovie.title}"`;
+
+        // Show original movie info
+        originalInfo.innerHTML = `
+          <img src="${originalMovie.image}" alt="${originalMovie.title}" 
+               onerror="this.src='${getPlaceholderImage()}';">
+          <div class="original-movie-info">
+            <div class="original-movie-title">${originalMovie.title}</div>
+            <div class="original-movie-year">
+              ${originalMovie.year} • ${
+          originalMovie.type === "movie" ? "🎬 Movie" : "📺 TV Show"
+        }
+            </div>
+            ${
+              originalMovie.rating !== "N/A"
+                ? `<div class="original-movie-rating">⭐ ${originalMovie.rating}</div>`
+                : ""
+            }
+          </div>
+        `;
+
+        // Show loading state
+        grid.innerHTML = `
+          <div class="loading-recommendations">
+            <div class="loading-spinner"></div>
+            <span>Loading recommendations from the vault...</span>
+          </div>
+        `;
+
+        // Show modal
+        modal.classList.add("show");
+
+        // Fetch and display recommendations
+        const recommendations = await fetchRecommendations(
+          originalMovie.id,
+          originalMovie.type
+        );
+
+        if (recommendations.length === 0) {
+          grid.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted); grid-column: 1 / -1;">
+              <p>🎭 No recommendations found in our theater vault.</p>
+              <p style="margin-top: 0.5rem; font-size: 0.9rem;">🍿 Try exploring different genres!</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Render recommendations
+        grid.innerHTML = "";
+        recommendations.forEach((recommendation) => {
+          const card = document.createElement("div");
+          card.className = "recommendation-card";
+
+          card.innerHTML = `
+            <img src="${recommendation.image}" alt="${recommendation.title}" 
+                 loading="lazy"
+                 onerror="this.src='${getPlaceholderImage()}';">
+            <div class="recommendation-info">
+              <div class="recommendation-title">${recommendation.title}</div>
+              <div class="recommendation-year">${recommendation.year}</div>
+              ${
+                recommendation.rating !== "N/A"
+                  ? `<div class="recommendation-rating">⭐ ${recommendation.rating}</div>`
+                  : ""
+              }
+            </div>
+          `;
+
+          card.addEventListener("click", () => {
+            window.open(recommendation.tmdbUrl, "_blank");
+            showToast(
+              `🎬 Opening "${recommendation.title}" on TMDB`,
+              "success"
+            );
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      // Close recommendations modal
+      function closeRecommendations() {
+        const modal = document.getElementById("recommendationsModal");
+        if (modal) {
+          modal.classList.remove("show");
+        }
+      }
+
+      // Add/remove from watch later
+      async function toggleWatchLater(item, buttonElement) {
+        try {
+          const exists = await movieState.watchLaterDB.exists(item.id);
+
+          if (exists) {
+            await movieState.watchLaterDB.remove(item.id);
+            buttonElement.textContent = "❤️";
+            buttonElement.classList.remove("added");
+            showToast(`Removed "${item.title}" from theater seats`, "success");
+          } else {
+            await movieState.watchLaterDB.add(item);
+            buttonElement.textContent = "💖";
+            buttonElement.classList.add("added");
+            showToast(`Reserved seat for "${item.title}"`, "success");
+          }
+
+          await loadWatchLaterItems();
+        } catch (error) {
+          console.error("Error toggling watch later:", error);
+          showToast("Failed to update theater reservation", "error");
+        }
+      }
+
+      // Render watch later section with click handling
+      function renderWatchLaterSection() {
+        const grid = document.getElementById("watchLaterGrid");
+        const subtitle = document.getElementById("watchLaterSubtitle");
+
+        if (!grid) return;
+
+        if (movieState.watchLaterItems.length === 0) {
+          grid.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); padding: 1.5rem; grid-column: 1 / -1;">
+              🍿 Reserve your seats by clicking the ❤️ button on any movie!
+            </div>
+          `;
+          subtitle.textContent = "Your reserved collection";
+          return;
+        }
+
+        subtitle.textContent = `${movieState.watchLaterItems.length} seats reserved`;
+        grid.innerHTML = "";
+
+        movieState.watchLaterItems
+          .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
+          .forEach((item) => {
+            const watchLaterItem = document.createElement("div");
+            watchLaterItem.className = "watch-later-item";
+
+            const clickCount = item.clickCount || 0;
+            const clickIndicator = clickCount === 1 ? "🎯 " : "";
+
+            watchLaterItem.innerHTML = `
+              <img src="${item.image}" alt="${item.title}" 
+                   loading="lazy"
+                   onerror="this.src='${getPlaceholderImage()}';">
+              <button class="watch-later-remove" onclick="removeFromWatchLater('${
+                item.id
+              }')">
+                ✕
+              </button>
+              <div class="watch-later-content">
+                <div class="watch-later-item-title">${clickIndicator}${
+              item.title
+            }</div>
+                ${
+                  clickCount === 1
+                    ? `<div style="font-size: 0.7rem; color: var(--accent); margin-top: 0.2rem;">Tap again to open TMDB</div>`
+                    : `<div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem;">Tap for recommendations</div>`
+                }
+              </div>
+            `;
+
+            watchLaterItem.addEventListener("click", (e) => {
+              if (!e.target.classList.contains("watch-later-remove")) {
+                handleWatchLaterClick(item, watchLaterItem);
+              }
+            });
+
+            grid.appendChild(watchLaterItem);
+          });
+      }
+
+      // Remove from watch later
+      async function removeFromWatchLater(id) {
+        try {
+          await movieState.watchLaterDB.remove(parseInt(id));
+          await loadWatchLaterItems();
+          showToast("Seat reservation cancelled", "success");
+        } catch (error) {
+          console.error("Error removing from watch later:", error);
+          showToast("Failed to cancel reservation", "error");
+        }
+      }
+
+      // Update watch later counter
+      function updateWatchLaterCounter() {
+        const counter = document.getElementById("watchLaterCount");
+        const button = document.getElementById("watchLaterCounter");
+
+        if (counter) {
+          counter.textContent = movieState.watchLaterItems.length;
+        }
+
+        if (button) {
+          button.onclick = () => {
+            const section = document.getElementById("watchLaterSection");
+            if (section) {
+              section.scrollIntoView({ behavior: "smooth" });
+            }
+          };
+        }
+      }
+
+      // Toast notification system
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
+
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+
+        container.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add("show"), 100);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => container.removeChild(toast), 300);
+        }, 3000);
+      }
+
+      // Fetch movies from TMDB API
+      async function fetchMoviesFromTMDB(category = "popular", page = 1) {
+        try {
+          movieState.isLoading = true;
+          showLoadingState("movieCards", "Loading theater listings...");
+
+          let url;
+          const categoryInfo = GENRE_CATEGORIES[category];
+
+          if (!categoryInfo) {
+            throw new Error("Invalid category");
+          }
+
+          // Build API URL based on category type
+          if (categoryInfo.endpoint) {
+            // Special endpoints like popular, trending, top_rated
+            if (categoryInfo.endpoint === "trending") {
+              url = `${TMDB_CONFIG.baseUrl}/trending/${movieState.selectedCategory}/week?api_key=${TMDB_CONFIG.apiKey}&page=${page}`;
+            } else {
+              url = `${TMDB_CONFIG.baseUrl}/${movieState.selectedCategory}/${categoryInfo.endpoint}?api_key=${TMDB_CONFIG.apiKey}&page=${page}`;
+            }
+          } else if (categoryInfo.genreId) {
+            // Genre-based filtering
+            url = `${TMDB_CONFIG.baseUrl}/discover/${movieState.selectedCategory}?api_key=${TMDB_CONFIG.apiKey}&with_genres=${categoryInfo.genreId}&page=${page}&sort_by=popularity.desc`;
+          }
+
+          console.log(
+            `🎬 Fetching ${categoryInfo.name} ${movieState.selectedCategory} (page ${page})...`
+          );
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`TMDB API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (!data.results || data.results.length === 0) {
+            throw new Error("No results found");
+          }
+
+          // Process movies/shows
+          const processedItems = data.results.map((item) => ({
+            id: item.id,
+            title: item.title || item.name,
+            originalTitle: item.original_title || item.original_name,
+            overview: item.overview || "No description available.",
+            releaseDate: item.release_date || item.first_air_date,
+            year: item.release_date
+              ? new Date(item.release_date).getFullYear()
+              : item.first_air_date
+              ? new Date(item.first_air_date).getFullYear()
+              : "TBA",
+            rating: item.vote_average
+              ? Math.round(item.vote_average * 10) / 10
+              : "N/A",
+            voteCount: item.vote_count || 0,
+            popularity: item.popularity || 0,
+            posterPath: item.poster_path,
+            backdropPath: item.backdrop_path,
+            genreIds: item.genre_ids || [],
+            adult: item.adult || false,
+            image: item.poster_path
+              ? `${TMDB_CONFIG.imageBaseUrlSmall}${item.poster_path}`
+              : getPlaceholderImage(),
+            tmdbUrl: `https://www.themoviedb.org/${movieState.selectedCategory}/${item.id}`,
+            type: movieState.selectedCategory,
+          }));
+
+          movieState.currentMovies =
+            page === 1
+              ? processedItems
+              : [...movieState.currentMovies, ...processedItems];
+          movieState.currentPage = page;
+          movieState.totalPages = Math.min(data.total_pages, 500);
+          movieState.lastFetch = Date.now();
+
+          console.log(
+            `✅ Loaded ${processedItems.length} ${movieState.selectedCategory} (page ${page}/${movieState.totalPages})`
+          );
+
+          return processedItems;
+        } catch (error) {
+          console.error("❌ Error fetching from TMDB:", error);
+          showErrorMessage(
+            `Failed to load ${movieState.selectedCategory}: ${error.message}`
+          );
+          return [];
+        } finally {
+          movieState.isLoading = false;
+        }
+      }
+
+      // UI Functions
+      function showErrorMessage(message) {
+        const container = document.getElementById("movieCards");
+        if (!container) return;
+
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--text-muted); width: 100%;">
+              <p style="margin-bottom: 1rem;">${message}</p>
+              <button onclick="loadMovies()" style="
+                  padding: 0.75rem 1.5rem;
+                  background: var(--velvet);
+                  color: white;
+                  border: 2px solid var(--accent);
+                  border-radius: 12px;
+                  cursor: pointer;
+                  font-weight: 600;
+              ">Try Again</button>
+          </div>
+        `;
+      }
+
+      function showLoadingState(containerId, message = "Loading...") {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; padding: 20px; color: var(--text-muted);">
+              <div class="loading-spinner"></div>
+              <span>${message}</span>
+          </div>
+        `;
+      }
+
+      // Create movie/show card
+      async function createMovieCard(item) {
+        const card = document.createElement("div");
+        card.className = "movie-card";
+
+        // Check if item is in watch later
+        const isInWatchLater = await movieState.watchLaterDB.exists(item.id);
+
+        card.innerHTML = `
+          <div class="movie-poster">
+              <img src="${item.image}" alt="${item.title}" 
+                   loading="lazy"
+                   onerror="this.src='${getPlaceholderImage()}';">
+              
+              ${
+                item.rating !== "N/A"
+                  ? `
+                  <div class="rating-badge ${
+                    item.rating >= 8
+                      ? "rating-good"
+                      : item.rating >= 6
+                      ? "rating-okay"
+                      : "rating-poor"
+                  }">
+                      ⭐ ${item.rating}
+                  </div>
+              `
+                  : ""
+              }
+              
+              <div class="year-badge">
+                  ${item.year}
+              </div>
+              
+              <div class="type-badge">
+                  ${item.type === "movie" ? "🎬 Movie" : "📺 TV Show"}
+              </div>
+
+              <button class="watch-later-btn ${isInWatchLater ? "added" : ""}" 
+                      onclick="event.stopPropagation(); toggleWatchLater(${JSON.stringify(
+                        item
+                      ).replace(/"/g, "&quot;")}, this)">
+                  ${isInWatchLater ? "💖" : "❤️"}
+              </button>
+          </div>
+          
+          <div class="movie-content">
+              <h4 class="movie-title">${item.title}</h4>
+              
+              <p class="movie-overview">${item.overview}</p>
+              
+              <div class="movie-meta">
+                  ${
+                    item.voteCount > 0
+                      ? `
+                      <span class="meta-tag">${item.voteCount.toLocaleString()} votes</span>
+                  `
+                      : ""
+                  }
+              </div>
+          </div>
+        `;
+
+        // Click handler for main card
+        card.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("watch-later-btn")) {
+            openMovieDetails(item);
+          }
+        });
+
+        return card;
+      }
+
+      // Open movie/show details
+      function openMovieDetails(item) {
+        console.log(`🎬 Opening details for: ${item.title}`);
+        window.open(item.tmdbUrl, "_blank");
+        showToast(`🎬 Opening "${item.title}"!`, "success");
+      }
+
+      // Create genre filter buttons
+      function createGenreFilters() {
+        const genreContainer = document.getElementById("genreButtons");
+        if (!genreContainer) return;
+
+        genreContainer.innerHTML = "";
+
+        Object.entries(GENRE_CATEGORIES).forEach(([key, genre]) => {
+          const button = document.createElement("button");
+          button.textContent = genre.name;
+          button.className = `filter-btn ${
+            movieState.currentGenre === key ? "active" : ""
+          }`;
+
+          button.addEventListener("click", () => {
+            movieState.currentGenre = key;
+            movieState.currentMovies = [];
+            movieState.currentPage = 1;
+            createGenreFilters();
+            loadMovies(key);
+          });
+
+          genreContainer.appendChild(button);
+        });
+      }
+
+      // Create type selector
+      function createTypeSelector() {
+        const typeButtons = document.querySelectorAll(".type-btn");
+        typeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const type = btn.getAttribute("data-type");
+            movieState.selectedCategory = type;
+            movieState.currentMovies = [];
+            movieState.currentPage = 1;
+
+            typeButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            loadMovies(movieState.currentGenre);
+          });
+        });
+      }
+
+      // Search functionality
+      function setupSearch() {
+        const searchInput = document.getElementById("movieSearchInput");
+        const searchBtn = document.getElementById("movieSearchBtn");
+
+        const handleSearch = async () => {
+          const query = searchInput.value.trim();
+          if (query) {
+            await searchMovies(query);
+          }
+        };
+
+        if (searchBtn) searchBtn.addEventListener("click", handleSearch);
+        if (searchInput) {
+          searchInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          });
+        }
+      }
+
+      // Search movies/shows
+      async function searchMovies(query, page = 1) {
+        try {
+          if (!query.trim()) return [];
+
+          movieState.isLoading = true;
+          showLoadingState(
+            "movieCards",
+            `Searching theater archives for "${query}"...`
+          );
+
+          const url = `${TMDB_CONFIG.baseUrl}/search/${
+            movieState.selectedCategory
+          }?api_key=${TMDB_CONFIG.apiKey}&query=${encodeURIComponent(
+            query
+          )}&page=${page}`;
+
+          console.log(`🔍 Searching for "${query}"...`);
+
+          const response = await fetch(url);
+          if (!response.ok)
+            throw new Error(`Search failed: ${response.status}`);
+
+          const data = await response.json();
+          const results = data.results || [];
+
+          console.log(`✅ Found ${results.length} search results`);
+          const processedResults = results.map((item) => ({
+            id: item.id,
+            title: item.title || item.name,
+            overview: item.overview || "No description available.",
+            year: item.release_date
+              ? new Date(item.release_date).getFullYear()
+              : item.first_air_date
+              ? new Date(item.first_air_date).getFullYear()
+              : "TBA",
+            rating: item.vote_average
+              ? Math.round(item.vote_average * 10) / 10
+              : "N/A",
+            voteCount: item.vote_count || 0,
+            image: item.poster_path
+              ? `${TMDB_CONFIG.imageBaseUrlSmall}${item.poster_path}`
+              : getPlaceholderImage(),
+            tmdbUrl: `https://www.themoviedb.org/${movieState.selectedCategory}/${item.id}`,
+            type: movieState.selectedCategory,
+          }));
+
+          renderMovies(processedResults, `Search: "${query}"`);
+          return processedResults;
+        } catch (error) {
+          console.error("❌ Search error:", error);
+          showErrorMessage(`Search failed: ${error.message}`);
+          return [];
+        } finally {
+          movieState.isLoading = false;
+        }
+      }
+
+      // Render movies/shows
+      async function renderMovies(items, categoryName = null) {
+        const container = document.getElementById("movieCards");
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        if (items.length === 0) {
+          container.innerHTML = `
+              <div style="text-align: center; padding: 2rem; color: var(--text-muted); width: 100%;">
+                  <p>No ${
+                    movieState.selectedCategory === "movie"
+                      ? "movies"
+                      : "TV shows"
+                  } found in the theater archives. Try a different category!</p>
+              </div>
+          `;
+          return;
+        }
+
+        // Create cards
+        for (const item of items) {
+          const card = await createMovieCard(item);
+          container.appendChild(card);
+        }
+
+        // Show load more button if there are more pages
+        const loadMoreSection = document.getElementById("loadMoreSection");
+        if (
+          movieState.currentPage < movieState.totalPages &&
+          !categoryName?.includes("Search")
+        ) {
+          if (loadMoreSection) {
+            loadMoreSection.style.display = "block";
+            const loadMoreBtn = document.getElementById("loadMoreBtn");
+            if (loadMoreBtn) {
+              loadMoreBtn.textContent = `🎫 More ${
+                movieState.selectedCategory === "movie" ? "Movies" : "TV Shows"
+              } (Page ${movieState.currentPage + 1})`;
+              loadMoreBtn.onclick = () => loadMoreMovies();
+            }
+          }
+        } else {
+          if (loadMoreSection) {
+            loadMoreSection.style.display = "none";
+          }
+        }
+
+        // Update success message
+        const genreName =
+          categoryName ||
+          GENRE_CATEGORIES[movieState.currentGenre]?.name ||
+          "items";
+        showToast(
+          `🎬 Loaded ${items.length} ${genreName.toLowerCase()}!`,
+          "success"
+        );
+      }
+
+      // Load movies for a specific genre/category
+      async function loadMovies(category = "popular") {
+        movieState.currentGenre = category;
+        movieState.currentPage = 1;
+        movieState.currentMovies = [];
+
+        const items = await fetchMoviesFromTMDB(category, 1);
+        if (items.length > 0) {
+          await renderMovies(items);
+        }
+      }
+
+      // Load more movies (pagination)
+      async function loadMoreMovies() {
+        if (
+          movieState.isLoading ||
+          movieState.currentPage >= movieState.totalPages
+        ) {
+          return;
+        }
+
+        const nextPage = movieState.currentPage + 1;
+        const newItems = await fetchMoviesFromTMDB(
+          movieState.currentGenre,
+          nextPage
+        );
+
+        if (newItems.length > 0) {
+          await renderMovies(movieState.currentMovies);
+        }
+      }
+
+      // Initialize Movies Hub
+      async function initializeMoviesHub() {
+        console.log("🎬 Initializing Theater Movies Hub...");
+
+        // Initialize Watch Later first
+        await initWatchLater();
+
+        // Create genre filters
+        createGenreFilters();
+
+        // Setup type selector
+        createTypeSelector();
+
+        // Setup search
+        setupSearch();
+
+        // Load initial movies
+        await loadMovies("popular");
+
+        console.log("✅ Theater Movies Hub ready!");
+      }
+
+      // Make functions globally available
+      window.toggleWatchLater = toggleWatchLater;
+      window.removeFromWatchLater = removeFromWatchLater;
+      window.loadMovies = loadMovies;
+      window.closeRecommendations = closeRecommendations;
+
+      // Close modal when clicking outside
+      document.addEventListener("click", (e) => {
+        const modal = document.getElementById("recommendationsModal");
+        if (modal && e.target === modal) {
+          closeRecommendations();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeRecommendations();
+        }
+      });
+
+      // Initialize when DOM is ready
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("🎬 Starting Theater Movies Hub initialization...");
+        try {
+          await initializeMoviesHub();
+          console.log("✅ Theater Movies Hub initialized successfully!");
+        } catch (error) {
+          console.error("❌ Theater Movies Hub initialization failed:", error);
+          showToast("Failed to initialize theater", "error");
+        }
+      });
+    </script>
+  </body>
+</html>

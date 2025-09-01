@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180x180.png" />
+    <meta name="theme-color" content="#a78bfa" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bean's Interactive Notepad</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Notepad Color Palette */
+        --paper-white: #fefdf8;
+        --paper-cream: #faf9f4;
+        --line-blue: #a8d8ea;
+        --margin-red: #ff6b6b;
+        --pencil-gray: #2c3e50;
+        --pencil-light: #7f8c8d;
+        --eraser-pink: #ff9ff3;
+        --ring-metal: #bdc3c7;
+        --ring-shadow: #34495e;
+        --paper-shadow: rgba(0, 0, 0, 0.1);
+        --hole-shadow: rgba(0, 0, 0, 0.3);
+
+        /* Functional colors */
+        --primary-blue: #3498db;
+        --success-green: #27ae60;
+        --error-red: #e74c3c;
+        --warning-orange: #f39c12;
+
+        /* Design tokens */
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --transition: 0.3s ease;
+
+        /* Typography */
+        --font-size-xs: 0.75rem;
+        --font-size-sm: 0.875rem;
+        --font-size-base: 1rem;
+        --font-size-lg: 1.125rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.5rem;
+        --font-size-3xl: 1.875rem;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+        color: var(--pencil-gray);
+        min-height: 100vh;
+        padding: var(--spacing-lg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Hub Navigation Button */
+      .hub-nav {
+        position: fixed;
+        top: var(--spacing-lg);
+        left: var(--spacing-lg);
+        z-index: 1000;
+      }
+
+      .hub-button {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all var(--transition);
+        font-size: var(--font-size-sm);
+        box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        text-decoration: none;
+      }
+
+      .hub-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(44, 62, 80, 0.4);
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+      }
+
+      /* Notepad Container */
+      .notepad-container {
+        position: relative;
+        width: 100%;
+        max-width: 700px;
+        margin: var(--spacing-xl) 0;
+        background: var(--paper-white);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
+          0 8px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        overflow: hidden;
+      }
+
+      /* Binder Ring Holes */
+      .binder-rings {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 60px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .ring-hole {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background: radial-gradient(
+          circle,
+          var(--hole-shadow) 0%,
+          var(--hole-shadow) 30%,
+          var(--paper-white) 31%,
+          var(--paper-white) 100%
+        );
+        border-radius: 50%;
+        left: 18px;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .ring-hole:nth-child(1) {
+        top: 80px;
+      }
+      .ring-hole:nth-child(2) {
+        top: 160px;
+      }
+      .ring-hole:nth-child(3) {
+        top: 240px;
+      }
+      .ring-hole:nth-child(4) {
+        top: 320px;
+      }
+      .ring-hole:nth-child(5) {
+        top: 400px;
+      }
+      .ring-hole:nth-child(6) {
+        top: 480px;
+      }
+
+      /* Binder Rings */
+      .binder-ring {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: -40px;
+        background: linear-gradient(135deg, var(--ring-metal), #95a5a6);
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+          inset 0 1px 2px rgba(255, 255, 255, 0.5),
+          inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+        border: 2px solid #95a5a6;
+      }
+
+      .binder-ring:nth-child(1) {
+        top: 82px;
+      }
+      .binder-ring:nth-child(2) {
+        top: 162px;
+      }
+      .binder-ring:nth-child(3) {
+        top: 242px;
+      }
+      .binder-ring:nth-child(4) {
+        top: 322px;
+      }
+      .binder-ring:nth-child(5) {
+        top: 402px;
+      }
+      .binder-ring:nth-child(6) {
+        top: 482px;
+      }
+
+      /* Mobile adjustments for binder rings */
+      @media (max-width: 768px) {
+        .binder-rings {
+          width: 40px;
+        }
+
+        .ring-hole {
+          width: 16px;
+          height: 16px;
+          left: 12px;
+        }
+
+        .binder-ring {
+          width: 14px;
+          height: 14px;
+          left: -25px;
+          border: 1px solid #95a5a6;
+        }
+
+        .binder-ring:nth-child(1) {
+          top: 84px;
+        }
+        .binder-ring:nth-child(2) {
+          top: 164px;
+        }
+        .binder-ring:nth-child(3) {
+          top: 244px;
+        }
+        .binder-ring:nth-child(4) {
+          top: 324px;
+        }
+        .binder-ring:nth-child(5) {
+          top: 404px;
+        }
+        .binder-ring:nth-child(6) {
+          top: 484px;
+        }
+      }
+
+      /* Paper Lines */
+      .paper-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(
+            to right,
+            var(--margin-red) 90px,
+            transparent 90px
+          ),
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 31px,
+            var(--line-blue) 32px,
+            var(--line-blue) 33px
+          );
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @media (max-width: 768px) {
+        .paper-lines {
+          background-image: linear-gradient(
+              to right,
+              var(--margin-red) 60px,
+              transparent 60px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              transparent 0px,
+              transparent 31px,
+              var(--line-blue) 32px,
+              var(--line-blue) 33px
+            );
+        }
+      }
+
+      /* Header */
+      .notepad-header {
+        position: relative;
+        z-index: 5;
+        text-align: center;
+        padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+        margin-left: 110px;
+        padding-left: var(--spacing-xl);
+        padding-top: 65px; /* Align with second line */
+      }
+
+      .notepad-title {
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-3xl);
+        font-weight: 700;
+        color: var(--pencil-gray);
+        margin-bottom: var(--spacing-sm);
+        transform: rotate(-0.5deg);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        line-height: 33px; /* Match blue line spacing */
+      }
+
+      .date-header {
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-lg);
+        color: var(--pencil-light);
+        transform: rotate(0.3deg);
+        line-height: 33px; /* Match blue line spacing */
+      }
+
+      /* Form Section */
+      .form-section {
+        position: relative;
+        z-index: 5;
+        padding: var(--spacing-lg);
+        margin-left: 110px;
+        border-bottom: 2px dashed var(--line-blue);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .handwritten-form {
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        align-items: end;
+      }
+
+      .input-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .handwritten-label {
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--pencil-gray);
+        margin-bottom: var(--spacing-xs);
+        transform: rotate(-0.2deg);
+        display: block;
+      }
+
+      .handwritten-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid var(--pencil-light);
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-xl);
+        font-weight: 500;
+        color: var(--pencil-gray);
+        padding: var(--spacing-sm) 0;
+        outline: none;
+        transition: border-color var(--transition);
+      }
+
+      .handwritten-input:focus {
+        border-bottom-color: var(--primary-blue);
+      }
+
+      .handwritten-input::placeholder {
+        color: var(--pencil-light);
+        opacity: 0.7;
+      }
+
+      .handwritten-select {
+        background: transparent;
+        border: 2px solid var(--pencil-light);
+        border-radius: var(--radius-md);
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-lg);
+        font-weight: 500;
+        color: var(--pencil-gray);
+        padding: var(--spacing-sm);
+        cursor: pointer;
+        outline: none;
+        transform: rotate(-0.1deg);
+      }
+
+      .handwritten-select:focus {
+        border-color: var(--primary-blue);
+      }
+
+      .add-btn {
+        background: linear-gradient(135deg, var(--primary-blue), #2980b9);
+        border: none;
+        color: white;
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all var(--transition);
+        transform: rotate(0.5deg);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+      }
+
+      .add-btn:hover {
+        transform: rotate(0.5deg) translateY(-2px);
+        box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+      }
+
+      /* Task Sections */
+      .task-section {
+        position: relative;
+        z-index: 5;
+        margin: var(--spacing-lg) 0;
+        padding: var(--spacing-lg);
+        margin-left: 110px;
+      }
+
+      .section-title {
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        color: var(--pencil-gray);
+        margin-bottom: var(--spacing-lg);
+        transform: rotate(-0.3deg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .section-underline {
+        flex: 1;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-blue), transparent);
+        transform: skew(-10deg);
+        margin-left: var(--spacing-md);
+      }
+
+      /* Task List */
+      .task-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .task-item {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-sm) 0;
+        position: relative;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+
+      .task-item:hover {
+        transform: translateX(2px);
+      }
+
+      /* Hand-drawn checkbox */
+      .task-checkbox {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin-right: var(--spacing-md);
+        cursor: pointer;
+      }
+
+      .checkbox-square {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--pencil-gray);
+        border-radius: 2px;
+        background: transparent;
+        transform: rotate(-1deg);
+        transition: all var(--transition);
+      }
+
+      .task-item.completed .checkbox-square {
+        background: rgba(52, 152, 219, 0.1);
+      }
+
+      /* Hand-drawn checkmark */
+      .checkbox-mark {
+        position: absolute;
+        top: 2px;
+        left: 3px;
+        width: 12px;
+        height: 8px;
+        opacity: 0;
+        transform: scale(0) rotate(5deg);
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .task-item.completed .checkbox-mark {
+        opacity: 1;
+        transform: scale(1) rotate(5deg);
+      }
+
+      .checkmark-path {
+        stroke: var(--primary-blue);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        stroke-dasharray: 16;
+        stroke-dashoffset: 16;
+        transition: stroke-dashoffset 0.4s ease-in-out;
+      }
+
+      .task-item.completed .checkmark-path {
+        stroke-dashoffset: 0;
+      }
+
+      .task-text {
+        flex: 1;
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-xl);
+        font-weight: 500;
+        color: var(--pencil-gray);
+        line-height: 1.4;
+        transform: rotate(-0.1deg);
+        transition: all var(--transition);
+      }
+
+      .task-item.completed .task-text {
+        color: var(--pencil-light);
+        text-decoration: line-through;
+        text-decoration-color: var(--primary-blue);
+        text-decoration-thickness: 2px;
+        transform: rotate(-0.1deg) translateX(5px);
+      }
+
+      /* Task Actions */
+      .task-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        opacity: 0;
+        transition: opacity var(--transition);
+      }
+
+      .task-item:hover .task-actions {
+        opacity: 1;
+      }
+
+      .action-btn {
+        background: transparent;
+        border: none;
+        color: var(--pencil-light);
+        font-size: var(--font-size-lg);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        border-radius: var(--radius-sm);
+        transition: all var(--transition);
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .delete-btn:hover {
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--error-red);
+        transform: scale(1.1);
+      }
+
+      .drag-handle {
+        cursor: grab;
+      }
+
+      .drag-handle:hover {
+        background: rgba(52, 152, 219, 0.1);
+        color: var(--primary-blue);
+      }
+
+      .drag-handle:active {
+        cursor: grabbing;
+      }
+
+      /* Completion Section */
+      .completion-section {
+        position: relative;
+        z-index: 5;
+        text-align: center;
+        padding: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+        margin-left: 100px;
+        padding-left: var(--spacing-xl);
+        border-top: 2px dashed var(--line-blue);
+      }
+
+      .completion-btn {
+        background: linear-gradient(135deg, var(--success-green), #229954);
+        border: none;
+        color: white;
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        padding: var(--spacing-md) var(--spacing-xl);
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all var(--transition);
+        transform: rotate(-0.5deg);
+        box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .completion-btn:hover {
+        transform: rotate(-0.5deg) translateY(-3px);
+        box-shadow: 0 8px 16px rgba(39, 174, 96, 0.4);
+      }
+
+      /* Messages */
+      .message {
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        text-align: center;
+        display: none;
+        transform: rotate(-0.2deg);
+        transition: all var(--transition);
+      }
+
+      .error-message {
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--error-red);
+        border: 2px dashed var(--error-red);
+      }
+
+      .success-message {
+        background: rgba(39, 174, 96, 0.1);
+        color: var(--success-green);
+        border: 2px dashed var(--success-green);
+      }
+
+      /* Pencil markings and doodles */
+      .doodle {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.3;
+        z-index: 2;
+      }
+
+      .doodle-star {
+        top: 150px;
+        right: 100px;
+        font-size: 24px;
+        color: var(--warning-orange);
+        transform: rotate(15deg);
+      }
+
+      .doodle-heart {
+        top: 300px;
+        right: 80px;
+        font-size: 20px;
+        color: var(--margin-red);
+        transform: rotate(-10deg);
+      }
+
+      .doodle-arrow {
+        top: 500px;
+        right: 120px;
+        font-size: 30px;
+        color: var(--primary-blue);
+        transform: rotate(25deg);
+      }
+
+      /* Bean Mascot - keeping original styles */
+      .bean-mascot {
+        position: fixed;
+        width: 72px;
+        height: 80px;
+        bottom: 10px;
+        left: 10px;
+        z-index: 99999;
+      }
+
+      .bean-shadow {
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 50px;
+        height: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        filter: blur(6px);
+        border-radius: 50%;
+        transform: translateX(-50%);
+      }
+
+      .bean-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        animation: bean-bounce 2.2s ease-in-out infinite;
+      }
+
+      .bean-message-bubble {
+        position: absolute;
+        bottom: 100%;
+        left: 100%;
+        transform: translateX(-20px) translateY(-10px);
+        background: linear-gradient(135deg, var(--primary-blue), #2980b9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        z-index: 100000;
+        min-width: 140px;
+        text-align: center;
+      }
+
+      .bean-message-bubble::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 30px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid var(--primary-blue);
+      }
+
+      .bean-message-bubble.show {
+        opacity: 1;
+        transform: translateX(-20px) translateY(-20px);
+      }
+
+      /* Bean animations */
+      @keyframes bean-bounce {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-3px) rotate(-1deg);
+        }
+      }
+
+      @keyframes bean-celebration {
+        0% {
+          transform: translateY(0) scale(1) rotate(0deg);
+        }
+        10% {
+          transform: translateY(-15px) scale(1.1) rotate(15deg);
+        }
+        20% {
+          transform: translateY(-25px) scale(1.2) rotate(-15deg);
+        }
+        30% {
+          transform: translateY(-20px) scale(1.1) rotate(20deg);
+        }
+        40% {
+          transform: translateY(-30px) scale(1.2) rotate(-10deg);
+        }
+        50% {
+          transform: translateY(-35px) scale(1.3) rotate(10deg);
+        }
+        60% {
+          transform: translateY(-25px) scale(1.1) rotate(-5deg);
+        }
+        70% {
+          transform: translateY(-15px) scale(1.05) rotate(8deg);
+        }
+        80% {
+          transform: translateY(-10px) scale(1) rotate(-3deg);
+        }
+        90% {
+          transform: translateY(-5px) scale(1) rotate(2deg);
+        }
+        100% {
+          transform: translateY(0) scale(1) rotate(0deg);
+        }
+      }
+
+      @keyframes bean-cute-jump {
+        0% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+        15% {
+          transform: translateY(-5px) rotate(-3deg) scale(1.05);
+        }
+        30% {
+          transform: translateY(-12px) rotate(2deg) scale(1.1);
+        }
+        45% {
+          transform: translateY(-18px) rotate(-1deg) scale(1.08);
+        }
+        60% {
+          transform: translateY(-8px) rotate(1deg) scale(1.05);
+        }
+        75% {
+          transform: translateY(-2px) rotate(-0.5deg) scale(1.02);
+        }
+        85% {
+          transform: translateY(0) rotate(0.5deg) scale(1.01);
+        }
+        100% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+      }
+
+      .bean-celebrating {
+        animation: bean-celebration 1.5s ease-out;
+      }
+
+      .bean-mascot:hover .bean-svg {
+        animation: bean-bounce 2.2s ease-in-out infinite,
+          bean-wiggle 0.5s ease-in-out;
+      }
+
+      .bean-mascot.jumping .bean-svg {
+        animation: bean-cute-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+      }
+
+      @keyframes bean-wiggle {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(5deg);
+        }
+        50% {
+          transform: rotate(-5deg);
+        }
+        75% {
+          transform: rotate(3deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* Dark mode toggle */
+      .dark-mode-toggle {
+        position: fixed;
+        bottom: var(--spacing-lg);
+        right: var(--spacing-lg);
+        background: linear-gradient(135deg, var(--pencil-gray), #34495e);
+        border: none;
+        color: white;
+        font-size: var(--font-size-xl);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(44, 62, 80, 0.4);
+        transition: all var(--transition);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dark-mode-toggle:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 12px 32px rgba(44, 62, 80, 0.5);
+      }
+
+      /* Confetti */
+      .confetti-container {
+        pointer-events: none;
+        position: fixed;
+        bottom: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        height: 200px;
+        overflow: visible;
+        z-index: 9999;
+        display: none;
+      }
+
+      .confetti {
+        position: absolute;
+        width: 12px;
+        height: 8px;
+        border-radius: var(--radius-sm);
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+      }
+
+      @keyframes confetti-burst {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+          opacity: 1;
+        }
+        80% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--x-move), var(--y-move)) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        body {
+          padding: var(--spacing-md);
+        }
+
+        .notepad-container {
+          max-width: 100%;
+        }
+
+        .notepad-header,
+        .form-section,
+        .task-section,
+        .completion-section {
+          margin-left: 70px;
+        }
+
+        .handwritten-form {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .input-group {
+          min-width: auto;
+        }
+
+        .notepad-title {
+          font-size: var(--font-size-2xl);
+        }
+
+        .section-title {
+          font-size: var(--font-size-xl);
+        }
+
+        .bean-mascot {
+          width: 60px;
+          height: 68px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .notepad-header,
+        .form-section,
+        .task-section,
+        .completion-section {
+          padding: var(--spacing-md);
+          margin-left: 50px;
+        }
+
+        .notepad-title {
+          font-size: var(--font-size-xl);
+        }
+
+        .task-text {
+          font-size: var(--font-size-lg);
+        }
+
+        .completion-btn {
+          font-size: var(--font-size-xl);
+          padding: var(--spacing-sm) var(--spacing-lg);
+        }
+      }
+
+      /* Empty state styling */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--pencil-light);
+        font-family: "Caveat", cursive;
+        font-size: var(--font-size-lg);
+        transform: rotate(-0.2deg);
+        font-style: italic;
+      }
+
+      /* Fade in animation for new items */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px) rotate(-0.1deg);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) rotate(-0.1deg);
+        }
+      }
+
+      .task-item {
+        animation: fadeInUp 0.3s ease-out;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hub Navigation -->
+    <div class="hub-nav">
+      <a href="index.html" class="hub-button">
+        <span>Hub</span>
+      </a>
+    </div>
+
+    <!-- Notepad Container -->
+    <div class="notepad-container">
+      <!-- Binder Rings -->
+      <div class="binder-rings">
+        <div class="ring-hole"></div>
+        <div class="ring-hole"></div>
+        <div class="ring-hole"></div>
+        <div class="ring-hole"></div>
+        <div class="ring-hole"></div>
+        <div class="ring-hole"></div>
+        <div class="binder-ring"></div>
+        <div class="binder-ring"></div>
+        <div class="binder-ring"></div>
+        <div class="binder-ring"></div>
+        <div class="binder-ring"></div>
+        <div class="binder-ring"></div>
+      </div>
+
+      <!-- Paper Lines -->
+      <div class="paper-lines"></div>
+
+      <!-- Decorative doodles -->
+      <div class="doodle doodle-star">*</div>
+      <div class="doodle doodle-heart">♡</div>
+      <div class="doodle doodle-arrow">→</div>
+
+      <!-- Header -->
+      <div class="notepad-header">
+        <h1 class="notepad-title">Bean's Interactive Notepad</h1>
+        <div class="date-header" id="current-date">Today's Tasks</div>
+      </div>
+
+      <!-- Form Section -->
+      <div class="form-section">
+        <form id="todo-form" class="handwritten-form">
+          <div class="input-group">
+            <label for="todo-input" class="handwritten-label">New Task</label>
+            <input
+              type="text"
+              id="todo-input"
+              class="handwritten-input"
+              placeholder="Write something down..."
+              autocomplete="off"
+              required
+            />
+          </div>
+          <div>
+            <label for="task-type" class="handwritten-label">Type</label>
+            <select
+              id="task-type"
+              class="handwritten-select"
+              aria-label="Task type"
+            >
+              <option value="daily">Daily</option>
+              <option value="today" selected>Today</option>
+            </select>
+          </div>
+          <button type="submit" class="add-btn">Add Task</button>
+        </form>
+      </div>
+
+      <!-- Daily Tasks Section -->
+      <div
+        class="task-section"
+        id="daily-section"
+        aria-label="Daily tasks section"
+      >
+        <h2 class="section-title">
+          Daily Tasks
+          <div class="section-underline"></div>
+        </h2>
+        <ul id="daily-list" class="task-list"></ul>
+      </div>
+
+      <!-- Today's Tasks Section -->
+      <div
+        class="task-section"
+        id="today-section"
+        aria-label="Today's tasks section"
+      >
+        <h2 class="section-title">
+          Today's Tasks
+          <div class="section-underline"></div>
+        </h2>
+        <ul id="today-list" class="task-list"></ul>
+      </div>
+
+      <!-- Completion Section -->
+      <div class="completion-section">
+        <button id="clear-today-btn" type="button" class="completion-btn">
+          I did it!
+        </button>
+        <div
+          id="error-message"
+          class="message error-message"
+          role="alert"
+        ></div>
+        <div
+          id="encouragement-message"
+          class="message success-message"
+          aria-live="polite"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div
+      id="confetti-container"
+      class="confetti-container"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Bean Mascot -->
+    <div
+      aria-hidden="false"
+      class="bean-mascot idle facing-right"
+      id="bean-mascot"
+    >
+      <div class="bean-message-bubble" id="bean-message">Good Job Bean!</div>
+      <div aria-hidden="true" class="bean-shadow"></div>
+      <svg
+        aria-label="Bean mascot"
+        class="bean-svg"
+        role="img"
+        viewBox="0 0 160 180"
+      >
+        <!-- Bean body -->
+        <path
+          d="M80 15
+             C50 25, 35 60, 45 110
+             C50 140, 80 160, 110 140
+             C140 120, 125 50, 95 30
+             C85 20, 80 15, 80 15 Z"
+          fill="#ff8fb7"
+          stroke="#3b2644"
+          stroke-linejoin="round"
+          stroke-width="4"
+        ></path>
+        <!-- Left Arm -->
+        <g class="bean-arm-left" transform-origin="48 78">
+          <line
+            x1="48"
+            y1="78"
+            x2="28"
+            y2="88"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <circle
+            cx="28"
+            cy="88"
+            r="3"
+            fill="#ff8fb7"
+            stroke="#3b2644"
+            stroke-width="2"
+          />
+        </g>
+        <!-- Right Arm -->
+        <g class="bean-arm-right" transform-origin="112 75">
+          <line
+            x1="112"
+            y1="75"
+            x2="132"
+            y2="85"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <circle
+            cx="132"
+            cy="85"
+            r="3"
+            fill="#ff8fb7"
+            stroke="#3b2644"
+            stroke-width="2"
+          />
+        </g>
+        <!-- Left Leg -->
+        <g class="bean-leg-left" transform-origin="65 140">
+          <line
+            x1="65"
+            y1="140"
+            x2="55"
+            y2="165"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <ellipse cx="55" cy="167" rx="6" ry="3" fill="#3b2644" />
+        </g>
+        <!-- Right Leg -->
+        <g class="bean-leg-right" transform-origin="95 140">
+          <line
+            x1="95"
+            y1="140"
+            x2="105"
+            y2="165"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <ellipse cx="105" cy="167" rx="6" ry="3" fill="#3b2644" />
+        </g>
+        <!-- Eyes -->
+        <circle cx="70" cy="65" fill="#2a1731" r="5.5"></circle>
+        <circle cx="96" cy="58" fill="#2a1731" r="5.5"></circle>
+        <!-- Smile -->
+        <path
+          d="M65 84c8 8 22 7 30-1"
+          fill="none"
+          stroke="#2a1731"
+          stroke-linecap="round"
+          stroke-width="4"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button
+      id="dark-mode-toggle"
+      class="dark-mode-toggle"
+      aria-label="Toggle dark mode"
+      title="Toggle dark mode"
+    >
+      ◐
+    </button>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <script>
+      // Set current date
+      function setCurrentDate() {
+        const today = new Date();
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        document.getElementById("current-date").textContent =
+          today.toLocaleDateString("en-US", options);
+      }
+
+      // App state management
+      const AppState = {
+        form: document.getElementById("todo-form"),
+        input: document.getElementById("todo-input"),
+        taskTypeSelect: document.getElementById("task-type"),
+        dailyListEl: document.getElementById("daily-list"),
+        todayListEl: document.getElementById("today-list"),
+        clearTodayBtn: document.getElementById("clear-today-btn"),
+        errorMsgEl: document.getElementById("error-message"),
+        encouragementMsgEl: document.getElementById("encouragement-message"),
+        confettiContainer: document.getElementById("confetti-container"),
+        darkModeToggle: document.getElementById("dark-mode-toggle"),
+        beanMascot: document.getElementById("bean-mascot"),
+        beanMessage: document.getElementById("bean-message"),
+        DAILY_KEY: "tasks_daily",
+        TODAY_KEY: "tasks_today",
+        DARK_MODE_KEY: "darkMode",
+        dailyTasks: [],
+        todayTasks: [],
+      };
+
+      // Data management
+      class DataManager {
+        static loadData() {
+          try {
+            AppState.dailyTasks = JSON.parse(
+              localStorage.getItem(AppState.DAILY_KEY) || "[]"
+            );
+            AppState.todayTasks = JSON.parse(
+              localStorage.getItem(AppState.TODAY_KEY) || "[]"
+            );
+          } catch (error) {
+            console.error("Error loading data:", error);
+            AppState.dailyTasks = [];
+            AppState.todayTasks = [];
+          }
+        }
+
+        static saveDailyTasks() {
+          try {
+            localStorage.setItem(
+              AppState.DAILY_KEY,
+              JSON.stringify(AppState.dailyTasks)
+            );
+          } catch (error) {
+            console.error("Error saving daily tasks:", error);
+          }
+        }
+
+        static saveTodayTasks() {
+          try {
+            localStorage.setItem(
+              AppState.TODAY_KEY,
+              JSON.stringify(AppState.todayTasks)
+            );
+          } catch (error) {
+            console.error("Error saving today tasks:", error);
+          }
+        }
+      }
+
+      // Bean Mascot Manager
+      class BeanManager {
+        static showMessage(message = "Good Job Bean!") {
+          AppState.beanMessage.textContent = message;
+          AppState.beanMessage.classList.add("show");
+          setTimeout(() => {
+            AppState.beanMessage.classList.remove("show");
+          }, 3000);
+        }
+
+        static showEncouragingMessage() {
+          const encouragingMessages = [
+            "You can do it, baby!",
+            "Almost there, sweetheart!",
+            "Keep going, beautiful!",
+            "You're so close, love!",
+            "I believe in you, baby!",
+            "You've got this, gorgeous!",
+            "Don't give up now, darling!",
+            "You're amazing, keep pushing!",
+            "So proud of your effort, babe!",
+            "You got this, bean!",
+            "So brave, Bean",
+          ];
+
+          const randomMessage =
+            encouragingMessages[
+              Math.floor(Math.random() * encouragingMessages.length)
+            ];
+          BeanManager.showMessage(randomMessage);
+          BeanManager.wiggle();
+        }
+
+        static celebrate() {
+          AppState.beanMascot.classList.add("bean-celebrating");
+          BeanManager.showMessage("Good Job Bean! 🌟");
+          setTimeout(() => {
+            AppState.beanMascot.classList.remove("bean-celebrating");
+          }, 1500);
+        }
+
+        static wiggle() {
+          const beanSvg = AppState.beanMascot.querySelector(".bean-svg");
+          beanSvg.style.animation =
+            "bean-bounce 2.2s ease-in-out infinite, bean-wiggle 0.5s ease-in-out";
+          setTimeout(() => {
+            beanSvg.style.animation = "bean-bounce 2.2s ease-in-out infinite";
+          }, 500);
+        }
+
+        static init() {
+          AppState.beanMascot.addEventListener("click", () => {
+            BeanManager.jump();
+          });
+        }
+
+        static jump() {
+          AppState.beanMascot.classList.add("jumping");
+          setTimeout(() => {
+            AppState.beanMascot.classList.remove("jumping");
+          }, 800);
+        }
+      }
+
+      // Task management
+      class TaskManager {
+        static renderTasks(listEl, tasks, isDaily) {
+          listEl.innerHTML = "";
+
+          if (tasks.length === 0) {
+            const emptyState = document.createElement("div");
+            emptyState.className = "empty-state";
+            emptyState.textContent = isDaily
+              ? "No daily tasks yet..."
+              : "No tasks for today...";
+            listEl.appendChild(emptyState);
+            return;
+          }
+
+          tasks.forEach(({ id, text, completed }) => {
+            const li = document.createElement("li");
+            li.className = `task-item ${completed ? "completed" : ""}`;
+            li.dataset.id = id;
+
+            li.innerHTML = `
+              <div class="task-checkbox" onclick="TaskManager.toggleTask('${id}', ${isDaily})">
+                <div class="checkbox-square"></div>
+                <svg class="checkbox-mark" viewBox="0 0 12 8">
+                  <path class="checkmark-path" d="M1,4 L4,7 L11,1"></path>
+                </svg>
+              </div>
+              <span class="task-text">${text}</span>
+              <div class="task-actions">
+                <button class="action-btn delete-btn" onclick="TaskManager.deleteTask('${id}', ${isDaily})" title="Delete task">×</button>
+                <span class="action-btn drag-handle" title="Drag to reorder">≡</span>
+              </div>
+            `;
+
+            listEl.appendChild(li);
+          });
+        }
+
+        static toggleTask(id, isDaily) {
+          const taskArray = isDaily ? AppState.dailyTasks : AppState.todayTasks;
+          const task = taskArray.find((t) => t.id === id);
+
+          if (task) {
+            task.completed = !task.completed;
+            if (isDaily) {
+              DataManager.saveDailyTasks();
+            } else {
+              DataManager.saveTodayTasks();
+            }
+            UIManager.hideMessage();
+            TaskManager.renderAll();
+          }
+        }
+
+        static deleteTask(id, isDaily) {
+          if (isDaily) {
+            AppState.dailyTasks = AppState.dailyTasks.filter(
+              (t) => t.id !== id
+            );
+            DataManager.saveDailyTasks();
+          } else {
+            AppState.todayTasks = AppState.todayTasks.filter(
+              (t) => t.id !== id
+            );
+            DataManager.saveTodayTasks();
+          }
+          UIManager.hideMessage();
+          TaskManager.renderAll();
+        }
+
+        static addTask(text, type) {
+          const task = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            text: text.trim(),
+            completed: false,
+          };
+
+          if (type === "daily") {
+            AppState.dailyTasks.push(task);
+            DataManager.saveDailyTasks();
+          } else {
+            AppState.todayTasks.push(task);
+            DataManager.saveTodayTasks();
+          }
+
+          UIManager.hideMessage();
+          TaskManager.renderAll();
+          AppState.input.value = "";
+          AppState.input.focus();
+        }
+
+        static renderAll() {
+          TaskManager.renderTasks(
+            AppState.dailyListEl,
+            AppState.dailyTasks,
+            true
+          );
+          TaskManager.renderTasks(
+            AppState.todayListEl,
+            AppState.todayTasks,
+            false
+          );
+          DragManager.enableDragAndDrop();
+        }
+
+        static completeDay() {
+          const allDailyChecked = AppState.dailyTasks.every((t) => t.completed);
+          const allTodayChecked = AppState.todayTasks.every((t) => t.completed);
+
+          if (!allDailyChecked || !allTodayChecked) {
+            BeanManager.showEncouragingMessage();
+            return;
+          }
+
+          AppState.todayTasks = [];
+          DataManager.saveTodayTasks();
+
+          AppState.dailyTasks = AppState.dailyTasks.map((task) => ({
+            ...task,
+            completed: false,
+          }));
+          DataManager.saveDailyTasks();
+
+          UIManager.hideMessage();
+          TaskManager.renderAll();
+          ConfettiManager.showConfetti();
+          BeanManager.celebrate();
+          UIManager.showMessage("Proud of you, Bean! 🌟", "success");
+
+          setTimeout(() => {
+            UIManager.hideMessage();
+          }, 4000);
+        }
+      }
+
+      // Drag and drop management
+      class DragManager {
+        static enableDragAndDrop() {
+          if (AppState.dailyListEl.sortableInstance) {
+            AppState.dailyListEl.sortableInstance.destroy();
+          }
+          if (AppState.todayListEl.sortableInstance) {
+            AppState.todayListEl.sortableInstance.destroy();
+          }
+
+          AppState.dailyListEl.sortableInstance = new Sortable(
+            AppState.dailyListEl,
+            {
+              animation: 200,
+              handle: ".drag-handle",
+              onEnd: () => DragManager.reorderTasks(AppState.dailyListEl, true),
+            }
+          );
+
+          AppState.todayListEl.sortableInstance = new Sortable(
+            AppState.todayListEl,
+            {
+              animation: 200,
+              handle: ".drag-handle",
+              onEnd: () =>
+                DragManager.reorderTasks(AppState.todayListEl, false),
+            }
+          );
+        }
+
+        static reorderTasks(listEl, isDaily) {
+          const newOrderIds = Array.from(listEl.children)
+            .filter((li) => li.dataset.id)
+            .map((li) => li.dataset.id);
+
+          if (isDaily) {
+            AppState.dailyTasks = newOrderIds
+              .map((id) => AppState.dailyTasks.find((t) => t.id === id))
+              .filter(Boolean);
+            DataManager.saveDailyTasks();
+          } else {
+            AppState.todayTasks = newOrderIds
+              .map((id) => AppState.todayTasks.find((t) => t.id === id))
+              .filter(Boolean);
+            DataManager.saveTodayTasks();
+          }
+
+          TaskManager.renderAll();
+        }
+      }
+
+      // UI management
+      class UIManager {
+        static showMessage(msg, type) {
+          if (type === "error") {
+            AppState.errorMsgEl.textContent = msg;
+            AppState.errorMsgEl.style.display = "block";
+            AppState.encouragementMsgEl.style.display = "none";
+          } else if (type === "success") {
+            AppState.encouragementMsgEl.textContent = msg;
+            AppState.encouragementMsgEl.style.display = "block";
+            AppState.errorMsgEl.style.display = "none";
+          }
+        }
+
+        static hideMessage() {
+          AppState.errorMsgEl.style.display = "none";
+          AppState.encouragementMsgEl.style.display = "none";
+        }
+      }
+
+      // Confetti management
+      class ConfettiManager {
+        static getRandomColor() {
+          const colors = [
+            "#3498db",
+            "#27ae60",
+            "#e74c3c",
+            "#f39c12",
+            "#9b59b6",
+            "#1abc9c",
+            "#ff6b6b",
+            "#4ecdc4",
+          ];
+          return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        static showConfetti() {
+          const burstsCount = 25;
+          const baseXRange = [window.innerWidth * 0.2, window.innerWidth * 0.8];
+          const minY = window.innerHeight * 0.3;
+          const maxY = window.innerHeight * 0.7;
+
+          for (let b = 0; b < burstsCount; b++) {
+            const x =
+              baseXRange[0] + Math.random() * (baseXRange[1] - baseXRange[0]);
+            const y = minY + Math.random() * (maxY - minY);
+
+            const container = document.createElement("div");
+            container.style.cssText = `
+              position: fixed;
+              left: ${x}px;
+              top: ${y}px;
+              width: 0;
+              height: 0;
+              pointer-events: none;
+              overflow: visible;
+              z-index: 9999;
+            `;
+
+            const piecesPerBurst = 12 + Math.floor(Math.random() * 8);
+
+            for (let i = 0; i < piecesPerBurst; i++) {
+              const piece = document.createElement("div");
+              piece.className = "confetti";
+              piece.style.backgroundColor = ConfettiManager.getRandomColor();
+
+              const angle = Math.random() * 2 * Math.PI;
+              const distance = 80 + Math.random() * 120;
+              const xMove = Math.cos(angle) * distance + "px";
+              const yMove = Math.sin(angle) * distance + "px";
+
+              piece.style.setProperty("--x-move", xMove);
+              piece.style.setProperty("--y-move", yMove);
+
+              const duration = 1.2 + Math.random() * 0.8;
+              piece.style.animation = `confetti-burst ${duration}s ease-out forwards`;
+
+              container.appendChild(piece);
+            }
+
+            const delay = Math.random() * 800;
+            setTimeout(() => {
+              document.body.appendChild(container);
+              setTimeout(() => container.remove(), 2500);
+            }, delay);
+          }
+        }
+      }
+
+      // Theme management
+      class ThemeManager {
+        static init() {
+          const savedDarkMode =
+            localStorage.getItem(AppState.DARK_MODE_KEY) === "true";
+          ThemeManager.applyDarkMode(savedDarkMode);
+
+          AppState.darkModeToggle.addEventListener("click", () => {
+            const isDark = document.body.classList.toggle("dark-mode");
+            localStorage.setItem(AppState.DARK_MODE_KEY, isDark);
+            ThemeManager.applyDarkMode(isDark);
+          });
+        }
+
+        static applyDarkMode(isDark) {
+          if (isDark) {
+            document.body.classList.add("dark-mode");
+            AppState.darkModeToggle.textContent = "☀";
+            AppState.darkModeToggle.title = "Switch to light mode";
+            document.documentElement.style.setProperty(
+              "--paper-white",
+              "#2c3e50"
+            );
+            document.documentElement.style.setProperty(
+              "--paper-cream",
+              "#34495e"
+            );
+            document.documentElement.style.setProperty(
+              "--pencil-gray",
+              "#ecf0f1"
+            );
+            document.documentElement.style.setProperty(
+              "--pencil-light",
+              "#bdc3c7"
+            );
+          } else {
+            document.body.classList.remove("dark-mode");
+            AppState.darkModeToggle.textContent = "◐";
+            AppState.darkModeToggle.title = "Switch to dark mode";
+            document.documentElement.style.setProperty(
+              "--paper-white",
+              "#fefdf8"
+            );
+            document.documentElement.style.setProperty(
+              "--paper-cream",
+              "#faf9f4"
+            );
+            document.documentElement.style.setProperty(
+              "--pencil-gray",
+              "#2c3e50"
+            );
+            document.documentElement.style.setProperty(
+              "--pencil-light",
+              "#7f8c8d"
+            );
+          }
+        }
+      }
+
+      // Event management
+      class EventManager {
+        static init() {
+          AppState.form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = AppState.input.value.trim();
+            if (!text) return;
+            TaskManager.addTask(text, AppState.taskTypeSelect.value);
+          });
+
+          AppState.clearTodayBtn.addEventListener("click", () => {
+            TaskManager.completeDay();
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && e.ctrlKey) {
+              TaskManager.completeDay();
+            }
+          });
+        }
+      }
+
+      // App initialization
+      class App {
+        static init() {
+          console.log("📝 Initializing Interactive Notepad...");
+
+          setCurrentDate();
+          DataManager.loadData();
+          ThemeManager.init();
+          BeanManager.init();
+          EventManager.init();
+          TaskManager.renderAll();
+          AppState.input.focus();
+
+          console.log("✨ Interactive Notepad initialized successfully!");
+        }
+      }
+
+      // Initialize app when DOM is ready
+      document.addEventListener("DOMContentLoaded", App.init);
+
+      // Service worker registration
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("service-worker.js")
+            .then(() => console.log("Service Worker registered"))
+            .catch((err) =>
+              console.error("Service Worker registration failed:", err)
+            );
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>YouTube Analytics Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --youtube-red: #ff0000;
+        --youtube-dark: #0f0f0f;
+        --card-bg: #ffffff;
+        --surface-bg: #f8f9fa;
+        --text-primary: #0f0f0f;
+        --text-secondary: #606060;
+        --border-light: #e5e5e5;
+        --success: #00d924;
+        --warning: #ffa500;
+        --gradient-primary: linear-gradient(135deg, #ff0000, #cc0000);
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+        --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      body {
+        font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: var(--surface-bg);
+        color: var(--text-primary);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        text-rendering: optimizeLegibility;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 8px;
+      }
+
+      /* Header */
+      .header {
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border-light);
+        padding: 12px 0;
+        margin-bottom: 16px;
+        border-radius: 0 0 16px 16px;
+        box-shadow: var(--shadow-card);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px;
+        gap: 8px;
+      }
+
+      .left-section {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .hub-button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-card);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .hub-button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-elevated);
+      }
+
+      .hub-button:active {
+        transform: scale(0.95);
+      }
+
+      .hub-icon {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        min-width: 0;
+      }
+
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--gradient-primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+
+      .logo span {
+        display: none;
+      }
+
+      .channel-name {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 16px;
+        font-weight: 500;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+        flex-shrink: 0;
+      }
+
+      /* Channel Info Card */
+      .channel-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-card);
+      }
+
+      .channel-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .channel-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid var(--border-light);
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .channel-info h2 {
+        font-size: 18px;
+        margin-bottom: 6px;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+
+      .channel-description {
+        color: var(--text-secondary);
+        font-size: 12px;
+        line-height: 1.4;
+        margin-bottom: 12px;
+        max-width: 100%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 12px 8px;
+        background: var(--surface-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-light);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .stat-item:active {
+        background-color: var(--border-light);
+        transform: scale(0.95);
+      }
+
+      .stat-label {
+        font-size: 10px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+
+      /* Cards Grid */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--border-light);
+        transition: transform 0.2s ease;
+      }
+
+      .card:active {
+        transform: scale(0.98);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .card-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: bold;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 180px;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .chart-container canvas {
+        max-width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Milestone Progress */
+      .milestone-card {
+        grid-column: 1 / -1;
+      }
+
+      .milestone-content {
+        text-align: center;
+        padding: 8px;
+      }
+
+      .milestone-text {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+      }
+
+      .progress-container {
+        background: var(--surface-bg);
+        height: 12px;
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: var(--gradient-primary);
+        border-radius: 24px;
+        width: 0%;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+
+      .progress-text {
+        font-size: 12px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* Loading State */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      .loading::after {
+        content: "";
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border-light);
+        border-top: 2px solid var(--youtube-red);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 8px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 16px;
+        color: var(--text-secondary);
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      /* Error State */
+      .error-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+      }
+
+      .error-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        opacity: 0.5;
+      }
+
+      /* Tablet Optimizations */
+      @media (min-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+
+        .header {
+          margin-bottom: 24px;
+          padding: 16px 0;
+        }
+
+        .logo span {
+          display: inline;
+        }
+
+        .logo {
+          font-size: 18px;
+        }
+
+        .channel-name {
+          font-size: 13px;
+          max-width: 180px;
+        }
+
+        .channel-header {
+          flex-direction: row;
+          text-align: left;
+          align-items: flex-start;
+        }
+
+        .channel-description {
+          text-align: left;
+          font-size: 14px;
+        }
+
+        .stats-row {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+        }
+
+        .cards-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
+
+        .chart-container {
+          height: 220px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card-title {
+          font-size: 16px;
+        }
+      }
+
+      /* Desktop */
+      @media (min-width: 1024px) {
+        .container {
+          padding: 24px;
+        }
+
+        .logo {
+          font-size: 20px;
+        }
+
+        .channel-card {
+          padding: 24px;
+        }
+
+        .channel-avatar {
+          width: 88px;
+          height: 88px;
+        }
+
+        .channel-info h2 {
+          font-size: 24px;
+        }
+
+        .chart-container {
+          height: 250px;
+        }
+
+        .card {
+          padding: 24px;
+        }
+      }
+
+      /* Extra small devices */
+      @media (max-width: 360px) {
+        .container {
+          padding: 4px;
+        }
+
+        .header-content {
+          padding: 0 4px;
+        }
+
+        .channel-name {
+          max-width: 100px;
+          font-size: 10px;
+        }
+
+        .channel-avatar {
+          width: 64px;
+          height: 64px;
+        }
+
+        .channel-info h2 {
+          font-size: 16px;
+        }
+
+        .channel-description {
+          font-size: 11px;
+        }
+
+        .stat-value {
+          font-size: 14px;
+        }
+
+        .chart-container {
+          height: 160px;
+        }
+
+        .milestone-text {
+          font-size: 14px;
+        }
+      }
+
+      /* Landscape orientation optimizations */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .header {
+          position: relative;
+          margin-bottom: 12px;
+        }
+
+        .channel-card {
+          margin-bottom: 12px;
+        }
+
+        .channel-header {
+          flex-direction: row;
+          text-align: left;
+          margin-bottom: 12px;
+        }
+
+        .channel-avatar {
+          width: 60px;
+          height: 60px;
+        }
+
+        .stats-row {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 6px;
+        }
+
+        .chart-container {
+          height: 120px;
+        }
+
+        .cards-grid {
+          gap: 12px;
+        }
+
+        .card {
+          padding: 12px;
+        }
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --card-bg: #1f1f1f;
+          --surface-bg: #0f0f0f;
+          --text-primary: #ffffff;
+          --text-secondary: #b3b3b3;
+          --border-light: #333333;
+        }
+      }
+
+      /* High contrast mode */
+      @media (prefers-contrast: high) {
+        :root {
+          --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+          --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.4);
+          --border-light: #666666;
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .progress-bar {
+          transition: none;
+        }
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="left-section">
+            <a href="index.html" class="hub-button">
+              <div class="hub-icon">🏠</div>
+              <span>Hub</span>
+            </a>
+            <div class="logo">
+              <div class="logo-icon">YT</div>
+              <span>YouTube Analytics</span>
+            </div>
+          </div>
+          <div class="channel-name">
+            <span>@threadsbydaynah Analytics</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="channel-card">
+        <div class="channel-header">
+          <img
+            id="channelAvatar"
+            class="channel-avatar"
+            src=""
+            alt="Channel Avatar"
+          />
+          <div class="channel-info">
+            <h2 id="channelTitle">Loading...</h2>
+            <p id="channelDescription" class="channel-description"></p>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-label">Subscribers</div>
+            <div id="subscriberCount" class="stat-value">—</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Total Views</div>
+            <div id="totalViews" class="stat-value">—</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Videos</div>
+            <div id="videoCount" class="stat-value">—</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Joined</div>
+            <div id="createdDate" class="stat-value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Upload Consistency</h3>
+            <div class="card-icon" style="background: #4285f4">CAL</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="consistencyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Growth Velocity</h3>
+            <div class="card-icon" style="background: #34a853">GRW</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="velocityChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Engagement Trends</h3>
+            <div class="card-icon" style="background: #ea4335">ENG</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="engagementChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card milestone-card">
+          <div class="card-header">
+            <h3 class="card-title">Milestone Progress</h3>
+            <div class="card-icon" style="background: #fbbc04">TGT</div>
+          </div>
+          <div class="milestone-content">
+            <div id="milestoneText" class="milestone-text">
+              Goal: 200 Subscribers
+            </div>
+            <div class="progress-container">
+              <div id="milestoneProgress" class="progress-bar"></div>
+            </div>
+            <div id="progressText" class="progress-text">0% complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        Powered by YouTube Data API v3<br />
+        Real-time analytics for content creators
+      </p>
+    </footer>
+
+    <script>
+      const API_KEY = "AIzaSyD6ISfx6ekKOVlk7sLuvg5tp_KahhgfU4s";
+      const DEFAULT_CHANNEL_ID = "UC7sSK-gXDFRCImlN4aErGQg";
+
+      let currentMilestone = 200;
+      let charts = {};
+
+      // DOM Elements
+      const elements = {
+        avatar: document.getElementById("channelAvatar"),
+        title: document.getElementById("channelTitle"),
+        description: document.getElementById("channelDescription"),
+        subscribers: document.getElementById("subscriberCount"),
+        views: document.getElementById("totalViews"),
+        videos: document.getElementById("videoCount"),
+        created: document.getElementById("createdDate"),
+        milestoneText: document.getElementById("milestoneText"),
+        milestoneProgress: document.getElementById("milestoneProgress"),
+        progressText: document.getElementById("progressText"),
+      };
+
+      // Mobile-optimized Chart.js defaults
+      Chart.defaults.font.size = window.innerWidth < 768 ? 10 : 12;
+      Chart.defaults.plugins.legend.labels.usePointStyle = true;
+      Chart.defaults.plugins.legend.labels.padding =
+        window.innerWidth < 768 ? 10 : 20;
+
+      // Utility Functions
+      function formatNumber(num) {
+        if (num >= 1000000) {
+          return (num / 1000000).toFixed(1) + "M";
+        } else if (num >= 1000) {
+          return (num / 1000).toFixed(1) + "K";
+        }
+        return num.toLocaleString();
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.getFullYear().toString();
+      }
+
+      function truncateText(text, maxLength) {
+        const length = window.innerWidth < 768 ? 15 : maxLength || 25;
+        return text.length > length ? text.substring(0, length) + "..." : text;
+      }
+
+      // API Functions
+      async function fetchChannelData(channelId) {
+        try {
+          const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${channelId}&key=${API_KEY}`
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch channel data");
+          }
+
+          const data = await response.json();
+
+          if (!data.items || data.items.length === 0) {
+            throw new Error("Channel not found");
+          }
+
+          const channel = data.items[0];
+          displayChannelInfo(channel);
+          await fetchVideoData(channel.contentDetails.relatedPlaylists.uploads);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      async function fetchVideoData(uploadsPlaylistId) {
+        try {
+          const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploadsPlaylistId}&key=${API_KEY}`
+          );
+
+          const data = await response.json();
+          const videos = data.items.map((item) => ({
+            id: item.snippet.resourceId.videoId,
+            title: item.snippet.title,
+            publishedAt: new Date(item.snippet.publishedAt),
+          }));
+
+          await enrichVideoStats(videos);
+        } catch (error) {
+          console.error("Error fetching video data:", error);
+        }
+      }
+
+      async function enrichVideoStats(videos) {
+        try {
+          const videoIds = videos.map((v) => v.id).join(",");
+          const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${API_KEY}`
+          );
+
+          const data = await response.json();
+
+          data.items.forEach((item, index) => {
+            videos[index].views = parseInt(item.statistics.viewCount) || 0;
+            videos[index].likes = parseInt(item.statistics.likeCount) || 0;
+            videos[index].comments =
+              parseInt(item.statistics.commentCount) || 0;
+          });
+
+          renderCharts(videos);
+        } catch (error) {
+          console.error("Error enriching video stats:", error);
+        }
+      }
+
+      // Display Functions
+      function displayChannelInfo(channel) {
+        const stats = channel.statistics;
+        const snippet = channel.snippet;
+
+        elements.avatar.src =
+          snippet.thumbnails.high?.url || snippet.thumbnails.default.url;
+        elements.title.textContent = snippet.title;
+        elements.description.textContent =
+          snippet.description || "No description available";
+        elements.subscribers.textContent = formatNumber(
+          parseInt(stats.subscriberCount)
+        );
+        elements.views.textContent = formatNumber(parseInt(stats.viewCount));
+        elements.videos.textContent = formatNumber(parseInt(stats.videoCount));
+        elements.created.textContent = formatDate(snippet.publishedAt);
+
+        updateMilestoneProgress(parseInt(stats.subscriberCount));
+      }
+
+      function updateMilestoneProgress(currentSubs) {
+        currentMilestone = 200;
+
+        const progress = Math.min((currentSubs / currentMilestone) * 100, 100);
+
+        elements.milestoneText.textContent = `Goal: ${formatNumber(
+          currentMilestone
+        )} Subscribers`;
+        elements.milestoneProgress.style.width = progress + "%";
+        elements.progressText.textContent = `${progress.toFixed(
+          1
+        )}% complete (${formatNumber(currentSubs)}/${formatNumber(
+          currentMilestone
+        )})`;
+      }
+
+      function renderCharts(videos) {
+        const sortedVideos = videos
+          .sort((a, b) => a.publishedAt - b.publishedAt)
+          .slice(-20);
+        const labels = sortedVideos.map((v) => truncateText(v.title));
+
+        renderConsistencyChart(sortedVideos, labels);
+        renderVelocityChart(sortedVideos, labels);
+        renderEngagementChart(sortedVideos, labels);
+      }
+
+      function getResponsiveChartOptions() {
+        const isMobile = window.innerWidth < 768;
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: "#f1f3f4",
+              },
+              ticks: {
+                font: {
+                  size: isMobile ? 9 : 11,
+                },
+              },
+            },
+            x: {
+              grid: {
+                display: false,
+              },
+              ticks: {
+                maxRotation: isMobile ? 90 : 45,
+                font: {
+                  size: isMobile ? 8 : 10,
+                },
+              },
+            },
+          },
+        };
+      }
+
+      function renderConsistencyChart(videos, labels) {
+        const daysBetween = videos.slice(1).map((video, index) => {
+          const timeDiff = video.publishedAt - videos[index].publishedAt;
+          return Math.round(timeDiff / (1000 * 60 * 60 * 24));
+        });
+
+        if (charts.consistency) charts.consistency.destroy();
+
+        const ctx = document
+          .getElementById("consistencyChart")
+          .getContext("2d");
+        charts.consistency = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels.slice(1),
+            datasets: [
+              {
+                label: "Days Between Uploads",
+                data: daysBetween,
+                backgroundColor: "#4285f4",
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: getResponsiveChartOptions(),
+        });
+      }
+
+      function renderVelocityChart(videos, labels) {
+        const viewsPerDay = videos.map((video) => {
+          const daysSincePublish = Math.max(
+            1,
+            (Date.now() - video.publishedAt) / (1000 * 60 * 60 * 24)
+          );
+          return Math.round(video.views / daysSincePublish);
+        });
+
+        if (charts.velocity) charts.velocity.destroy();
+
+        const ctx = document.getElementById("velocityChart").getContext("2d");
+        charts.velocity = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Views per Day",
+                data: viewsPerDay,
+                borderColor: "#34a853",
+                backgroundColor: "rgba(52, 168, 83, 0.1)",
+                borderWidth: window.innerWidth < 768 ? 2 : 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: window.innerWidth < 768 ? 2 : 3,
+              },
+            ],
+          },
+          options: getResponsiveChartOptions(),
+        });
+      }
+
+      function renderEngagementChart(videos, labels) {
+        const likes = videos.map((v) => v.likes);
+        const comments = videos.map((v) => v.comments);
+
+        if (charts.engagement) charts.engagement.destroy();
+
+        const ctx = document.getElementById("engagementChart").getContext("2d");
+        const options = getResponsiveChartOptions();
+        options.plugins.legend.display = true;
+        options.plugins.legend.position = "top";
+
+        charts.engagement = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Likes",
+                data: likes,
+                borderColor: "#ea4335",
+                backgroundColor: "rgba(234, 67, 53, 0.1)",
+                borderWidth: window.innerWidth < 768 ? 2 : 3,
+                fill: false,
+                pointRadius: window.innerWidth < 768 ? 2 : 3,
+              },
+              {
+                label: "Comments",
+                data: comments,
+                borderColor: "#fbbc04",
+                backgroundColor: "rgba(251, 188, 4, 0.1)",
+                borderWidth: window.innerWidth < 768 ? 2 : 3,
+                fill: false,
+                pointRadius: window.innerWidth < 768 ? 2 : 3,
+              },
+            ],
+          },
+          options: options,
+        });
+      }
+
+      function showError(message) {
+        elements.title.textContent = "Error: " + message;
+        elements.description.textContent =
+          "Please check your input and try again.";
+      }
+
+      // Handle resize events for responsive charts
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          // Update chart font sizes
+          Chart.defaults.font.size = window.innerWidth < 768 ? 10 : 12;
+          Chart.defaults.plugins.legend.labels.padding =
+            window.innerWidth < 768 ? 10 : 20;
+
+          // Redraw charts with new responsive settings
+          Object.values(charts).forEach((chart) => {
+            if (chart && chart.resize) {
+              chart.resize();
+            }
+          });
+        }, 250);
+      });
+
+      // Handle orientation changes
+      window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+          Object.values(charts).forEach((chart) => {
+            if (chart && chart.resize) {
+              chart.resize();
+            }
+          });
+        }, 100);
+      });
+
+      // Add touch feedback to stat items
+      document.addEventListener("DOMContentLoaded", () => {
+        const statItems = document.querySelectorAll(".stat-item");
+        statItems.forEach((item) => {
+          item.addEventListener("touchstart", () => {
+            item.style.transform = "scale(0.95)";
+          });
+          item.addEventListener("touchend", () => {
+            item.style.transform = "scale(1)";
+          });
+        });
+      });
+
+      // Prevent zoom on double tap
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        (event) => {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      // Initialize with default channel
+      fetchChannelData(DEFAULT_CHANNEL_ID);
+    </script>
+  </body>
+</html>

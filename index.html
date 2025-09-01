@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bean's Cozy Hub</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Color Palette */
+        --forest-dark: #1a2f1a;
+        --forest-medium: #2d4a2d;
+        --forest-light: #4a6b4a;
+        --moss-green: #7d8c6b;
+        --cream: #f9f7f4;
+        --warm-white: #fefcf8;
+        --text-dark: #3a3a3a;
+        --text-light: #666;
+
+        /* Day/Night Dynamic Colors */
+        --sky-top: #87ceeb;
+        --sky-middle: #98d8f0;
+        --sky-bottom: #b8e6ff;
+        --forest-base: #1a2f1a;
+        --forest-accent: #4a6b4a;
+
+        /* Section Colors */
+        --music-purple: #9b59b6;
+        --creators-orange: #e67e22;
+        --knitting-teal: #16a085;
+        --movies-blue: #3498db;
+        --recipes-red: #e74c3c;
+        --books-green: #27ae60;
+        --cozy-brown: #8b4513;
+        --todo-green: #4a6b4a;
+        --games-yellow: #fada5e;
+        --channel-navy: #000080;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--sky-top) 0%,
+          var(--sky-middle) 40%,
+          var(--sky-bottom) 70%,
+          var(--forest-base) 100%
+        );
+        min-height: 100vh;
+        color: var(--warm-white);
+        overflow-x: hidden;
+        position: relative;
+        transition: background 2s ease;
+      }
+
+      /* Day/Night Theme Classes */
+      body.night-theme {
+        --sky-top: #0f0f23;
+        --sky-middle: #1a1a3a;
+        --sky-bottom: #2d2d4a;
+        --forest-base: #0a1a0a;
+        --forest-accent: #2a3a2a;
+        background: linear-gradient(
+          135deg,
+          var(--sky-top) 0%,
+          var(--sky-middle) 40%,
+          var(--sky-bottom) 70%,
+          var(--forest-base) 100%
+        );
+      }
+
+      body.day-theme {
+        --sky-top: #87ceeb;
+        --sky-middle: #98d8f0;
+        --sky-bottom: #b8e6ff;
+        --forest-base: #1a2f1a;
+        --forest-accent: #4a6b4a;
+        background: linear-gradient(
+          135deg,
+          var(--sky-top) 0%,
+          var(--sky-middle) 40%,
+          var(--sky-bottom) 70%,
+          var(--forest-base) 100%
+        );
+      }
+
+      /* Celestial Bodies */
+      .celestial-body {
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        z-index: 10;
+        transition: opacity 2s ease, transform 2s ease;
+      }
+
+      .sun {
+        top: 20px;
+        left: 20%;
+        opacity: 1;
+        animation: sunTravel 43200s linear infinite,
+          sunGlow 3s ease-in-out infinite alternate;
+      }
+
+      .moon {
+        top: 20px;
+        left: 20%;
+        opacity: 0;
+        animation: moonTravel 43200s linear infinite,
+          moonGlow 4s ease-in-out infinite alternate;
+        animation-delay: -21600s; /* Start moon 12 hours offset from sun */
+      }
+
+      /* Show/hide celestial bodies based on theme */
+      body.night-theme .sun {
+        opacity: 0 !important;
+      }
+
+      body.night-theme .moon {
+        opacity: 1 !important;
+      }
+
+      body.day-theme .sun {
+        opacity: 1 !important;
+      }
+
+      body.day-theme .moon {
+        opacity: 0 !important;
+      }
+
+      .sun-svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        opacity: 0.85;
+      }
+
+      .moon-svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 0 20px rgba(200, 200, 255, 0.2));
+        opacity: 0.8;
+      }
+
+      /* Stars for night theme */
+      .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 2s ease;
+      }
+
+      body.night-theme .stars {
+        opacity: 1;
+      }
+
+      body.day-theme .stars {
+        opacity: 0;
+      }
+
+      .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 2s ease-in-out infinite alternate;
+      }
+
+      /* Background Elements */
+      .forest-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .trees {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40%;
+        background: linear-gradient(to top, var(--forest-base), transparent);
+        transition: background 2s ease;
+      }
+
+      .tree {
+        position: absolute;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 80px solid var(--forest-base);
+        opacity: 0.8;
+        transition: border-bottom-color 2s ease;
+      }
+
+      .tree:nth-child(1) {
+        left: 5%;
+        transform: scale(1.2);
+      }
+      .tree:nth-child(2) {
+        left: 15%;
+        transform: scale(0.8);
+      }
+      .tree:nth-child(3) {
+        left: 25%;
+        transform: scale(1.5);
+      }
+      .tree:nth-child(4) {
+        right: 25%;
+        transform: scale(0.9);
+      }
+      .tree:nth-child(5) {
+        right: 15%;
+        transform: scale(1.3);
+      }
+      .tree:nth-child(6) {
+        right: 5%;
+        transform: scale(1.1);
+      }
+
+      /* Sparkles */
+      .sparkle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--warm-white);
+        border-radius: 50%;
+        animation: sparkle 3s ease-in-out infinite;
+      }
+
+      .sparkle:nth-child(1) {
+        top: 25%;
+        left: 30%;
+        animation-delay: 0s;
+      }
+      .sparkle:nth-child(2) {
+        top: 45%;
+        right: 20%;
+        animation-delay: 1s;
+      }
+      .sparkle:nth-child(3) {
+        top: 65%;
+        left: 60%;
+        animation-delay: 2s;
+      }
+
+      /* Main Content */
+      .container {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeInUp 1s ease-out;
+      }
+
+      .title {
+        font-family: "Pacifico", cursive;
+        font-size: 2.5rem;
+        color: var(--warm-white);
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .love-note {
+        margin: 1rem 0 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(249, 247, 244, 0.2);
+        border: 2px solid rgba(249, 247, 244, 0.3);
+        border-radius: 25px;
+        font-size: 0.9rem;
+        color: white;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      /* Weather Widget */
+      .weather-widget {
+        background: rgba(249, 247, 244, 0.2);
+        border: 2px solid rgba(249, 247, 244, 0.4);
+        border-radius: 25px;
+        padding: 0.75rem 1.5rem;
+        backdrop-filter: blur(15px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        min-width: 200px;
+        margin: 0.5rem 0;
+        transition: all 0.3s ease;
+      }
+
+      .weather-widget:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .weather-icon {
+        font-size: 1.5rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      .weather-temp {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--warm-white);
+      }
+
+      .weather-desc {
+        font-size: 0.75rem;
+        color: var(--moss-green);
+        text-transform: capitalize;
+      }
+
+      /* Navigation */
+      .todo-button-container {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 1.5rem;
+      }
+
+      .nav-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 2rem;
+      }
+
+      .nav-card {
+        background: rgba(249, 247, 244, 0.25);
+        border: 2px solid rgba(249, 247, 244, 0.3);
+        border-radius: 20px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(15px);
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: fadeInUp 0.6s ease-out forwards;
+      }
+
+      .nav-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+
+      .nav-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      .nav-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--warm-white);
+        margin-bottom: 0.25rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .nav-subtitle {
+        font-size: 0.7rem;
+        color: var(--moss-green);
+        font-weight: 400;
+      }
+
+      /* Todo button special styling */
+      .nav-card.todo {
+        border-color: #e8a5a5;
+        background: linear-gradient(
+          135deg,
+          rgba(232, 165, 165, 0.35) 0%,
+          rgba(232, 165, 165, 0.2) 100%
+        );
+      }
+
+      .nav-card.todo .nav-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0;
+      }
+
+      .nav-card.todo:hover {
+        border-color: #e8a5a5;
+        box-shadow: 0 15px 35px rgba(232, 165, 165, 0.4);
+      }
+
+      /* Orange & Blue button special styling */
+      .nav-card.orange-blue {
+        border-color: #fbac4c;
+        background: linear-gradient(
+          135deg,
+          rgba(251, 172, 76, 0.35) 0%,
+          rgba(152, 175, 206, 0.2) 100%
+        );
+        height: 80px;
+        flex-direction: row;
+        gap: 1rem;
+      }
+
+      .nav-card.orange-blue .nav-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0;
+        background: linear-gradient(45deg, #fbac4c, #98afce);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-card.orange-blue:hover {
+        border-color: #fbac4c;
+        box-shadow: 0 15px 35px rgba(251, 172, 76, 0.4);
+      }
+
+      /* Individual section colors */
+      .nav-card.music {
+        border-color: #800020;
+        background: linear-gradient(
+          135deg,
+          rgba(128, 0, 32, 0.4) 0%,
+          rgba(255, 215, 0, 0.3) 100%
+        );
+      }
+      .nav-card.music:hover {
+        border-color: #800020;
+        box-shadow: 0 15px 35px rgba(128, 0, 32, 0.4),
+          0 0 20px rgba(255, 215, 0, 0.6);
+      }
+
+      .nav-card.creators {
+        border-color: #0066ff;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 102, 255, 0.4) 0%,
+          rgba(0, 0, 0, 0.3) 100%
+        );
+      }
+      .nav-card.creators:hover {
+        border-color: #0066ff;
+        box-shadow: 0 15px 35px rgba(0, 102, 255, 0.4),
+          0 0 20px rgba(0, 0, 0, 0.8);
+      }
+
+      .nav-card.knitting {
+        border-color: #8b4513;
+        background: linear-gradient(
+          135deg,
+          rgba(139, 69, 19, 0.4) 0%,
+          rgba(245, 245, 220, 0.3) 100%
+        );
+      }
+      .nav-card.knitting:hover {
+        border-color: #8b4513;
+        box-shadow: 0 15px 35px rgba(139, 69, 19, 0.4),
+          0 0 20px rgba(245, 245, 220, 0.6);
+      }
+
+      .nav-card.movies {
+        border-color: #800020;
+        background: linear-gradient(
+          135deg,
+          rgba(128, 0, 32, 0.4) 0%,
+          rgba(255, 215, 0, 0.3) 100%
+        );
+      }
+      .nav-card.movies:hover {
+        border-color: #800020;
+        box-shadow: 0 15px 35px rgba(128, 0, 32, 0.4),
+          0 0 20px rgba(255, 215, 0, 0.6);
+      }
+
+      .nav-card.recipes {
+        border-color: #ffffff;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.4) 0%,
+          rgba(192, 192, 192, 0.3) 100%
+        );
+      }
+      .nav-card.recipes:hover {
+        border-color: #ffffff;
+        box-shadow: 0 15px 35px rgba(255, 255, 255, 0.4),
+          0 0 20px rgba(192, 192, 192, 0.6);
+      }
+
+      .nav-card.books {
+        border-color: #228b22;
+        background: linear-gradient(
+          135deg,
+          rgba(34, 139, 34, 0.4) 0%,
+          rgba(70, 42, 19, 0.989) 100%
+        );
+      }
+      .nav-card.books:hover {
+        border-color: #228b22;
+        box-shadow: 0 15px 35px rgba(34, 139, 34, 0.4),
+          0 0 20px rgba(95, 57, 26, 0.6);
+      }
+
+      .nav-card.games {
+        border-color: #00ffff;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.4) 0%,
+          rgba(255, 20, 147, 0.3) 100%
+        );
+      }
+      .nav-card.games:hover {
+        border-color: #00ffff;
+        box-shadow: 0 15px 35px rgba(0, 255, 255, 0.4),
+          0 0 20px rgba(255, 20, 147, 0.6);
+      }
+
+      .nav-card.channel {
+        border-color: #ff0000;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 0, 0, 0.4) 0%,
+          rgba(255, 255, 255, 0.3) 100%
+        );
+      }
+      .nav-card.channel:hover {
+        border-color: #ff0000;
+        box-shadow: 0 15px 35px rgba(255, 0, 0, 0.4),
+          0 0 20px rgba(255, 255, 255, 0.6);
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--moss-green);
+        font-size: 0.7rem;
+        opacity: 0.8;
+      }
+
+      /* Weather Modal */
+      .weather-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        padding: 2rem;
+      }
+
+      .weather-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .weather-details {
+        background: linear-gradient(
+          135deg,
+          var(--forest-medium) 0%,
+          var(--forest-light) 100%
+        );
+        border: 2px solid rgba(249, 247, 244, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 100%;
+        position: relative;
+        animation: slideUp 0.3s ease;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(249, 247, 244, 0.1);
+        border: 1px solid rgba(249, 247, 244, 0.2);
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--warm-white);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .close-btn:hover {
+        background: rgba(249, 247, 244, 0.2);
+        transform: scale(1.1);
+      }
+
+      .weather-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(249, 247, 244, 0.2);
+      }
+
+      .weather-location {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--warm-white);
+        margin-bottom: 0.5rem;
+      }
+
+      .weather-current {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .weather-current-icon {
+        font-size: 3rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+
+      .weather-current-temp {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: var(--warm-white);
+      }
+
+      .weather-current-desc {
+        font-size: 1rem;
+        color: var(--moss-green);
+        text-transform: capitalize;
+        text-align: center;
+      }
+
+      .weather-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .weather-stat {
+        background: rgba(249, 247, 244, 0.1);
+        border: 1px solid rgba(249, 247, 244, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .weather-stat-label {
+        font-size: 0.75rem;
+        color: var(--moss-green);
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .weather-stat-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--warm-white);
+      }
+
+      .sun-moon-times {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(249, 247, 244, 0.2);
+      }
+
+      .sun-moon-stat {
+        background: rgba(249, 247, 244, 0.1);
+        border: 1px solid rgba(249, 247, 244, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .sun-moon-stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .sun-moon-stat-label {
+        font-size: 0.75rem;
+        color: var(--moss-green);
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .sun-moon-stat-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--warm-white);
+      }
+
+      /* Bean Mascot - Updated CSS */
+      .bean-mascot {
+        position: fixed;
+        width: 72px;
+        height: 80px;
+        bottom: 10px;
+        left: 10px;
+        z-index: 99999;
+        /* Remove any existing transform to prevent conflicts */
+        transform: translateX(0px) scaleX(1);
+        cursor: pointer; /* Make it clear it's clickable */
+        user-select: none; /* Prevent text selection */
+      }
+
+      .bean-shadow {
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 50px;
+        height: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        filter: blur(6px);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        transition: all 0.3s ease;
+      }
+
+      /* Shadow gets smaller during jump */
+      .bean-mascot.jumping .bean-shadow {
+        width: 35px;
+        opacity: 0.6;
+      }
+
+      .bean-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        /* Only apply gentle bounce when not walking */
+        animation: bean-bounce 2.2s ease-in-out infinite;
+      }
+
+      /* Walking animation - disable bounce during walking */
+      .bean-mascot.walking .bean-svg {
+        animation: bean-walk 0.4s ease-in-out infinite;
+      }
+
+      .bean-mascot:hover .bean-svg {
+        animation: bean-bounce 2.2s ease-in-out infinite,
+          bean-wiggle 0.5s ease-in-out;
+      }
+
+      /* Add a subtle glow effect on hover */
+      .bean-mascot:hover {
+        filter: drop-shadow(0 0 8px rgba(255, 143, 183, 0.3));
+      }
+
+      /* Animations */
+      @keyframes sunTravel {
+        0% {
+          left: 5%;
+          top: 80px;
+        }
+        25% {
+          left: 25%;
+          top: 5px;
+        }
+        50% {
+          left: 50%;
+          top: 0px;
+        }
+        75% {
+          left: 75%;
+          top: 5px;
+        }
+        100% {
+          left: 95%;
+          top: 80px;
+        }
+      }
+
+      @keyframes moonTravel {
+        0% {
+          left: 5%;
+          top: 80px;
+        }
+        25% {
+          left: 25%;
+          top: 5px;
+        }
+        50% {
+          left: 50%;
+          top: 0px;
+        }
+        75% {
+          left: 75%;
+          top: 5px;
+        }
+        100% {
+          left: 95%;
+          top: 80px;
+        }
+      }
+
+      @keyframes sunGlow {
+        0% {
+          filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.2));
+          opacity: 0.8;
+        }
+        100% {
+          filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
+          opacity: 0.9;
+        }
+      }
+
+      @keyframes moonGlow {
+        0% {
+          filter: drop-shadow(0 0 20px rgba(200, 200, 255, 0.15));
+          opacity: 0.75;
+        }
+        100% {
+          filter: drop-shadow(0 0 30px rgba(200, 200, 255, 0.25));
+          opacity: 0.85;
+        }
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.3;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes floatGentle {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg) scale(var(--scale, 1));
+          opacity: 0.8;
+        }
+        25% {
+          transform: translateY(-8px) rotate(5deg) scale(var(--scale, 1));
+          opacity: 0.9;
+        }
+        50% {
+          transform: translateY(-15px) rotate(0deg) scale(var(--scale, 1));
+          opacity: 1;
+        }
+        75% {
+          transform: translateY(-8px) rotate(-5deg) scale(var(--scale, 1));
+          opacity: 0.9;
+        }
+      }
+
+      @keyframes petalBreathe {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) rotate(var(--rotation, 0deg))
+            translateY(-15px) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translate(-50%, -50%) rotate(var(--rotation, 0deg))
+            translateY(-15px) scale(1.05);
+          opacity: 1;
+        }
+      }
+
+      @keyframes sparkle {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes bean-bounce {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-3px) rotate(-1deg);
+        }
+      }
+
+      @keyframes bean-walk {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-2px) rotate(1deg);
+        }
+        75% {
+          transform: translateY(-2px) rotate(-1deg);
+        }
+      }
+
+      @keyframes bean-wiggle {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(5deg);
+        }
+        50% {
+          transform: rotate(-5deg);
+        }
+        75% {
+          transform: rotate(3deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* New cute jump animation for tap/click */
+      @keyframes bean-cute-jump {
+        0% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+        15% {
+          transform: translateY(-5px) rotate(-3deg) scale(1.05);
+        }
+        30% {
+          transform: translateY(-12px) rotate(2deg) scale(1.1);
+        }
+        45% {
+          transform: translateY(-18px) rotate(-1deg) scale(1.08);
+        }
+        60% {
+          transform: translateY(-8px) rotate(1deg) scale(1.05);
+        }
+        75% {
+          transform: translateY(-2px) rotate(-0.5deg) scale(1.02);
+        }
+        85% {
+          transform: translateY(0) rotate(0.5deg) scale(1.01);
+        }
+        100% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+      }
+
+      /* Arm animations */
+      @keyframes arm-wave {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-15deg);
+        }
+        50% {
+          transform: rotate(10deg);
+        }
+        75% {
+          transform: rotate(-5deg);
+        }
+      }
+
+      @keyframes arm-walk {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(20deg);
+        }
+        50% {
+          transform: rotate(-10deg);
+        }
+        75% {
+          transform: rotate(15deg);
+        }
+      }
+
+      @keyframes arm-jump {
+        0% {
+          transform: rotate(0deg);
+        }
+        15% {
+          transform: rotate(-30deg);
+        }
+        30% {
+          transform: rotate(-45deg);
+        }
+        45% {
+          transform: rotate(-50deg);
+        }
+        60% {
+          transform: rotate(-20deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* Leg animations */
+      @keyframes leg-walk {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(15deg);
+        }
+        50% {
+          transform: rotate(-15deg);
+        }
+        75% {
+          transform: rotate(10deg);
+        }
+      }
+
+      @keyframes leg-jump {
+        0% {
+          transform: rotate(0deg);
+        }
+        15% {
+          transform: rotate(-10deg);
+        }
+        30% {
+          transform: rotate(-20deg);
+        }
+        45% {
+          transform: rotate(-15deg);
+        }
+        60% {
+          transform: rotate(5deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* Bean jump state - temporarily override other animations */
+      .bean-mascot.jumping .bean-svg {
+        animation: bean-cute-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+      }
+
+      /* Limb animations based on Bean's state */
+      .bean-mascot.jumping .bean-arm-left {
+        animation: arm-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+      }
+
+      .bean-mascot.jumping .bean-arm-right {
+        animation: arm-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        animation-delay: 0.05s;
+      }
+
+      .bean-mascot.jumping .bean-leg-left {
+        animation: leg-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+      }
+
+      .bean-mascot.jumping .bean-leg-right {
+        animation: leg-jump 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        animation-delay: 0.03s;
+      }
+
+      /* Walking limb animations */
+      .bean-mascot.walking .bean-arm-left {
+        animation: arm-walk 0.4s ease-in-out infinite;
+      }
+
+      .bean-mascot.walking .bean-arm-right {
+        animation: arm-walk 0.4s ease-in-out infinite;
+        animation-delay: 0.2s; /* Opposite arm swing */
+      }
+
+      .bean-mascot.walking .bean-leg-left {
+        animation: leg-walk 0.4s ease-in-out infinite;
+      }
+
+      .bean-mascot.walking .bean-leg-right {
+        animation: leg-walk 0.4s ease-in-out infinite;
+        animation-delay: 0.2s; /* Opposite leg movement */
+      }
+
+      /* When holding umbrella, keep the arm more stable */
+      .bean-mascot.walking .bean-umbrella {
+        animation: umbrella-walk 0.4s ease-in-out infinite;
+      }
+
+      @keyframes umbrella-walk {
+        0% {
+          transform: translate(20, -15) rotate(2deg);
+        }
+        25% {
+          transform: translate(22, -14) rotate(5deg);
+        }
+        50% {
+          transform: translate(18, -16) rotate(-2deg);
+        }
+        75% {
+          transform: translate(19, -15) rotate(1deg);
+        }
+        100% {
+          transform: translate(20, -15) rotate(2deg);
+        }
+      }
+
+      /* Gentle wave on hover - but not when holding umbrella */
+      .bean-mascot:hover:not(:has(.bean-umbrella[style*="block"]))
+        .bean-arm-right {
+        animation: arm-wave 1s ease-in-out infinite;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 480px) {
+        .celestial-body {
+          width: 70px;
+          height: 70px;
+        }
+        .container {
+          padding: 1.5rem 1rem;
+        }
+        .title {
+          font-size: 2rem;
+        }
+        .nav-grid {
+          max-width: 350px;
+          gap: 0.8rem;
+        }
+        .nav-card {
+          padding: 1.2rem 0.8rem;
+          min-height: 100px;
+        }
+        .nav-card.todo {
+          height: 70px;
+          padding: 0.8rem 1.5rem;
+          gap: 0.8rem;
+        }
+        .nav-card.todo .nav-icon {
+          font-size: 1.5rem;
+        }
+        .love-note {
+          font-size: 0.8rem;
+          padding: 0.6rem 1.2rem;
+          color: white;
+        }
+        .weather-widget {
+          font-size: 0.85rem;
+          padding: 0.6rem 1.2rem;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .celestial-body {
+          width: 60px;
+          height: 60px;
+        }
+        .nav-grid {
+          max-width: 300px;
+        }
+        .nav-card {
+          padding: 1rem 0.6rem;
+          min-height: 90px;
+        }
+        .nav-card.todo {
+          height: 65px;
+          padding: 0.7rem 1.2rem;
+        }
+      }
+      .nav-card.trivia {
+        align-self: flex-end;
+        margin: 20px;
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        min-height: 60px;
+        max-width: 60px;
+        max-height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        background: linear-gradient(
+          135deg,
+          #ffb6c1,
+          #ffffff
+        ); /* pink to white */
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      /* hide the title so only the emoji shows */
+      .nav-card.trivia .nav-title {
+        display: none;
+      }
+      /* hide the title so only the emoji shows */
+      .nav-card.trivia .nav-title {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Elements -->
+    <div class="forest-bg">
+      <!-- Celestial Bodies -->
+      <div class="celestial-body sun">
+        <svg
+          class="sun-svg"
+          viewBox="0 0 120 120"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Sun rays - more subtle -->
+          <g
+            stroke="#FFD700"
+            stroke-width="2"
+            stroke-linecap="round"
+            opacity="0.6"
+          >
+            <line x1="60" y1="15" x2="60" y2="22" />
+            <line x1="82.07" y1="19.64" x2="78.36" y2="24.36" />
+            <line x1="100.36" y1="37.93" x2="95.64" y2="41.64" />
+            <line x1="105" y1="60" x2="98" y2="60" />
+            <line x1="100.36" y1="82.07" x2="95.64" y2="78.36" />
+            <line x1="82.07" y1="100.36" x2="78.36" y2="95.64" />
+            <line x1="60" y1="105" x2="60" y2="98" />
+            <line x1="37.93" y1="100.36" x2="41.64" y2="95.64" />
+            <line x1="19.64" y1="82.07" x2="24.36" y2="78.36" />
+            <line x1="15" y1="60" x2="22" y2="60" />
+            <line x1="19.64" y1="37.93" x2="24.36" y2="41.64" />
+            <line x1="37.93" y1="19.64" x2="41.64" y2="24.36" />
+          </g>
+
+          <!-- Sun body - softer appearance -->
+          <circle
+            cx="60"
+            cy="60"
+            r="22"
+            fill="url(#sunGradient)"
+            stroke="none"
+          />
+
+          <!-- Gradient definition - more atmospheric -->
+          <defs>
+            <radialGradient id="sunGradient" cx="0.4" cy="0.3">
+              <stop offset="0%" stop-color="#FFEB3B" stop-opacity="0.9" />
+              <stop offset="60%" stop-color="#FFD700" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#FFA000" stop-opacity="0.7" />
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="celestial-body moon">
+        <svg
+          class="moon-svg"
+          viewBox="0 0 120 120"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Moon body - softer appearance -->
+          <circle
+            cx="60"
+            cy="60"
+            r="25"
+            fill="url(#moonGradient)"
+            stroke="none"
+          />
+
+          <!-- Gradient definition - more atmospheric -->
+          <defs>
+            <radialGradient id="moonGradient" cx="0.4" cy="0.3">
+              <stop offset="0%" stop-color="#F5F5F5" stop-opacity="0.8" />
+              <stop offset="70%" stop-color="#E8E8FF" stop-opacity="0.7" />
+              <stop offset="100%" stop-color="#D0D0E0" stop-opacity="0.6" />
+            </radialGradient>
+          </defs>
+
+          <!-- Moon craters - more subtle -->
+          <circle cx="52" cy="48" r="3" fill="#D5D5E5" opacity="0.4" />
+          <circle cx="70" cy="54" r="4" fill="#D5D5E5" opacity="0.3" />
+          <circle cx="57" cy="70" r="2" fill="#D5D5E5" opacity="0.4" />
+          <circle cx="68" cy="68" r="1.5" fill="#D5D5E5" opacity="0.3" />
+          <circle cx="48" cy="65" r="2" fill="#D5D5E5" opacity="0.3" />
+        </svg>
+      </div>
+
+      <!-- Stars for night theme -->
+      <div class="stars" id="starsContainer">
+        <!-- Stars will be generated by JavaScript -->
+      </div>
+
+      <!-- Trees -->
+      <div class="trees">
+        <div class="tree"></div>
+        <div class="tree"></div>
+        <div class="tree"></div>
+        <div class="tree"></div>
+        <div class="tree"></div>
+        <div class="tree"></div>
+      </div>
+
+      <!-- Sparkles -->
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+      <div class="sparkle"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+      <header class="header">
+        <h1 class="title">Bean's Place</h1>
+        <div class="love-note" id="loveNote">You're amazing, always 💛</div>
+        <!-- Weather Widget -->
+        <div class="weather-widget" id="weatherWidget">
+          <div class="weather-icon" id="weatherIcon">🌤️</div>
+          <div class="weather-info">
+            <div class="weather-temp" id="weatherTemp">Loading...</div>
+            <div class="weather-desc" id="weatherDesc">Getting weather...</div>
+          </div>
+        </div>
+      </header>
+      <!-- To-do Section -->
+      <div class="todo-button-container">
+        <div class="nav-card todo" onclick="navigateTo('to-do')">
+          <div class="nav-icon">✓</div>
+          <div>
+            <div class="nav-title">Bean's To-Do</div>
+          </div>
+        </div>
+      </div>
+      <!-- Game Grumps Button -->
+      <div class="todo-button-container">
+        <div class="nav-card orange-blue" onclick="navigateTo('gamegrumps')">
+          <div class="nav-icon">🧡</div>
+          <div>
+            <div class="nav-title">Game Grumps</div>
+          </div>
+        </div>
+      </div>
+      <!-- Navigation Grid -->
+      <nav class="nav-grid">
+        <div class="nav-card music" onclick="navigateTo('music')">
+          <div class="nav-icon">𝄞</div>
+          <div class="nav-title">Music</div>
+        </div>
+        <div class="nav-card creators" onclick="navigateTo('creators')">
+          <div class="nav-icon">📺</div>
+          <div class="nav-title">Creators</div>
+        </div>
+        <div class="nav-card knitting" onclick="navigateTo('knitting')">
+          <div class="nav-icon">🧶</div>
+          <div class="nav-title">Knitting</div>
+        </div>
+        <div class="nav-card movies" onclick="navigateTo('movies')">
+          <div class="nav-icon">🎥</div>
+          <div class="nav-title">Movies + TV</div>
+        </div>
+        <div class="nav-card recipes" onclick="navigateTo('recipes')">
+          <div class="nav-icon">🍲</div>
+          <div class="nav-title">Recipes</div>
+        </div>
+        <div class="nav-card books" onclick="navigateTo('books')">
+          <div class="nav-icon">📖</div>
+          <div class="nav-title">Books</div>
+        </div>
+        <div class="nav-card games" onclick="navigateTo('games')">
+          <div class="nav-icon">🎮</div>
+          <div class="nav-title">Games</div>
+          <div class="nav-subtitle">Shelf and Suggestions</div>
+        </div>
+        <div class="nav-card channel" onclick="navigateTo('channel')">
+          <div class="nav-icon">▶️</div>
+          <div class="nav-title">Channel</div>
+          <div class="nav-subtitle">Stats and Charts</div>
+        </div>
+      </nav>
+      <div class="nav-card trivia" onclick="navigateTo('trivia')">
+        <div class="nav-icon">🧠</div>
+        <div class="nav-title">Trivia</div>
+      </div>
+      <footer class="footer">Made with ❤︎</footer>
+    </div>
+
+    <!-- Weather Details Modal -->
+    <div class="weather-modal" id="weatherModal">
+      <div class="weather-details">
+        <button class="close-btn" onclick="closeWeatherModal()">×</button>
+        <div class="weather-header">
+          <div class="weather-location" id="weatherLocation">Kingston, ON</div>
+          <div class="weather-current">
+            <div class="weather-current-icon" id="weatherCurrentIcon">🌤️</div>
+            <div class="weather-current-temp" id="weatherCurrentTemp">22°C</div>
+          </div>
+          <div class="weather-current-desc" id="weatherCurrentDesc">
+            Partly cloudy
+          </div>
+        </div>
+        <div class="weather-stats">
+          <div class="weather-stat">
+            <div class="weather-stat-label">Feels Like</div>
+            <div class="weather-stat-value" id="feelsLike">24°C</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">Humidity</div>
+            <div class="weather-stat-value" id="humidity">65%</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">Wind Speed</div>
+            <div class="weather-stat-value" id="windSpeed">12 km/h</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">High</div>
+            <div class="weather-stat-value" id="temp-high">25°C</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">Low</div>
+            <div class="weather-stat-value" id="temp-low">15°C</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bean Mascot -->
+    <div
+      aria-hidden="false"
+      class="bean-mascot idle facing-right"
+      id="bean-mascot"
+    >
+      <div aria-hidden="true" class="bean-shadow"></div>
+      <svg
+        aria-label="Bean mascot"
+        class="bean-svg"
+        role="img"
+        viewBox="0 0 160 180"
+      >
+        <!-- Bean body -->
+        <path
+          d="M80 15
+             C50 25, 35 60, 45 110
+             C50 140, 80 160, 110 140
+             C140 120, 125 50, 95 30
+             C85 20, 80 15, 80 15 Z"
+          fill="#ff8fb7"
+          stroke="#3b2644"
+          stroke-linejoin="round"
+          stroke-width="4"
+        ></path>
+
+        <!-- Left Arm -->
+        <g class="bean-arm-left" transform-origin="48 78">
+          <line
+            x1="48"
+            y1="78"
+            x2="28"
+            y2="88"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <!-- Left Hand -->
+          <circle
+            cx="28"
+            cy="88"
+            r="3"
+            fill="#ff8fb7"
+            stroke="#3b2644"
+            stroke-width="2"
+          />
+        </g>
+
+        <!-- Right Arm -->
+        <g class="bean-arm-right" transform-origin="112 75">
+          <line
+            x1="112"
+            y1="75"
+            x2="132"
+            y2="85"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <!-- Right Hand -->
+          <circle
+            cx="132"
+            cy="85"
+            r="3"
+            fill="#ff8fb7"
+            stroke="#3b2644"
+            stroke-width="2"
+          />
+        </g>
+
+        <!-- Left Leg -->
+        <g class="bean-leg-left" transform-origin="65 140">
+          <line
+            x1="65"
+            y1="140"
+            x2="55"
+            y2="165"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <!-- Left Foot -->
+          <ellipse cx="55" cy="167" rx="6" ry="3" fill="#3b2644" />
+        </g>
+
+        <!-- Right Leg -->
+        <g class="bean-leg-right" transform-origin="95 140">
+          <line
+            x1="95"
+            y1="140"
+            x2="105"
+            y2="165"
+            stroke="#3b2644"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <!-- Right Foot -->
+          <ellipse cx="105" cy="167" rx="6" ry="3" fill="#3b2644" />
+        </g>
+
+        <!-- Eyes -->
+        <circle cx="70" cy="65" fill="#2a1731" r="5.5"></circle>
+        <circle cx="96" cy="58" fill="#2a1731" r="5.5"></circle>
+
+        <!-- Smile -->
+        <path
+          d="M65 84c8 8 22 7 30-1"
+          fill="none"
+          stroke="#2a1731"
+          stroke-linecap="round"
+          stroke-width="4"
+        ></path>
+
+        <g
+          class="bean-sunglasses"
+          style="display: none"
+          transform="rotate(-8 83 60)"
+        >
+          <!-- Lenses -->
+          <ellipse cx="70" cy="60" rx="12" ry="6" fill="#111" />
+          <ellipse cx="96" cy="58" rx="12" ry="6" fill="#111" />
+          <!-- Bridge -->
+          <rect x="81" y="58" width="12" height="2" fill="#111" />
+        </g>
+
+        <!-- Cozy winter scarf -->
+        <g class="bean-scarf" style="display: none" transform="translate(0, 8)">
+          <!-- Back part of scarf (behind Bean) -->
+          <ellipse
+            cx="85"
+            cy="88"
+            rx="30"
+            ry="7"
+            fill="#2980b9"
+            opacity="0.8"
+          />
+
+          <!-- Main scarf wrap around neck -->
+          <path
+            d="M50 85 C58 82, 68 80, 83 82 C98 84, 108 86, 116 90 C114 96, 102 99, 83 97 C64 95, 52 93, 50 85 Z"
+            fill="#3498db"
+            stroke="#2471a3"
+            stroke-width="1"
+          />
+
+          <!-- Left hanging end -->
+          <path
+            d="M50 88 C46 93, 43 105, 46 120 C49 138, 45 148, 42 162 C40 169, 45 172, 50 169 C56 166, 59 154, 56 140 C53 125, 56 110, 53 95 L50 88 Z"
+            fill="#3498db"
+            stroke="#2471a3"
+            stroke-width="1"
+          />
+
+          <!-- Right hanging end -->
+          <path
+            d="M116 92 C120 97, 123 109, 120 124 C117 142, 121 152, 124 166 C126 173, 121 176, 116 173 C110 170, 107 158, 110 144 C113 129, 110 114, 113 99 L116 92 Z"
+            fill="#3498db"
+            stroke="#2471a3"
+            stroke-width="1"
+          />
+        </g>
+
+        <!-- Cute umbrella - starts from Bean's right hand -->
+        <g class="bean-umbrella" style="display: none">
+          <!-- Umbrella handle - starts exactly at Bean's right hand (132, 85) - made longer -->
+          <path
+            d="M132 85 Q122 92 126 100 Q132 103 138 100 Q142 92 132 85"
+            fill="none"
+            stroke="#8b4513"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+
+          <!-- Umbrella pole - goes from handle up to canopy, repositioned for center over Bean's head -->
+          <line
+            x1="132"
+            y1="85"
+            x2="95"
+            y2="8"
+            stroke="#8b4513"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+
+          <!-- Umbrella canopy - repositioned so center is over Bean's head (around x=80-85) -->
+          <path
+            d="M50 18 Q72 -2 95 4 Q118 -2 140 18 Q118 10 95 12 Q72 10 50 18 Z"
+            fill="#4a90e2"
+            stroke="#2c5282"
+            stroke-width="2"
+          />
+
+          <!-- Umbrella canopy underside - adds depth, repositioned -->
+          <path
+            d="M53 18 Q73 12 95 14 Q117 12 137 18"
+            fill="none"
+            stroke="#2c5282"
+            stroke-width="1"
+            opacity="0.5"
+          />
+
+          <!-- Umbrella tip/finial - repositioned -->
+          <circle cx="95" cy="4" r="2" fill="#2c5282" />
+
+          <!-- Rain drops bouncing off umbrella -->
+          <g fill="#87ceeb" opacity="0.6">
+            <!-- Drops hitting umbrella and bouncing off -->
+            <ellipse
+              cx="60"
+              cy="24"
+              rx="1"
+              ry="3"
+              transform="rotate(30 60 24)"
+            />
+            <ellipse
+              cx="80"
+              cy="16"
+              rx="1"
+              ry="3"
+              transform="rotate(-10 80 16)"
+            />
+            <ellipse
+              cx="110"
+              cy="14"
+              rx="1"
+              ry="3"
+              transform="rotate(40 110 14)"
+            />
+            <ellipse
+              cx="135"
+              cy="22"
+              rx="1"
+              ry="3"
+              transform="rotate(-20 135 22)"
+            />
+
+            <!-- Rain drops falling around but not on Bean -->
+            <ellipse
+              cx="35"
+              cy="45"
+              rx="1.5"
+              ry="4"
+              transform="rotate(10 35 45)"
+            />
+            <ellipse
+              cx="165"
+              cy="50"
+              rx="1.5"
+              ry="4"
+              transform="rotate(-10 165 50)"
+            />
+            <ellipse
+              cx="25"
+              cy="65"
+              rx="1"
+              ry="3"
+              transform="rotate(15 25 65)"
+            />
+            <ellipse
+              cx="175"
+              cy="60"
+              rx="1"
+              ry="3"
+              transform="rotate(-15 175 60)"
+            />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then((reg) => console.log("Service worker registered.", reg))
+          .catch((err) =>
+            console.log("Service worker registration failed:", err)
+          );
+      }
+      // Configuration
+      const CONFIG = {
+        loveNotes: [
+          "You light up every room you enter",
+          "Your laugh is unforgettable",
+          "You make kindness look effortless",
+          "Your presence feels like home",
+          "You inspire calm and joy around you",
+          "Your smile stays with me all day",
+          "You notice the little things",
+          "Your courage amazes me",
+          "You make life feel brighter",
+          "Your warmth is contagious",
+          "You handle challenges with grace",
+          "Your creativity is endless",
+          "You bring out the best in others",
+          "Your thoughtfulness leaves me in awe",
+          "You are unforgettable",
+          "Your eyes hold so much depth",
+          "You make ordinary moments extraordinary",
+          "Your energy is magnetic",
+          "You are deeply inspiring",
+          "Your patience is remarkable",
+          "You make everyone feel welcome",
+          "Your laughter is pure magic",
+          "You turn simple days into memories",
+          "Your presence is comforting",
+          "You make every space feel alive",
+          "Your determination is beautiful",
+          "You are effortlessly charming",
+          "Your intuition is impressive",
+          "You have a heart full of generosity",
+          "Your voice is soothing and strong",
+          "You bring light to cloudy days",
+          "Your passion is inspiring",
+          "You are endlessly fascinating",
+          "Your kindness changes people",
+          "You carry yourself with confidence",
+          "Your hugs feel like safety",
+          "You have a way of making life sweeter",
+          "Your insight is remarkable",
+          "You make the world feel warmer",
+          "Your curiosity is contagious",
+          "You are endlessly captivating",
+          "Your thoughtfulness never goes unnoticed",
+          "You turn moments into memories",
+          "Your presence alone lifts spirits",
+          "You are radiant in every way",
+          "Your wisdom surprises me daily",
+          "You make every day feel special",
+          "Your love leaves traces everywhere",
+          "You are grace and strength combined",
+          "Your smile could light a city",
+          "You make challenges feel smaller",
+          "Your laughter fills the air",
+          "You are elegance in motion",
+          "Your spirit is unshakable",
+          "You are remarkable in ways words can't capture",
+          "Your eyes tell stories",
+          "You make life feel effortless",
+          "Your authenticity inspires others",
+          "You are a beacon of warmth",
+          "Your creativity enriches everyone",
+          "You make ordinary moments shine",
+          "Your patience is admirable",
+          "You carry joy wherever you go",
+          "Your intelligence is dazzling",
+          "You have an aura of calm strength",
+          "Your charm is natural",
+          "You make hearts feel lighter",
+          "Your love is so strong",
+          "You make spaces feel safe",
+          "Your laughter lingers in my mind",
+          "You inspire confidence in others",
+          "You have a beautiful presence",
+          "Your insight is rare and valuable",
+          "You make people feel seen",
+          "Your spirit is both gentle and strong",
+          "You make life feel expansive",
+          "Your energy brightens the dullest days",
+          "You are magnetic and grounding",
+          "Your voice lingers like a melody",
+          "You are elegance made human",
+          "Your kindness echoes",
+          "You make the world feel richer",
+          "Your smile is unforgettable",
+          "You inspire love and joy",
+          "You are radiant and enduring",
+          "Your presence is a gift",
+          "You are captivating in your simplicity",
+          "Your warmth draws people in",
+          "You make ordinary feel magical",
+          "Your intuition guides beautifully",
+          "You have a heart that leaves marks",
+          "You are endlessly admirable",
+          "Your authenticity is rare",
+          "You make the world better by existing",
+          "Your passion is inspiring",
+          "You carry beauty effortlessly",
+          "You are endlessly fascinating",
+          "Your laughter is a light in the dark",
+          "You bring calm and excitement in equal measure",
+          "Your soul feels familiar and wondrous",
+          "You make life feel fuller",
+          "Your elegance is effortless",
+          "You leave a mark just by being you",
+          "Your joy is palpable",
+          "You make love feel natural",
+          "Your presence transforms everything",
+          "You inspire hope silently",
+          "You are breathtakingly real",
+          "Your confidence is magnetic",
+          "You make hearts feel alive",
+          "Your energy is unforgettable",
+          "You are remarkable, always",
+        ],
+        noteRotationInterval: 4000,
+        weatherApiKey: "5e85ce3a5a5f68071a402d17d06883f7",
+        weatherLocation: "Kingston,Ontario,CA",
+      };
+
+      // Star generation for night theme
+      function generateStars() {
+        const starsContainer = document.getElementById("starsContainer");
+        starsContainer.innerHTML = ""; // Clear existing stars
+
+        const numStars = 80; // Number of stars to generate
+
+        for (let i = 0; i < numStars; i++) {
+          const star = document.createElement("div");
+          star.className = "star";
+
+          // Random position
+          star.style.left = Math.random() * 100 + "%";
+          star.style.top = Math.random() * 70 + "%"; // Keep stars in upper 70% of screen
+
+          // Random animation delay for twinkling
+          star.style.animationDelay = Math.random() * 3 + "s";
+          star.style.animationDuration = 2 + Math.random() * 2 + "s"; // 2-4 seconds
+
+          // Slight size variation
+          const size = 1.5 + Math.random() * 1; // 1.5px to 2.5px
+          star.style.width = size + "px";
+          star.style.height = size + "px";
+
+          starsContainer.appendChild(star);
+        }
+      }
+
+      // Weather widget functionality
+      class WeatherWidget {
+        constructor() {
+          this.apiKey = CONFIG.weatherApiKey;
+          this.location = CONFIG.weatherLocation;
+          this.weatherData = null;
+          this.init();
+        }
+
+        init() {
+          document
+            .getElementById("weatherWidget")
+            .addEventListener("click", () => {
+              this.openModal();
+            });
+
+          // Load weather data
+          this.loadWeather();
+
+          // Refresh weather every 10 minutes
+          setInterval(() => {
+            this.loadWeather();
+          }, 600000);
+        }
+
+        async loadWeather() {
+          try {
+            await this.loadRealWeather();
+          } catch (error) {
+            console.error("Error loading weather:", error);
+            this.showError();
+          }
+        }
+
+        async loadRealWeather() {
+          const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${this.location}&appid=${this.apiKey}&units=metric`
+          );
+
+          if (!response.ok) throw new Error("Weather API request failed");
+
+          const data = await response.json();
+
+          this.weatherData = {
+            location: `${data.name}, ${data.sys.country}`,
+            current: {
+              temp: Math.round(data.main.temp),
+              description: data.weather[0].description,
+              icon: this.getWeatherIcon(
+                data.weather[0].icon,
+                data.weather[0].main
+              ),
+              feelsLike: Math.round(data.main.feels_like),
+              humidity: data.main.humidity,
+              windSpeed: Math.round(data.wind.speed * 3.6), // Convert m/s to km/h
+              high: data.main.temp_max,
+              low: data.main.temp_min,
+              condition: data.weather[0].main.toLowerCase(),
+            },
+          };
+
+          this.updateWidget();
+          this.updateBeanAppearance();
+        }
+
+        getWeatherIcon(iconCode, condition) {
+          const iconMap = {
+            "01d": "☀️",
+            "01n": "🌙",
+            "02d": "⛅",
+            "02n": "☁️",
+            "03d": "☁️",
+            "03n": "☁️",
+            "04d": "☁️",
+            "04n": "☁️",
+            "09d": "🌧️",
+            "09n": "🌧️",
+            "10d": "🌦️",
+            "10n": "🌧️",
+            "11d": "⛈️",
+            "11n": "⛈️",
+            "13d": "❄️",
+            "13n": "❄️",
+            "50d": "🌫️",
+            "50n": "🌫️",
+          };
+
+          return iconMap[iconCode] || "🌤️";
+        }
+
+        updateWidget() {
+          if (!this.weatherData) return;
+
+          const { current } = this.weatherData;
+
+          document.getElementById("weatherIcon").textContent = current.icon;
+          document.getElementById(
+            "weatherTemp"
+          ).textContent = `${current.temp}°C`;
+          document.getElementById("weatherDesc").textContent =
+            current.description;
+        }
+
+        updateBeanAppearance() {
+          const condition = this.weatherData.current.condition;
+          const sunglasses = document.querySelector(".bean-sunglasses");
+          const scarf = document.querySelector(".bean-scarf");
+          const umbrella = document.querySelector(".bean-umbrella");
+
+          // Hide all by default
+          if (sunglasses) sunglasses.style.display = "none";
+          if (scarf) scarf.style.display = "none";
+          if (umbrella) umbrella.style.display = "none";
+
+          if (condition.includes("clear") || condition.includes("sun")) {
+            if (sunglasses) sunglasses.style.display = "block";
+          } else if (condition.includes("snow")) {
+            if (scarf) scarf.style.display = "block";
+          } else if (
+            condition.includes("rain") ||
+            condition.includes("drizzle") ||
+            condition.includes("thunder")
+          ) {
+            if (umbrella) umbrella.style.display = "block";
+          }
+        }
+
+        updateModal() {
+          if (!this.weatherData) return;
+
+          const { location, current } = this.weatherData;
+
+          document.getElementById("weatherLocation").textContent = location;
+          document.getElementById("weatherCurrentIcon").textContent =
+            current.icon;
+          document.getElementById(
+            "weatherCurrentTemp"
+          ).textContent = `${current.temp}°C`;
+          document.getElementById("weatherCurrentDesc").textContent =
+            current.description;
+          document.getElementById(
+            "feelsLike"
+          ).textContent = `${current.feelsLike}°C`;
+          document.getElementById(
+            "humidity"
+          ).textContent = `${current.humidity}%`;
+          document.getElementById(
+            "windSpeed"
+          ).textContent = `${current.windSpeed} km/h`;
+          document.getElementById("temp-high").textContent = `${Math.round(
+            current.high
+          )}°C`;
+          document.getElementById("temp-low").textContent = `${Math.round(
+            current.low
+          )}°C`;
+        }
+
+        openModal() {
+          this.updateModal();
+          const modal = document.getElementById("weatherModal");
+          modal.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+
+        closeModal() {
+          const modal = document.getElementById("weatherModal");
+          modal.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+
+        showError() {
+          document.getElementById("weatherTemp").textContent = "Error";
+          document.getElementById("weatherDesc").textContent =
+            "Unable to load weather";
+          document.getElementById("weatherIcon").textContent = "⚠️";
+        }
+      }
+
+      // Utility Functions
+      function rotateLoveNotes() {
+        const noteEl = document.getElementById("loveNote");
+        if (!noteEl) return;
+
+        // Start at a random index
+        let noteIndex = Math.floor(Math.random() * CONFIG.loveNotes.length);
+
+        // Show the first note immediately
+        noteEl.textContent = CONFIG.loveNotes[noteIndex];
+      }
+
+      function navigateTo(section) {
+        const clickedCard = event.target.closest(".nav-card");
+        if (clickedCard) {
+          clickedCard.style.transform = "scale(0.95)";
+          setTimeout(() => {
+            window.location.href = `${section}.html`;
+          }, 200);
+        }
+      }
+
+      function addTouchFeedback() {
+        document
+          .querySelectorAll(".nav-card:not(.coming-soon), .weather-widget")
+          .forEach((card) => {
+            card.addEventListener("touchstart", function () {
+              this.style.transform = "translateY(-4px) scale(0.98)";
+            });
+
+            card.addEventListener("touchend", function () {
+              this.style.transform = "";
+            });
+          });
+      }
+
+      // Global functions for modal control
+      function closeWeatherModal() {
+        weatherWidget.closeModal();
+      }
+
+      // Close modal when clicking outside
+      document.addEventListener("click", function (e) {
+        const modal = document.getElementById("weatherModal");
+        if (e.target === modal) {
+          closeWeatherModal();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          const modal = document.getElementById("weatherModal");
+          if (modal.classList.contains("active")) {
+            closeWeatherModal();
+          }
+        }
+      });
+
+      // Initialize weather widget
+      let weatherWidget;
+
+      // Theme switching functionality - FIXED VERSION
+      function updateTheme() {
+        const now = new Date();
+        const hour = now.getHours();
+
+        // Night time: 6 PM (18:00) to 6 AM (06:00)
+        const isNightTime = hour >= 18 || hour < 6;
+
+        console.log(
+          `Current time: ${hour}:${now.getMinutes()}, Night time: ${isNightTime}`
+        );
+
+        const body = document.body;
+
+        // Force remove both classes first
+        body.classList.remove("night-theme", "day-theme");
+
+        // Add the appropriate theme class
+        if (isNightTime) {
+          body.classList.add("night-theme");
+          console.log("Applied night theme");
+        } else {
+          body.classList.add("day-theme");
+          console.log("Applied day theme");
+        }
+
+        // Force a repaint to ensure styles are applied
+        body.offsetHeight;
+      }
+
+      // Bean interaction functionality
+      function setupBeanInteraction() {
+        const beanMascot = document.getElementById("bean-mascot");
+        let isJumping = false;
+
+        // Handle click/tap on Bean
+        beanMascot.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Don't interrupt if already jumping
+          if (isJumping) return;
+
+          performBeanJump();
+        });
+
+        // Handle touch events for mobile
+        beanMascot.addEventListener("touchstart", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Don't interrupt if already jumping
+          if (isJumping) return;
+
+          performBeanJump();
+        });
+
+        function performBeanJump() {
+          isJumping = true;
+
+          // Add jumping class
+          beanMascot.classList.add("jumping");
+
+          // Remove jumping class after animation completes
+          setTimeout(() => {
+            beanMascot.classList.remove("jumping");
+            isJumping = false;
+          }, 800); // Match the animation duration
+
+          // Optional: Add a cute sound effect or haptic feedback
+          // if (navigator.vibrate) {
+          //   navigator.vibrate(50); // Short vibration on mobile
+          // }
+        }
+      }
+      const bean = document.getElementById("bean-mascot");
+
+      // Configuration - all timing now consistent
+      const WALK_SPEED = 60; // pixels per second - consistent speed
+      const PAUSE_DURATION = 1200; // pause at edges (ms)
+      const START_DELAY = 15000; // initial delay (ms) - matches your original
+      const JUMP_DURATION = 500; // jump animation duration (ms)
+
+      let isWalking = false;
+
+      // Calculate dynamic walk duration based on distance and speed
+      function calculateWalkDuration() {
+        const screenWidth = window.innerWidth;
+        const beanWidth = bean.offsetWidth;
+        const distance = screenWidth - beanWidth - 20; // 10px margin on each side
+        return (distance / WALK_SPEED) * 1000; // convert to milliseconds
+      }
+
+      function startWalking() {
+        isWalking = true;
+        bean.classList.add("walking");
+      }
+
+      function stopWalking() {
+        isWalking = false;
+        bean.classList.remove("walking");
+      }
+
+      function jumpAtEdge(callback) {
+        stopWalking();
+
+        // Get current transform values
+        const currentTransform = bean.style.transform;
+        const currentX =
+          currentTransform.match(/translateX\(([^)]+)\)/)?.[1] || "0px";
+        const currentScaleX = currentTransform.includes("scaleX(-1)") ? -1 : 1;
+        const newScaleX = currentScaleX * -1; // flip direction
+
+        // Jump up and flip - smoother easing
+        bean.style.transition = `transform ${JUMP_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+        bean.style.transform = `translateX(${currentX}) scaleX(${newScaleX}) translateY(-20px)`;
+
+        setTimeout(() => {
+          // Land smoothly
+          bean.style.transform = `translateX(${currentX}) scaleX(${newScaleX}) translateY(0px)`;
+
+          setTimeout(() => {
+            if (callback) callback();
+          }, 200); // Small delay after landing
+        }, JUMP_DURATION * 0.6); // Jump peak timing
+      }
+
+      function walkCycle() {
+        const screenWidth = window.innerWidth;
+        const beanWidth = bean.offsetWidth;
+        const walkDuration = calculateWalkDuration();
+        const rightX = screenWidth - beanWidth - 10;
+
+        // Walk right
+        startWalking();
+        bean.style.transition = `transform ${walkDuration}ms linear`;
+        bean.style.transform = `translateX(${rightX}px) scaleX(1)`;
+
+        setTimeout(() => {
+          // Jump and flip at right edge
+          jumpAtEdge(() => {
+            setTimeout(() => {
+              // Walk left
+              startWalking();
+              bean.style.transition = `transform ${walkDuration}ms linear`;
+              bean.style.transform = `translateX(0px) scaleX(-1)`;
+
+              setTimeout(() => {
+                // Jump and flip at left edge
+                jumpAtEdge(() => {
+                  setTimeout(() => {
+                    walkCycle(); // Start next cycle
+                  }, PAUSE_DURATION);
+                });
+              }, walkDuration);
+            }, PAUSE_DURATION);
+          });
+        }, walkDuration);
+      }
+
+      // Initialize bean position
+      function initializeBean() {
+        bean.style.transform = "translateX(0px) scaleX(1)";
+        bean.style.transition = "none";
+        stopWalking();
+      }
+
+      // Handle window resize to recalculate walk distance
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (!isWalking) {
+            initializeBean();
+          }
+        }, 100);
+      });
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM Content Loaded - Initializing...");
+
+        // Generate stars first
+        generateStars();
+
+        // Set initial theme
+        updateTheme();
+
+        // Update theme every minute to catch sunrise/sunset
+        setInterval(updateTheme, 60000);
+
+        // Add a small delay to ensure all styles are loaded
+        setTimeout(() => {
+          randomizeFlowerColors();
+        }, 100);
+
+        rotateLoveNotes();
+        addTouchFeedback();
+
+        // Initialize weather widget
+        weatherWidget = new WeatherWidget();
+
+        // Setup Bean interaction
+        setupBeanInteraction();
+
+        // Initialize bean walking
+        initializeBean();
+
+        // Start the walking cycle after delay
+        setTimeout(() => {
+          walkCycle();
+        }, START_DELAY);
+      });
+    </script>
+  </body>
+</html>

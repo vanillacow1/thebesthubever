@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Discovery - Elegant Book Search</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1a2f1a 0%,
+          #2d1b0f 50%,
+          #1a2f1a 100%
+        );
+        color: #e8e2d5;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        position: relative;
+      }
+
+      /* Hub Button Styles */
+      .hub-button-container {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+      }
+
+      .hub-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(143, 188, 143, 0.9);
+        color: #1a2f1a;
+        border: none;
+        padding: 12px 16px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(143, 188, 143, 0.3);
+        text-decoration: none;
+      }
+
+      .hub-button:hover {
+        background: rgba(143, 188, 143, 1);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(143, 188, 143, 0.3);
+      }
+
+      .hub-icon {
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+
+      .hub-text {
+        font-size: 0.9rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 40px 0;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        font-weight: 300;
+        color: #8fbc8f;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        color: #d4a574;
+        opacity: 0.9;
+      }
+
+      .search-section {
+        background: rgba(45, 27, 15, 0.6);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(143, 188, 143, 0.2);
+      }
+
+      .search-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 250px;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        border: 2px solid #6b5b3a;
+        border-radius: 10px;
+        background: rgba(26, 47, 26, 0.8);
+        color: #e8e2d5;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #8fbc8f;
+        box-shadow: 0 0 15px rgba(143, 188, 143, 0.3);
+      }
+
+      .search-input::placeholder {
+        color: #a0957f;
+      }
+
+      .search-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        background: linear-gradient(45deg, #8fbc8f, #a0c4a0);
+        color: #1a2f1a;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(143, 188, 143, 0.4);
+        background: linear-gradient(45deg, #a0c4a0, #8fbc8f);
+      }
+
+      .search-results-section {
+        display: none;
+        background: rgba(45, 27, 15, 0.4);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 40px;
+        border: 1px solid rgba(143, 188, 143, 0.3);
+      }
+
+      .search-results-section h2 {
+        font-size: 2rem;
+        color: #8fbc8f;
+        margin-bottom: 25px;
+        text-align: center;
+        font-weight: 300;
+      }
+
+      .clear-search {
+        background: rgba(212, 165, 116, 0.2);
+        color: #d4a574;
+        border: 1px solid rgba(212, 165, 116, 0.3);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .clear-search:hover {
+        background: rgba(212, 165, 116, 0.3);
+        border-color: rgba(212, 165, 116, 0.5);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 0;
+        background: rgba(26, 47, 26, 0.3);
+        border-radius: 15px 15px 0 0;
+        overflow: hidden;
+        margin-bottom: 0;
+      }
+
+      .tab {
+        flex: 1;
+        padding: 20px;
+        background: rgba(45, 27, 15, 0.3);
+        color: #a0957f;
+        text-align: center;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab:hover {
+        background: rgba(45, 27, 15, 0.5);
+        color: #d4a574;
+      }
+
+      .tab.active {
+        background: rgba(45, 27, 15, 0.6);
+        color: #8fbc8f;
+        border-bottom-color: #8fbc8f;
+      }
+
+      .tab-content {
+        background: rgba(45, 27, 15, 0.4);
+        border-radius: 0 0 15px 15px;
+        padding: 30px;
+        border: 1px solid rgba(212, 165, 116, 0.2);
+        border-top: none;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .book-card {
+        background: rgba(26, 47, 26, 0.6);
+        border-radius: 10px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(143, 188, 143, 0.1);
+        text-align: center;
+        position: relative;
+      }
+
+      .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border-color: rgba(143, 188, 143, 0.4);
+      }
+
+      .book-cover {
+        width: 100%;
+        max-width: 120px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .book-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e8e2d5;
+        margin-bottom: 5px;
+        line-height: 1.3;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .book-author {
+        font-size: 0.9rem;
+        color: #d4a574;
+        opacity: 0.9;
+      }
+
+      .book-rank {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(143, 188, 143, 0.9);
+        color: #1a2f1a;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
+
+      .bestseller-badge {
+        background: linear-gradient(45deg, #d4a574, #e8c899);
+        color: #1a2f1a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+      }
+
+      .search-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+      }
+
+      .author-match {
+        background: linear-gradient(45deg, #8fbc8f, #a0c4a0);
+        color: #1a2f1a;
+      }
+
+      .title-match {
+        background: linear-gradient(45deg, #d4a574, #e8c899);
+        color: #1a2f1a;
+      }
+
+      .search-result-card {
+        border: 1px solid rgba(143, 188, 143, 0.2);
+      }
+
+      .search-result-card:hover {
+        border-color: rgba(143, 188, 143, 0.5);
+      }
+
+      .new-release-badge {
+        background: linear-gradient(45deg, #8fbc8f, #a0c4a0);
+        color: #1a2f1a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+      }
+
+      .new-release-card {
+        border: 1px solid rgba(143, 188, 143, 0.2);
+      }
+
+      .new-release-card:hover {
+        border-color: rgba(143, 188, 143, 0.5);
+      }
+
+      .book-list-name {
+        font-size: 0.8rem;
+        color: #a0957f;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2rem;
+        color: #8fbc8f;
+      }
+
+      .spinner {
+        border: 4px solid rgba(143, 188, 143, 0.3);
+        border-left: 4px solid #8fbc8f;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: #d4a574;
+        background: rgba(212, 165, 116, 0.1);
+        border-radius: 10px;
+        border: 1px solid rgba(212, 165, 116, 0.2);
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #1a2f1a, #2d1b0f);
+        margin: 3% auto;
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        border: 2px solid rgba(143, 188, 143, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .close {
+        color: #d4a574;
+        float: right;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .close:hover {
+        color: #8fbc8f;
+      }
+
+      .modal-header {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 25px;
+        align-items: flex-start;
+      }
+
+      .modal-cover {
+        width: 150px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-info {
+        flex: 1;
+      }
+
+      .modal-title {
+        font-size: 1.8rem;
+        color: #8fbc8f;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .modal-author {
+        font-size: 1.2rem;
+        color: #d4a574;
+        margin-bottom: 15px;
+      }
+
+      .modal-details {
+        margin-bottom: 20px;
+      }
+
+      .detail-item {
+        margin-bottom: 10px;
+        color: #e8e2d5;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #8fbc8f;
+        display: inline-block;
+        width: 120px;
+      }
+
+      .modal-description {
+        color: #e8e2d5;
+        line-height: 1.7;
+        text-align: justify;
+      }
+
+      .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .genre-tag {
+        background: rgba(143, 188, 143, 0.2);
+        color: #8fbc8f;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        border: 1px solid rgba(143, 188, 143, 0.3);
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0957f;
+        font-size: 1.1rem;
+      }
+
+      /* My Shelf specific styles */
+      .my-shelf-badge {
+        background: linear-gradient(45deg, #8fbc8f, #a0c4a0);
+        color: #1a2f1a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+      }
+
+      .shelf-card {
+        border: 1px solid rgba(143, 188, 143, 0.2);
+      }
+
+      .shelf-card:hover {
+        border-color: rgba(143, 188, 143, 0.5);
+      }
+
+      .add-to-shelf-btn {
+        background: rgba(143, 188, 143, 0.8);
+        color: #1a2f1a;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      .add-to-shelf-btn:hover {
+        background: rgba(143, 188, 143, 1);
+        transform: translateY(-1px);
+      }
+
+      .remove-from-shelf-btn {
+        background: rgba(212, 165, 116, 0.8);
+        color: #1a2f1a;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      .remove-from-shelf-btn:hover {
+        background: rgba(212, 165, 116, 1);
+        transform: translateY(-1px);
+      }
+
+      .modal-actions {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .shelf-stats {
+        background: rgba(143, 188, 143, 0.1);
+        border: 1px solid rgba(143, 188, 143, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #8fbc8f;
+      }
+
+      /* Recommendations specific styles */
+      .recommendation-info {
+        background: rgba(212, 165, 116, 0.1);
+        border: 1px solid rgba(212, 165, 116, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #d4a574;
+      }
+
+      .recommendation-badge {
+        background: linear-gradient(45deg, #d4a574, #e8c899);
+        color: #1a2f1a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: inline-block;
+      }
+
+      .recommendation-card {
+        border: 1px solid rgba(212, 165, 116, 0.2);
+      }
+
+      .recommendation-card:hover {
+        border-color: rgba(212, 165, 116, 0.5);
+      }
+
+      .recommendation-reason {
+        font-size: 0.8rem;
+        color: #a0957f;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+        }
+
+        /* Mobile Hub Button */
+        .hub-button-container {
+          top: 15px;
+          left: 15px;
+        }
+
+        .hub-button {
+          padding: 10px 14px;
+          font-size: 0.8rem;
+          border-radius: 20px;
+          gap: 6px;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+
+        .hub-button:active {
+          transform: scale(0.95);
+        }
+
+        .hub-icon {
+          font-size: 1rem;
+        }
+
+        .hub-text {
+          font-size: 0.8rem;
+        }
+
+        .header {
+          margin-bottom: 20px;
+          padding: 15px 0;
+          margin-top: 40px;
+        }
+
+        .header h1 {
+          font-size: 2.2rem;
+          margin-bottom: 5px;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .search-section {
+          padding: 20px;
+          margin-bottom: 20px;
+        }
+
+        .search-container {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .search-input {
+          min-width: 100%;
+          padding: 12px 16px;
+          font-size: 1rem;
+        }
+
+        .search-btn {
+          padding: 12px 24px;
+          font-size: 1rem;
+          width: 100%;
+        }
+
+        .tabs {
+          flex-direction: column;
+          border-radius: 10px;
+        }
+
+        .tab {
+          padding: 15px;
+          font-size: 1rem;
+          border-radius: 0;
+          border-bottom: 1px solid rgba(143, 188, 143, 0.1);
+        }
+
+        .tab:first-child {
+          border-radius: 10px 10px 0 0;
+        }
+
+        .tab:last-child {
+          border-radius: 0 0 10px 10px;
+          border-bottom: none;
+        }
+
+        .tab.active {
+          border-bottom: 1px solid #8fbc8f;
+        }
+
+        .tab-content {
+          border-radius: 10px;
+          padding: 20px;
+          border-top: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 15px;
+        }
+
+        .book-card {
+          padding: 12px;
+        }
+
+        .book-cover {
+          max-width: 100px;
+          height: 140px;
+        }
+
+        .book-title {
+          font-size: 0.9rem;
+          height: 36px;
+        }
+
+        .book-author {
+          font-size: 0.8rem;
+        }
+
+        .search-results-section {
+          padding: 20px;
+          margin-bottom: 30px;
+        }
+
+        .search-results-section h2 {
+          font-size: 1.5rem;
+          margin-bottom: 20px;
+        }
+
+        .clear-search {
+          padding: 8px 16px;
+          font-size: 0.8rem;
+          margin-bottom: 15px;
+        }
+
+        .modal {
+          padding: 10px;
+        }
+
+        .modal-content {
+          margin: 5% auto;
+          width: 95%;
+          max-width: none;
+          padding: 20px;
+          border-radius: 15px;
+          max-height: 90vh;
+        }
+
+        .modal-header {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+        }
+
+        .modal-cover {
+          width: 120px;
+          height: 160px;
+          margin: 0 auto;
+        }
+
+        .modal-title {
+          font-size: 1.5rem;
+        }
+
+        .modal-author {
+          font-size: 1rem;
+        }
+
+        .detail-item {
+          margin-bottom: 8px;
+        }
+
+        .detail-label {
+          width: 100px;
+          font-size: 0.9rem;
+        }
+
+        .modal-description {
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+
+        .genre-tags {
+          margin-top: 10px;
+          gap: 6px;
+        }
+
+        .genre-tag {
+          font-size: 0.8rem;
+          padding: 4px 8px;
+        }
+
+        .modal-actions {
+          margin-top: 15px;
+        }
+
+        .add-to-shelf-btn,
+        .remove-from-shelf-btn {
+          padding: 12px 20px;
+          font-size: 0.9rem;
+          width: 100%;
+        }
+
+        .shelf-stats,
+        .recommendation-info {
+          padding: 12px;
+          margin-bottom: 15px;
+        }
+
+        .shelf-stats h3,
+        .recommendation-info h3 {
+          font-size: 1.2rem;
+          margin-bottom: 5px;
+        }
+
+        .shelf-stats p,
+        .recommendation-info p {
+          font-size: 0.9rem;
+        }
+
+        .loading {
+          padding: 30px;
+          font-size: 1rem;
+        }
+
+        .spinner {
+          width: 30px;
+          height: 30px;
+          margin: 0 auto 15px;
+        }
+
+        .no-results {
+          padding: 40px 15px;
+          font-size: 1rem;
+        }
+
+        .no-results h3 {
+          font-size: 1.2rem;
+          margin-bottom: 10px;
+        }
+
+        .error-message {
+          padding: 30px 15px;
+          font-size: 0.9rem;
+        }
+
+        /* Touch-friendly interactions */
+        .book-card {
+          transition: all 0.2s ease;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .book-card:active {
+          transform: scale(0.95);
+          background: rgba(26, 47, 26, 0.8);
+        }
+
+        .tab {
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+
+        .search-btn,
+        .clear-search,
+        .add-to-shelf-btn,
+        .remove-from-shelf-btn {
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+
+        .search-btn:active {
+          transform: scale(0.98);
+        }
+
+        /* Improve text readability on small screens */
+        .recommendation-reason,
+        .book-list-name {
+          font-size: 0.75rem;
+        }
+
+        .search-badge,
+        .new-release-badge,
+        .my-shelf-badge,
+        .recommendation-badge {
+          font-size: 0.7rem;
+          padding: 3px 6px;
+        }
+
+        /* Better spacing for mobile */
+        .search-badge,
+        .new-release-badge,
+        .my-shelf-badge,
+        .recommendation-badge {
+          margin-bottom: 6px;
+        }
+
+        /* Optimize modal close button for touch */
+        .close {
+          font-size: 30px;
+          padding: 5px;
+          margin: -5px -5px 0 0;
+        }
+      }
+
+      /* Extra small screens (phones in portrait) */
+      @media (max-width: 480px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+          gap: 12px;
+        }
+
+        .book-cover {
+          max-width: 80px;
+          height: 120px;
+        }
+
+        .book-title {
+          font-size: 0.8rem;
+          height: 32px;
+        }
+
+        .book-author {
+          font-size: 0.75rem;
+        }
+
+        .modal-content {
+          padding: 15px;
+          margin: 2% auto;
+        }
+
+        .modal-cover {
+          width: 100px;
+          height: 140px;
+        }
+
+        .modal-title {
+          font-size: 1.3rem;
+        }
+
+        .search-results-section h2 {
+          font-size: 1.3rem;
+        }
+      }
+
+      /* Landscape orientation optimization */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .header {
+          padding: 20px 0;
+          margin-bottom: 20px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+
+        .modal-header {
+          flex-direction: row;
+          text-align: left;
+        }
+
+        .modal-cover {
+          width: 100px;
+          height: 140px;
+          margin: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Hub Button -->
+      <div class="hub-button-container">
+        <button class="hub-button" onclick="goToHub()">
+          <span class="hub-icon">←</span>
+          <span class="hub-text">Hub</span>
+        </button>
+      </div>
+
+      <div class="header">
+        <h1>Bean's bookshelf</h1>
+        <p>♡Create your shelf and get personal recommendations♡</p>
+      </div>
+
+      <div class="search-section">
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search for books or authors..."
+          />
+          <button id="searchBtn" class="search-btn">Search</button>
+        </div>
+      </div>
+
+      <!-- Search Results Section (appears at top when searching) -->
+      <div class="search-results-section" id="searchResultsSection">
+        <button class="clear-search" id="clearSearch">
+          Clear Search Results
+        </button>
+        <h2>Search Results</h2>
+        <div id="searchBooksGrid" class="books-grid"></div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <button class="tab active" data-tab="bestsellers">
+          NYT Bestsellers
+        </button>
+        <button class="tab" data-tab="newreleases">New Releases</button>
+        <button class="tab" data-tab="myshelf">My Shelf</button>
+        <button class="tab" data-tab="recommendations">Recommendations</button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <div class="tab-panel active" id="bestsellers">
+          <div id="bestsellerBooks" class="books-grid">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading NYT bestsellers...
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="newreleases">
+          <div id="newReleases" class="books-grid">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading new releases...
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="myshelf">
+          <div class="shelf-stats" id="shelfStats">
+            <h3>Your Library</h3>
+            <p>Books saved: <span id="bookCount">0</span></p>
+          </div>
+          <div id="myShelfBooks" class="books-grid">
+            <div class="no-results">
+              <h3>Your shelf is empty</h3>
+              <p>
+                Browse books and click "Add to Shelf" to start building your
+                collection!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="recommendations">
+          <div class="recommendation-info" id="recommendationInfo">
+            <h3>Personalized Recommendations</h3>
+            <p>
+              Based on your saved books, we'll find similar titles you might
+              enjoy
+            </p>
+          </div>
+          <div id="recommendationBooks" class="books-grid">
+            <div class="no-results">
+              <h3>No recommendations yet</h3>
+              <p>
+                Add some books to your shelf first, and we'll generate
+                personalized recommendations for you!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="bookModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+          <img id="modalCover" class="modal-cover" src="" alt="Book Cover" />
+          <div class="modal-info">
+            <h3 id="modalTitle" class="modal-title"></h3>
+            <p id="modalAuthor" class="modal-author"></p>
+            <div class="modal-details">
+              <div class="detail-item">
+                <span class="detail-label">Published:</span>
+                <span id="modalDate"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Publisher:</span>
+                <span id="modalPublisher"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Pages:</span>
+                <span id="modalPages"></span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Language:</span>
+                <span id="modalLanguage"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="modalDescription" class="modal-description"></div>
+        <div id="modalGenres" class="genre-tags"></div>
+        <div class="modal-actions">
+          <button
+            id="shelfActionBtn"
+            class="add-to-shelf-btn"
+            onclick="toggleShelfStatus()"
+          >
+            Add to Shelf
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Configuration
+      const CONFIG = {
+        // API keys configured
+        NYT_API_KEY: "nbQVt9ft6BWAx5W5960gyKcSJO8oomM6", // NYT Books API
+        GOOGLE_BOOKS_API_KEY: "AIzaSyD6ISfx6ekKOVlk7sLuvg5tp_KahhgfU4s", // Google Books API
+
+        // CORS proxy options (choose one that works best)
+        CORS_PROXIES: [
+          "https://api.allorigins.win/raw?url=",
+          "https://corsproxy.io/?",
+          "https://proxy.cors.sh/",
+        ],
+
+        // APIs
+        NYT_BASE: "https://api.nytimes.com/svc/books/v3",
+        GOOGLE_BOOKS_BASE: "https://www.googleapis.com/books/v1/volumes",
+      };
+
+      // Global variables
+      let currentCorsProxy = 0;
+      let bestsellerData = [];
+      let myShelf = [];
+      let currentBookId = null;
+
+      // Utility function to clean HTML tags from text
+      function cleanDescription(text) {
+        if (!text) return "";
+
+        // Remove HTML tags and decode HTML entities
+        const div = document.createElement("div");
+        div.innerHTML = text;
+        let cleanText = div.textContent || div.innerText || "";
+
+        // Remove extra whitespace and normalize spacing
+        cleanText = cleanText.replace(/\s+/g, " ").trim();
+
+        return cleanText;
+      }
+
+      // Initialize the app
+      document.addEventListener("DOMContentLoaded", function () {
+        loadMyShelf();
+        setupEventListeners();
+        setupTabs();
+        loadBestsellers();
+        updateShelfStats();
+        // Don't load new releases initially - wait for tab activation
+      });
+
+      // Hub navigation function
+      function goToHub() {
+        // You can customize this URL to point to your actual index/hub page
+        // For now, it shows an alert - replace with actual navigation
+        if (
+          confirm(
+            "Navigate back to Hub? (This will leave the Book Discovery app)"
+          )
+        ) {
+          // Replace this with your actual hub URL
+          window.location.href = "/"; // or 'index.html' or your hub page URL
+        }
+      }
+
+      // My Shelf Management Functions
+      function loadMyShelf() {
+        const saved = JSON.parse(JSON.stringify(myShelf || [])); // Deep copy to avoid reference issues
+        myShelf = saved;
+      }
+
+      function saveToShelf(bookData) {
+        // Check if book is already in shelf
+        const existingIndex = myShelf.findIndex(
+          (book) =>
+            book.id === bookData.id ||
+            (book.title === bookData.title && book.author === bookData.author)
+        );
+
+        if (existingIndex === -1) {
+          myShelf.push({
+            id: bookData.id,
+            title: bookData.title,
+            author: bookData.author,
+            thumbnail: bookData.thumbnail,
+            dateAdded: new Date().toISOString(),
+          });
+          updateShelfStats();
+          displayMyShelf();
+
+          // Regenerate recommendations if recommendations tab has been visited
+          if (
+            document
+              .getElementById("recommendations")
+              .hasAttribute("data-loaded")
+          ) {
+            generateRecommendations();
+          }
+
+          return true;
+        }
+        return false;
+      }
+
+      function removeFromShelf(bookId) {
+        const initialLength = myShelf.length;
+        myShelf = myShelf.filter((book) => book.id !== bookId);
+        if (myShelf.length < initialLength) {
+          updateShelfStats();
+          displayMyShelf();
+
+          // Regenerate recommendations if recommendations tab has been visited
+          if (
+            document
+              .getElementById("recommendations")
+              .hasAttribute("data-loaded")
+          ) {
+            generateRecommendations();
+          }
+
+          return true;
+        }
+        return false;
+      }
+
+      function isInShelf(bookId) {
+        return myShelf.some((book) => book.id === bookId);
+      }
+
+      function updateShelfStats() {
+        const bookCount = document.getElementById("bookCount");
+        if (bookCount) {
+          bookCount.textContent = myShelf.length;
+        }
+      }
+
+      function displayMyShelf() {
+        const container = document.getElementById("myShelfBooks");
+
+        if (myShelf.length === 0) {
+          container.innerHTML = `
+            <div class="no-results">
+              <h3>Your shelf is empty</h3>
+              <p>Browse books and click "Add to Shelf" to start building your collection!</p>
+            </div>
+          `;
+          return;
+        }
+
+        const booksHTML = myShelf
+          .map((book) => {
+            return `
+            <div class="book-card shelf-card" onclick="showBookDetails('${book.id}')">
+              <div class="my-shelf-badge">MY SHELF</div>
+              <img src="${book.thumbnail}" alt="${book.title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+              <div class="book-title">${book.title}</div>
+              <div class="book-author">${book.author}</div>
+            </div>
+          `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      function toggleShelfStatus() {
+        if (!currentBookId) return;
+
+        const isCurrentlyInShelf = isInShelf(currentBookId);
+        const title = document.getElementById("modalTitle").textContent;
+        const author = document.getElementById("modalAuthor").textContent;
+        const thumbnail = document.getElementById("modalCover").src;
+
+        if (isCurrentlyInShelf) {
+          removeFromShelf(currentBookId);
+          updateShelfButton();
+        } else {
+          const bookData = {
+            id: currentBookId,
+            title: title,
+            author: author,
+            thumbnail: thumbnail,
+          };
+          saveToShelf(bookData);
+          updateShelfButton();
+        }
+      }
+
+      function updateShelfButton() {
+        const shelfBtn = document.getElementById("shelfActionBtn");
+        if (!shelfBtn || !currentBookId) return;
+
+        if (isInShelf(currentBookId)) {
+          shelfBtn.textContent = "Remove from Shelf";
+          shelfBtn.className = "remove-from-shelf-btn";
+        } else {
+          shelfBtn.textContent = "Add to Shelf";
+          shelfBtn.className = "add-to-shelf-btn";
+        }
+      }
+
+      // Recommendation Generation Functions
+      async function generateRecommendations() {
+        if (myShelf.length === 0) {
+          displayEmptyRecommendations();
+          return;
+        }
+
+        const container = document.getElementById("recommendationBooks");
+        container.innerHTML =
+          '<div class="loading"><div class="spinner"></div>Generating personalized recommendations...</div>';
+
+        try {
+          // Strategy 1: Extract authors and genres from saved books
+          const authors = await extractAuthorsFromShelf();
+          const genres = await extractGenresFromShelf();
+
+          // Strategy 2: Use multiple recommendation approaches
+          let allRecommendations = [];
+
+          // Approach 1: Similar authors
+          if (authors.length > 0) {
+            const authorRecs = await getRecommendationsByAuthors(authors);
+            allRecommendations = allRecommendations.concat(authorRecs);
+          }
+
+          // Approach 2: Similar genres/categories
+          if (genres.length > 0) {
+            const genreRecs = await getRecommendationsByGenres(genres);
+            allRecommendations = allRecommendations.concat(genreRecs);
+          }
+
+          // Approach 3: NYT bestsellers in similar categories
+          const nytRecs = await getNYTRecommendations(genres);
+          allRecommendations = allRecommendations.concat(nytRecs);
+
+          // Remove duplicates and books already in shelf
+          const uniqueRecommendations =
+            filterAndRankRecommendations(allRecommendations);
+
+          if (uniqueRecommendations.length > 0) {
+            displayRecommendations(
+              uniqueRecommendations.slice(0, 12),
+              container
+            );
+          } else {
+            displayNoRecommendations(container);
+          }
+        } catch (error) {
+          console.error("Error generating recommendations:", error);
+          container.innerHTML =
+            '<div class="error-message">Unable to generate recommendations. Please try again later.</div>';
+        }
+      }
+
+      async function extractAuthorsFromShelf() {
+        const authors = new Set();
+
+        for (const book of myShelf) {
+          try {
+            // Get detailed book info to extract author
+            const bookDetails = await searchGoogleBooks(
+              `intitle:"${book.title}" inauthor:"${book.author}"`
+            );
+            if (bookDetails?.volumeInfo?.authors) {
+              bookDetails.volumeInfo.authors.forEach((author) => {
+                authors.add(author.toLowerCase());
+              });
+            }
+          } catch (error) {
+            console.warn("Failed to get author details for:", book.title);
+          }
+        }
+
+        return Array.from(authors).slice(0, 5); // Limit to top 5 authors
+      }
+
+      async function extractGenresFromShelf() {
+        const genres = new Set();
+
+        for (const book of myShelf) {
+          try {
+            // Get detailed book info to extract genres
+            const bookDetails = await searchGoogleBooks(
+              `intitle:"${book.title}" inauthor:"${book.author}"`
+            );
+            if (bookDetails?.volumeInfo?.categories) {
+              bookDetails.volumeInfo.categories.forEach((category) => {
+                // Extract main genre (before / or &)
+                const mainGenre = category
+                  .split("/")[0]
+                  .split("&")[0]
+                  .trim()
+                  .toLowerCase();
+                if (mainGenre !== "general" && mainGenre !== "fiction") {
+                  genres.add(mainGenre);
+                }
+              });
+            }
+          } catch (error) {
+            console.warn("Failed to get genre details for:", book.title);
+          }
+
+          // Rate limiting
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+
+        return Array.from(genres).slice(0, 5); // Limit to top 5 genres
+      }
+
+      async function getRecommendationsByAuthors(authors) {
+        let recommendations = [];
+
+        for (const author of authors.slice(0, 3)) {
+          // Limit to top 3 authors
+          try {
+            const query = `inauthor:"${author}"`;
+            const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+              ? `&key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+              : "";
+            const url = `${CONFIG.GOOGLE_BOOKS_BASE}?q=${encodeURIComponent(
+              query
+            )}&orderBy=relevance&printType=books&maxResults=5${apiKey}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.items) {
+              const authorRecs = data.items.map((book) => ({
+                ...book,
+                recommendationType: "author",
+                recommendationReason: `Similar author: ${author}`,
+                recommendationScore: 1,
+              }));
+              recommendations = recommendations.concat(authorRecs);
+            }
+          } catch (error) {
+            console.warn(`Failed to get recommendations for author: ${author}`);
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        return recommendations;
+      }
+
+      async function getRecommendationsByGenres(genres) {
+        let recommendations = [];
+
+        for (const genre of genres.slice(0, 3)) {
+          // Limit to top 3 genres
+          try {
+            const query = `subject:"${genre}" fiction`;
+            const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+              ? `&key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+              : "";
+            const url = `${CONFIG.GOOGLE_BOOKS_BASE}?q=${encodeURIComponent(
+              query
+            )}&orderBy=relevance&printType=books&maxResults=5${apiKey}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.items) {
+              const genreRecs = data.items.map((book) => ({
+                ...book,
+                recommendationType: "genre",
+                recommendationReason: `Similar genre: ${genre}`,
+                recommendationScore: 0.8,
+              }));
+              recommendations = recommendations.concat(genreRecs);
+            }
+          } catch (error) {
+            console.warn(`Failed to get recommendations for genre: ${genre}`);
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        return recommendations;
+      }
+
+      async function getNYTRecommendations(genres) {
+        let recommendations = [];
+
+        try {
+          // Get current bestsellers from different NYT lists based on user's genres
+          const listsToCheck = [
+            "hardcover-fiction",
+            "trade-fiction-paperback",
+            "combined-print-and-e-book-fiction",
+          ];
+
+          for (const listName of listsToCheck.slice(0, 2)) {
+            // Limit to 2 lists
+            try {
+              const nytUrl = `${CONFIG.NYT_BASE}/lists/current/${listName}.json?api-key=${CONFIG.NYT_API_KEY}`;
+              const nytData = await makeProxiedRequest(nytUrl);
+
+              if (nytData.results && nytData.results.books) {
+                // Get Google Books data for NYT books
+                for (const book of nytData.results.books.slice(0, 3)) {
+                  // Top 3 from each list
+                  try {
+                    const googleBook = await searchGoogleBooks(
+                      `intitle:"${book.title}" inauthor:"${book.author}"`
+                    );
+                    if (googleBook) {
+                      recommendations.push({
+                        ...googleBook,
+                        recommendationType: "bestseller",
+                        recommendationReason: "Currently trending",
+                        recommendationScore: 0.6,
+                        nytData: book,
+                      });
+                    }
+                  } catch (error) {
+                    console.warn(
+                      "Failed to get Google data for NYT book:",
+                      book.title
+                    );
+                  }
+
+                  await new Promise((resolve) => setTimeout(resolve, 200));
+                }
+              }
+            } catch (error) {
+              console.warn(
+                `Failed to get NYT recommendations from ${listName}`
+              );
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+        } catch (error) {
+          console.warn("Failed to get NYT recommendations:", error);
+        }
+
+        return recommendations;
+      }
+
+      function filterAndRankRecommendations(recommendations) {
+        // Remove duplicates by ID
+        const seen = new Map();
+        const unique = recommendations.filter((book) => {
+          if (seen.has(book.id)) return false;
+          seen.set(book.id, book);
+          return true;
+        });
+
+        // Remove books already in shelf
+        const filtered = unique.filter((book) => {
+          return (
+            !isInShelf(book.id) &&
+            !myShelf.some(
+              (shelfBook) =>
+                shelfBook.title.toLowerCase() ===
+                book.volumeInfo?.title?.toLowerCase()
+            )
+          );
+        });
+
+        // Sort by recommendation score (higher is better) and then by rating/relevance
+        return filtered.sort((a, b) => {
+          // Primary sort by recommendation score
+          if (a.recommendationScore !== b.recommendationScore) {
+            return b.recommendationScore - a.recommendationScore;
+          }
+
+          // Secondary sort by average rating if available
+          const aRating = a.volumeInfo?.averageRating || 0;
+          const bRating = b.volumeInfo?.averageRating || 0;
+          return bRating - aRating;
+        });
+      }
+
+      function displayRecommendations(recommendations, container) {
+        if (!recommendations || recommendations.length === 0) {
+          displayNoRecommendations(container);
+          return;
+        }
+
+        const booksHTML = recommendations
+          .map((book) => {
+            const info = book.volumeInfo;
+            const title = info.title || "Unknown Title";
+            const authors = info.authors
+              ? info.authors.join(", ")
+              : "Unknown Author";
+            const thumbnail = info.imageLinks
+              ? info.imageLinks.thumbnail || info.imageLinks.smallThumbnail
+              : "https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover";
+
+            const reason = book.recommendationReason || "Recommended for you";
+
+            return `
+            <div class="book-card recommendation-card" onclick="showBookDetails('${book.id}')">
+              <div class="recommendation-badge">RECOMMENDED</div>
+              <img src="${thumbnail}" alt="${title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+              <div class="book-title">${title}</div>
+              <div class="book-author">${authors}</div>
+              <div class="recommendation-reason">${reason}</div>
+            </div>
+          `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      function displayNoRecommendations(container) {
+        container.innerHTML = `
+          <div class="no-results">
+            <h3>No recommendations found</h3>
+            <p>We couldn't find similar books at the moment. Try adding more books to your shelf or check back later!</p>
+          </div>
+        `;
+      }
+
+      function displayEmptyRecommendations() {
+        const container = document.getElementById("recommendationBooks");
+        container.innerHTML = `
+          <div class="no-results">
+            <h3>No recommendations yet</h3>
+            <p>Add some books to your shelf first, and we'll generate personalized recommendations for you!</p>
+          </div>
+        `;
+      }
+
+      function setupEventListeners() {
+        const searchBtn = document.getElementById("searchBtn");
+        const searchInput = document.getElementById("searchInput");
+        const clearSearch = document.getElementById("clearSearch");
+        const modal = document.getElementById("bookModal");
+        const closeBtn = document.querySelector(".close");
+
+        searchBtn.addEventListener("click", performSearch);
+        searchInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            performSearch();
+          }
+        });
+
+        clearSearch.addEventListener("click", clearSearchResults);
+
+        closeBtn.addEventListener("click", function () {
+          modal.style.display = "none";
+          currentBookId = null;
+        });
+
+        window.addEventListener("click", function (e) {
+          if (e.target === modal) {
+            modal.style.display = "none";
+            currentBookId = null;
+          }
+        });
+      }
+
+      function setupTabs() {
+        const tabs = document.querySelectorAll(".tab");
+        const panels = document.querySelectorAll(".tab-panel");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const targetTab = this.getAttribute("data-tab");
+
+            // Remove active class from all tabs and panels
+            tabs.forEach((t) => t.classList.remove("active"));
+            panels.forEach((p) => p.classList.remove("active"));
+
+            // Add active class to clicked tab and corresponding panel
+            this.classList.add("active");
+            document.getElementById(targetTab).classList.add("active");
+
+            // Load data for the activated tab if not loaded yet
+            if (
+              targetTab === "newreleases" &&
+              !document
+                .getElementById("newReleases")
+                .hasAttribute("data-loaded")
+            ) {
+              loadNewReleases();
+              document
+                .getElementById("newReleases")
+                .setAttribute("data-loaded", "true");
+            } else if (targetTab === "myshelf") {
+              displayMyShelf();
+            } else if (
+              targetTab === "recommendations" &&
+              !document
+                .getElementById("recommendations")
+                .hasAttribute("data-loaded")
+            ) {
+              generateRecommendations();
+              document
+                .getElementById("recommendations")
+                .setAttribute("data-loaded", "true");
+            }
+          });
+        });
+      }
+
+      function clearSearchResults() {
+        const searchResultsSection = document.getElementById(
+          "searchResultsSection"
+        );
+        const searchInput = document.getElementById("searchInput");
+
+        searchResultsSection.style.display = "none";
+        searchInput.value = "";
+      }
+
+      async function makeProxiedRequest(url, headers = {}) {
+        const proxy = CONFIG.CORS_PROXIES[currentCorsProxy];
+
+        try {
+          const response = await fetch(proxy + encodeURIComponent(url), {
+            headers: {
+              Origin: window.location.origin,
+              "X-Requested-With": "XMLHttpRequest",
+              ...headers,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.warn(`CORS proxy ${proxy} failed, trying next...`);
+          currentCorsProxy =
+            (currentCorsProxy + 1) % CONFIG.CORS_PROXIES.length;
+
+          if (currentCorsProxy === 0) {
+            throw new Error("All CORS proxies failed");
+          }
+
+          return makeProxiedRequest(url, headers);
+        }
+      }
+
+      async function loadBestsellers() {
+        const container = document.getElementById("bestsellerBooks");
+
+        try {
+          // Try NYT API first (requires API key)
+          if (CONFIG.NYT_API_KEY) {
+            const nytUrl = `${CONFIG.NYT_BASE}/lists/current/hardcover-fiction.json?api-key=${CONFIG.NYT_API_KEY}`;
+            const nytData = await makeProxiedRequest(nytUrl);
+
+            if (nytData.results && nytData.results.books) {
+              // Transform NYT data to match our expected format
+              bestsellerData = nytData.results.books.map((book, index) => ({
+                rank: book.rank || index + 1,
+                book_details: [
+                  {
+                    title: book.title,
+                    author: book.author,
+                    description: cleanDescription(book.description),
+                  },
+                ],
+                isbns: [
+                  { isbn10: book.primary_isbn10, isbn13: book.primary_isbn13 },
+                ],
+                weeks_on_list: book.weeks_on_list,
+                rank_last_week: book.rank_last_week,
+              }));
+
+              await enhanceBooksWithGoogleData(bestsellerData);
+              displayBestsellers(bestsellerData, container);
+              return;
+            }
+          }
+
+          // Fallback: Use curated bestseller list
+          await loadCuratedBestsellers(container);
+        } catch (error) {
+          console.error("Error loading bestsellers:", error);
+          await loadCuratedBestsellers(container);
+        }
+      }
+
+      async function loadCuratedBestsellers(container) {
+        // Fallback with known popular books from recent NYT lists
+        const curatedBestsellers = [
+          { title: "Fourth Wing", author: "Rebecca Yarros" },
+          { title: "It Ends with Us", author: "Colleen Hoover" },
+          {
+            title: "The Seven Husbands of Evelyn Hugo",
+            author: "Taylor Jenkins Reid",
+          },
+          { title: "Where the Crawdads Sing", author: "Delia Owens" },
+          { title: "The Silent Patient", author: "Alex Michaelides" },
+          { title: "Atomic Habits", author: "James Clear" },
+          { title: "The Midnight Library", author: "Matt Haig" },
+          { title: "Circe", author: "Madeline Miller" },
+          { title: "The Song of Achilles", author: "Madeline Miller" },
+          { title: "Normal People", author: "Sally Rooney" },
+          { title: "Educated", author: "Tara Westover" },
+          { title: "The Invisible Life of Addie LaRue", author: "V.E. Schwab" },
+        ];
+
+        const books = await Promise.all(
+          curatedBestsellers.map(async (book, index) => {
+            const googleBook = await searchGoogleBooks(
+              `intitle:"${book.title}" inauthor:"${book.author}"`
+            );
+            return {
+              rank: index + 1,
+              book_details: [
+                {
+                  title: book.title,
+                  author: book.author,
+                  description: cleanDescription(
+                    googleBook?.volumeInfo?.description ||
+                      "Popular bestselling book"
+                  ),
+                },
+              ],
+              isbns: googleBook?.volumeInfo?.industryIdentifiers || [],
+              googleData: googleBook,
+            };
+          })
+        );
+
+        bestsellerData = books.filter((book) => book.googleData);
+        displayBestsellers(bestsellerData, container);
+      }
+
+      async function enhanceBooksWithGoogleData(books) {
+        for (let book of books) {
+          try {
+            let googleBook = null;
+
+            // Try ISBN first
+            if (book.isbns && book.isbns.length > 0) {
+              const isbn = book.isbns[0].isbn13 || book.isbns[0].isbn10;
+              if (isbn) {
+                googleBook = await searchGoogleBooks(`isbn:${isbn}`);
+              }
+            }
+
+            // Fallback to title + author
+            if (!googleBook && book.book_details && book.book_details[0]) {
+              const title = book.book_details[0].title;
+              const author = book.book_details[0].author;
+              if (title && author) {
+                googleBook = await searchGoogleBooks(
+                  `intitle:"${title}" inauthor:"${author}"`
+                );
+              }
+            }
+
+            book.googleData = googleBook;
+          } catch (error) {
+            console.warn(
+              `Failed to get Google data for book:`,
+              book.book_details?.[0]?.title || "Unknown",
+              error
+            );
+          }
+
+          // Small delay to avoid rate limiting
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      }
+
+      async function searchGoogleBooks(query) {
+        try {
+          const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+            ? `&key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+            : "";
+          const url = `${CONFIG.GOOGLE_BOOKS_BASE}?q=${encodeURIComponent(
+            query
+          )}&orderBy=relevance&maxResults=1${apiKey}`;
+
+          const response = await fetch(url);
+          const data = await response.json();
+
+          return data.items && data.items.length > 0 ? data.items[0] : null;
+        } catch (error) {
+          console.warn("Google Books search failed:", error);
+          return null;
+        }
+      }
+
+      function displayBestsellers(books, container) {
+        if (!books || books.length === 0) {
+          container.innerHTML =
+            '<div class="error-message">Unable to load bestseller data. Please check your API keys and try again.</div>';
+          return;
+        }
+
+        const booksHTML = books
+          .map((book, index) => {
+            const bookDetails = book.book_details ? book.book_details[0] : {};
+            const title = bookDetails.title || "Unknown Title";
+            const author = bookDetails.author || "Unknown Author";
+            const rank = book.rank || index + 1;
+
+            let thumbnail =
+              "https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover";
+            let bookId = null;
+
+            if (book.googleData) {
+              bookId = book.googleData.id;
+              if (book.googleData.volumeInfo?.imageLinks) {
+                thumbnail =
+                  book.googleData.volumeInfo.imageLinks.thumbnail ||
+                  book.googleData.volumeInfo.imageLinks.smallThumbnail ||
+                  thumbnail;
+              }
+            }
+
+            const clickHandler = bookId
+              ? `showBookDetails('${bookId}')`
+              : "showFallbackModal('" + title + "', '" + author + "')";
+
+            return `
+                    <div class="book-card" onclick="${clickHandler}">
+                        <img src="${thumbnail}" alt="${title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+                        <div class="book-title">${title}</div>
+                        <div class="book-author">${author}</div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      async function loadNewReleases() {
+        const container = document.getElementById("newReleases");
+
+        try {
+          // Strategy 1: Get books that are "New this week" (weeks_on_list = 1) from multiple lists
+          const newReleaseLists = [
+            "trade-fiction-paperback", // Paperback Trade Fiction
+            "hardcover-fiction", // Different from main bestsellers
+            "young-adult", // YA releases
+            "combined-print-and-e-book-fiction", // Combined list
+          ];
+
+          let allNewReleases = [];
+
+          for (const listName of newReleaseLists) {
+            try {
+              const nytUrl = `${CONFIG.NYT_BASE}/lists/current/${listName}.json?api-key=${CONFIG.NYT_API_KEY}`;
+              const nytData = await makeProxiedRequest(nytUrl);
+
+              if (nytData.results && nytData.results.books) {
+                // Filter for truly new books (1-3 weeks on list)
+                const newBooks = nytData.results.books
+                  .filter((book) => book.weeks_on_list <= 3)
+                  .map((book, index) => ({
+                    rank: book.rank || index + 1,
+                    book_details: [
+                      {
+                        title: book.title,
+                        author: book.author,
+                        description: cleanDescription(book.description),
+                      },
+                    ],
+                    isbns: [
+                      {
+                        isbn10: book.primary_isbn10,
+                        isbn13: book.primary_isbn13,
+                      },
+                    ],
+                    weeks_on_list: book.weeks_on_list,
+                    rank_last_week: book.rank_last_week,
+                    list_name: nytData.results.display_name || listName,
+                    isNewRelease: true,
+                  }));
+
+                allNewReleases = allNewReleases.concat(newBooks);
+              }
+            } catch (error) {
+              console.warn(`Failed to load from ${listName}:`, error);
+            }
+
+            // Rate limiting
+            await new Promise((resolve) => setTimeout(resolve, 300));
+          }
+
+          // Remove duplicates and prioritize truly new books (weeks_on_list = 1)
+          const uniqueNewReleases = removeDuplicatesByISBN(allNewReleases);
+          const sortedNewReleases = uniqueNewReleases.sort((a, b) => {
+            // Prioritize books with fewer weeks on list (newer)
+            if (a.weeks_on_list !== b.weeks_on_list) {
+              return a.weeks_on_list - b.weeks_on_list;
+            }
+            // Then by rank
+            return (a.rank || 999) - (b.rank || 999);
+          });
+
+          // Enhance with Google Books data
+          await enhanceBooksWithGoogleData(sortedNewReleases);
+
+          // Display new releases
+          displayNewReleases(sortedNewReleases.slice(0, 12), container);
+        } catch (error) {
+          console.error("Error loading NYT new releases:", error);
+          // Fallback to Google Books approach
+          await loadGoogleNewReleases(container);
+        }
+      }
+
+      async function loadGoogleNewReleases(container) {
+        // Fallback: Use Google Books for new releases
+        try {
+          const currentYear = new Date().getFullYear();
+          const searches = [
+            `subject:fiction ${currentYear}`,
+            `subject:fiction ${currentYear - 1}`,
+            "subject:fiction newest published",
+          ];
+
+          let allNewBooks = [];
+
+          for (const search of searches) {
+            const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+              ? `&key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+              : "";
+            const url = `${CONFIG.GOOGLE_BOOKS_BASE}?q=${encodeURIComponent(
+              search
+            )}&orderBy=newest&printType=books&maxResults=8${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.items) {
+              allNewBooks = allNewBooks.concat(data.items);
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 300));
+          }
+
+          const uniqueBooks = removeDuplicates(allNewBooks);
+          const filteredBooks = uniqueBooks.filter((book) => {
+            const publishedDate = book.volumeInfo?.publishedDate;
+            return (
+              publishedDate && publishedDate.includes(currentYear.toString())
+            );
+          });
+
+          displayBooks(filteredBooks.slice(0, 12), container);
+        } catch (error) {
+          console.error("Error loading Google new releases:", error);
+          container.innerHTML =
+            '<div class="error-message">Failed to load new releases. Please try again later.</div>';
+        }
+      }
+
+      function removeDuplicatesByISBN(books) {
+        const seenISBNs = new Set();
+        const seenTitles = new Set();
+
+        return books.filter((book) => {
+          // Check by ISBN first
+          const isbn = book.isbns?.[0]?.isbn13 || book.isbns?.[0]?.isbn10;
+          if (isbn && seenISBNs.has(isbn)) {
+            return false;
+          }
+
+          // Fallback to title + author
+          const titleAuthor = `${book.book_details?.[0]?.title?.toLowerCase()}-${book.book_details?.[0]?.author?.toLowerCase()}`;
+          if (seenTitles.has(titleAuthor)) {
+            return false;
+          }
+
+          if (isbn) seenISBNs.add(isbn);
+          seenTitles.add(titleAuthor);
+          return true;
+        });
+      }
+
+      function displayNewReleases(books, container) {
+        if (!books || books.length === 0) {
+          container.innerHTML =
+            '<div class="error-message">Unable to load new release data. Please check your API keys and try again.</div>';
+          return;
+        }
+
+        const booksHTML = books
+          .map((book, index) => {
+            const bookDetails = book.book_details ? book.book_details[0] : {};
+            const title = bookDetails.title || "Unknown Title";
+            const author = bookDetails.author || "Unknown Author";
+            const weeksOnList = book.weeks_on_list || 1;
+            const listName = book.list_name || "Fiction";
+
+            let thumbnail =
+              "https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover";
+            let bookId = null;
+
+            if (book.googleData) {
+              bookId = book.googleData.id;
+              if (book.googleData.volumeInfo?.imageLinks) {
+                thumbnail =
+                  book.googleData.volumeInfo.imageLinks.thumbnail ||
+                  book.googleData.volumeInfo.imageLinks.smallThumbnail ||
+                  thumbnail;
+              }
+            }
+
+            const clickHandler = bookId
+              ? `showBookDetails('${bookId}')`
+              : "showFallbackModal('" + title + "', '" + author + "')";
+
+            // Badge for new releases
+            const newBadge =
+              weeksOnList === 1
+                ? '<div class="new-release-badge">NEW THIS WEEK</div>'
+                : `<div class="new-release-badge">${weeksOnList} WEEKS</div>`;
+
+            return `
+                    <div class="book-card new-release-card" onclick="${clickHandler}">
+                        ${newBadge}
+                        <img src="${thumbnail}" alt="${title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+                        <div class="book-title">${title}</div>
+                        <div class="book-author">${author}</div>
+                        <div class="book-list-name">${listName}</div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      async function performSearch() {
+        const query = document.getElementById("searchInput").value.trim();
+        if (!query) return;
+
+        const resultsSection = document.getElementById("searchResultsSection");
+        const container = document.getElementById("searchBooksGrid");
+
+        // Show search results at the top
+        resultsSection.style.display = "block";
+        resultsSection.scrollIntoView({ behavior: "smooth" });
+
+        container.innerHTML =
+          '<div class="loading"><div class="spinner"></div>Searching...</div>';
+
+        try {
+          // Strategy: Prioritize exact author matches, then titles, then general
+          // Removed partial author match to reduce irrelevant results
+          const searches = [
+            `inauthor:"${query}"`, // Exact author match (highest priority)
+            `intitle:"${query}"`, // Exact title match
+            `intitle:${query}`, // Partial title match
+            query, // General search (lowest priority)
+          ];
+
+          let allSearchResults = [];
+
+          for (let i = 0; i < searches.length; i++) {
+            const search = searches[i];
+            const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+              ? `&key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+              : "";
+            const url = `${CONFIG.GOOGLE_BOOKS_BASE}?q=${encodeURIComponent(
+              search
+            )}&orderBy=relevance&printType=books&maxResults=15${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.items) {
+              // Add search priority score to each book
+              const booksWithPriority = data.items.map((book) => ({
+                ...book,
+                searchPriority: i, // Lower number = higher priority
+                searchType: getSearchType(i),
+              }));
+              allSearchResults = allSearchResults.concat(booksWithPriority);
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 200));
+          }
+
+          if (allSearchResults.length > 0) {
+            // Remove duplicates while preserving highest priority
+            const uniqueBooks = removeDuplicatesWithPriority(allSearchResults);
+
+            // Sort by search priority (author matches first), then by relevance
+            const sortedBooks = uniqueBooks.sort((a, b) => {
+              if (a.searchPriority !== b.searchPriority) {
+                return a.searchPriority - b.searchPriority;
+              }
+              // If same priority, maintain original order (relevance from API)
+              return 0;
+            });
+
+            displayBooksWithSearchInfo(sortedBooks.slice(0, 20), container);
+          } else {
+            container.innerHTML =
+              '<div class="no-results">No books found. Try different search terms.</div>';
+          }
+        } catch (error) {
+          console.error("Error performing search:", error);
+          container.innerHTML =
+            '<div class="error-message">Search failed. Please try again later.</div>';
+        }
+      }
+
+      function getSearchType(searchIndex) {
+        const searchTypes = [
+          "Exact Author Match",
+          "Exact Title Match",
+          "Title Match",
+          "General Match",
+        ];
+        return searchTypes[searchIndex] || "General Match";
+      }
+
+      function removeDuplicatesWithPriority(books) {
+        const seen = new Map();
+        return books.filter((book) => {
+          const id = book.id;
+          if (seen.has(id)) {
+            // Keep the book with higher priority (lower searchPriority number)
+            const existingBook = seen.get(id);
+            if (book.searchPriority < existingBook.searchPriority) {
+              seen.set(id, book);
+              return true;
+            }
+            return false;
+          }
+          seen.set(id, book);
+          return true;
+        });
+      }
+
+      function displayBooksWithSearchInfo(books, container) {
+        if (!books || books.length === 0) {
+          container.innerHTML =
+            '<div class="no-results">No books available</div>';
+          return;
+        }
+
+        const booksHTML = books
+          .map((book) => {
+            const info = book.volumeInfo;
+            const title = info.title || "Unknown Title";
+            const authors = info.authors
+              ? info.authors.join(", ")
+              : "Unknown Author";
+            const thumbnail = info.imageLinks
+              ? info.imageLinks.thumbnail || info.imageLinks.smallThumbnail
+              : "https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover";
+
+            // Add search type badge for author matches
+            const searchBadge =
+              book.searchPriority === 0
+                ? '<div class="search-badge author-match">Author Match</div>'
+                : book.searchPriority <= 2
+                ? '<div class="search-badge title-match">Title Match</div>'
+                : "";
+
+            return `
+                    <div class="book-card search-result-card" onclick="showBookDetails('${book.id}')">
+                        ${searchBadge}
+                        <img src="${thumbnail}" alt="${title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+                        <div class="book-title">${title}</div>
+                        <div class="book-author">${authors}</div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      function removeDuplicates(books) {
+        const seen = new Set();
+        return books.filter((book) => {
+          const id = book.id;
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+      }
+
+      function displayBooks(books, container) {
+        if (!books || books.length === 0) {
+          container.innerHTML =
+            '<div class="no-results">No books available</div>';
+          return;
+        }
+
+        const booksHTML = books
+          .map((book) => {
+            const info = book.volumeInfo;
+            const title = info.title || "Unknown Title";
+            const authors = info.authors
+              ? info.authors.join(", ")
+              : "Unknown Author";
+            const thumbnail = info.imageLinks
+              ? info.imageLinks.thumbnail || info.imageLinks.smallThumbnail
+              : "https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover";
+
+            return `
+                    <div class="book-card" onclick="showBookDetails('${book.id}')">
+                        <img src="${thumbnail}" alt="${title}" class="book-cover" onerror="this.src='https://via.placeholder.com/120x160/2d1b0f/8fbc8f?text=No+Cover'">
+                        <div class="book-title">${title}</div>
+                        <div class="book-author">${authors}</div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        container.innerHTML = booksHTML;
+      }
+
+      async function showBookDetails(bookId) {
+        currentBookId = bookId; // Set current book ID
+
+        try {
+          const apiKey = CONFIG.GOOGLE_BOOKS_API_KEY
+            ? `?key=${CONFIG.GOOGLE_BOOKS_API_KEY}`
+            : "";
+          const response = await fetch(
+            `${CONFIG.GOOGLE_BOOKS_BASE}/${bookId}${apiKey}`
+          );
+          const book = await response.json();
+          const info = book.volumeInfo;
+
+          // Populate modal
+          document.getElementById("modalTitle").textContent =
+            info.title || "Unknown Title";
+          document.getElementById("modalAuthor").textContent = info.authors
+            ? info.authors.join(", ")
+            : "Unknown Author";
+          document.getElementById("modalDate").textContent =
+            info.publishedDate || "Unknown";
+          document.getElementById("modalPublisher").textContent =
+            info.publisher || "Unknown";
+          document.getElementById("modalPages").textContent = info.pageCount
+            ? `${info.pageCount} pages`
+            : "Unknown";
+          document.getElementById("modalLanguage").textContent =
+            info.language || "Unknown";
+
+          // Clean the description of HTML tags
+          const cleanedDescription =
+            cleanDescription(info.description) || "No description available.";
+          document.getElementById("modalDescription").textContent =
+            cleanedDescription;
+
+          const coverUrl = info.imageLinks
+            ? info.imageLinks.large ||
+              info.imageLinks.medium ||
+              info.imageLinks.thumbnail ||
+              info.imageLinks.smallThumbnail
+            : "https://via.placeholder.com/150x200/2d1b0f/8fbc8f?text=No+Cover";
+          document.getElementById("modalCover").src = coverUrl;
+
+          // Display categories/genres
+          const genresContainer = document.getElementById("modalGenres");
+          if (info.categories && info.categories.length > 0) {
+            const genreTags = info.categories
+              .map((genre) => `<span class="genre-tag">${genre}</span>`)
+              .join("");
+            genresContainer.innerHTML = genreTags;
+          } else {
+            genresContainer.innerHTML =
+              '<span class="genre-tag">Fiction</span>';
+          }
+
+          // Update shelf button
+          updateShelfButton();
+
+          // Show modal
+          document.getElementById("bookModal").style.display = "block";
+        } catch (error) {
+          console.error("Error fetching book details:", error);
+          showFallbackModal(
+            "Book Details",
+            "Unable to load book information at this time."
+          );
+        }
+      }
+
+      function showFallbackModal(title, author) {
+        // Fallback modal for books without Google Books data
+        currentBookId = null; // No ID available for fallback
+
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalAuthor").textContent = author;
+        document.getElementById("modalDate").textContent = "Unknown";
+        document.getElementById("modalPublisher").textContent = "Unknown";
+        document.getElementById("modalPages").textContent = "Unknown";
+        document.getElementById("modalLanguage").textContent = "Unknown";
+        document.getElementById("modalDescription").textContent =
+          "This book appears on the New York Times Bestseller List. For more detailed information, please visit your local bookstore or library.";
+
+        document.getElementById("modalCover").src =
+          "https://via.placeholder.com/150x200/2d1b0f/8fbc8f?text=No+Cover";
+        document.getElementById("modalGenres").innerHTML =
+          '<span class="genre-tag">Bestseller</span>';
+
+        // Hide shelf button for fallback modal
+        document.getElementById("shelfActionBtn").style.display = "none";
+
+        document.getElementById("bookModal").style.display = "block";
+      }
+    </script>
+  </body>
+</html>

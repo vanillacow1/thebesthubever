@@ -1,0 +1,1533 @@
+<!-- Load YouTube module -->
+<script>
+  // Include the complete YouTube functionality inline since youtube.js has integration issues
+
+  // YouTube API Configuration
+  const API_KEY = "AIzaSyD6ISfx6ekKOVlk7sLuvg5tp_KahhgfU4s";
+  const FAVORITE_CREATORS = [
+    // Knitting channels (teal) - listed first
+    {
+      id: "UCl8KpmxzXJ5tY5LqAV5DO1w",
+      name: "amazingishgrace",
+      category: "knitting",
+    },
+    {
+      id: "UC8tzvYSfzmeLkIY1iK0S1jg",
+      name: "averpaula",
+      category: "knitting",
+    },
+    {
+      id: "UCFSyDmCD5kaQ_OeiTGEoyZg",
+      name: "BeaCreativeKnits",
+      category: "knitting",
+    },
+    {
+      id: "UCvdgJPzarMFumOp1eIguQog",
+      name: "natashacrawf",
+      category: "knitting",
+    },
+    {
+      id: "UCGXTcL9d367QXuRbKjAxo1Q",
+      name: "melanielocke",
+      category: "knitting",
+    },
+    { id: "UCaMfX5Gmyll4ceAX_NIAU3g", name: "CozyK", category: "knitting" },
+    {
+      id: "UC-B0snKT6-OzTJ6_843G7cQ",
+      name: "mrsmoonheaven",
+      category: "knitting",
+    },
+    { id: "UCQuRK-VFyCjf3VCqZkCDveA", name: "Uncomfy", category: "knitting" },
+
+    // Gaming channels (orange) - listed second
+    { id: "UC9CuvdOVfMPvKCiwdGKL3cQ", name: "Game Grumps", category: "gaming" },
+    { id: "UCG6zBb8GZKo1XZW4eHdg-0Q", name: "PointCrow", category: "gaming" },
+    { id: "UCXq2nALoSbxLMehAvYTxt_A", name: "The Grumps", category: "gaming" },
+  ];
+
+  let allVideos = [];
+  let selectedCreators = new Set(); // Track multiple selected creators
+
+  // Fetch upload playlist for a channel
+  // Convert YouTube duration format (PT1M30S) to seconds
+  function parseDuration(duration) {
+    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!match) return 0;
+
+    const hours = parseInt(match[1] || 0);
+    const minutes = parseInt(match[2] || 0);
+    const seconds = parseInt(match[3] || 0);
+
+    return hours * 3600 + minutes * 60 + seconds;
+  }
+
+  // Fetch upload playlist for a channel
+  async function fetchChannelUploads(channelId) {
+    try {
+      const channelRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${API_KEY}`
+      );
+
+      if (!channelRes.ok) {
+        throw new Error(`Failed to fetch channel data: ${channelRes.status}`);
+      }
+
+      const channelData = await channelRes.json();
+
+      if (!channelData.items || channelData.items.length === 0) {
+        console.warn(`No channel found for ID: ${channelId}`);
+        return [];
+      }
+
+      const uploadsId =
+        channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+      // Fetch more videos per creator to ensure we have enough for filtering
+      const playlistRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsId}&maxResults=50&key=${API_KEY}`
+      );
+
+      if (!playlistRes.ok) {
+        throw new Error(`Failed to fetch playlist data: ${playlistRes.status}`);
+      }
+
+      const playlistData = await playlistRes.json();
+
+      // Filter out any invalid videos first
+      const validVideoItems = playlistData.items.filter((item) => {
+        return (
+          item &&
+          item.snippet &&
+          item.snippet.resourceId &&
+          item.snippet.resourceId.videoId &&
+          item.snippet.title &&
+          item.snippet.title !== "Private video" &&
+          item.snippet.title !== "Deleted video"
+        );
+      });
+
+      // Extract video IDs for duration lookup
+      const videoIds = validVideoItems.map(
+        (item) => item.snippet.resourceId.videoId
+      );
+
+      if (videoIds.length === 0) {
+        console.log(`No valid videos found for channel ${channelId}`);
+        return [];
+      }
+
+      // Fetch video details including duration (YouTube API supports up to 50 IDs per request)
+      const videosRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(
+          ","
+        )}&key=${API_KEY}`
+      );
+
+      if (!videosRes.ok) {
+        throw new Error(`Failed to fetch video details: ${videosRes.status}`);
+      }
+
+      const videosData = await videosRes.json();
+
+      // Create a map of video ID to duration
+      const durationMap = {};
+      videosData.items.forEach((video) => {
+        const durationSeconds = parseDuration(video.contentDetails.duration);
+        durationMap[video.id] = durationSeconds;
+      });
+
+      // Filter videos that are at least 3 minutes (180 seconds) and map to final format
+      const filteredVideos = validVideoItems
+        .filter((item) => {
+          const videoId = item.snippet.resourceId.videoId;
+          const duration = durationMap[videoId] || 0;
+          return duration >= 180; // 3 minutes = 180 seconds
+        })
+        .map((item) => ({
+          channelId,
+          channelTitle: item.snippet.channelTitle,
+          videoId: item.snippet.resourceId.videoId,
+          title: item.snippet.title,
+          thumbnail:
+            item.snippet.thumbnails.medium?.url ||
+            item.snippet.thumbnails.default?.url,
+          publishedAt: item.snippet.publishedAt,
+        }));
+
+      console.log(
+        `Fetched ${validVideoItems.length} valid videos, filtered to ${filteredVideos.length} videos (3+ min) for ${channelId}`
+      );
+      return filteredVideos;
+    } catch (error) {
+      console.error(`Error fetching uploads for channel ${channelId}:`, error);
+      return [];
+    }
+  }
+
+  async function loadAllVideos() {
+    try {
+      // Try localStorage cache first - but use a new cache key for the updated version
+      const cached = localStorage.getItem("creatorVideosCache_v4");
+      if (cached) {
+        const parsedCache = JSON.parse(cached);
+        if (
+          parsedCache &&
+          Date.now() - parsedCache.timestamp < 1000 * 60 * 30
+        ) {
+          console.log("Using cached video data (v4)");
+          allVideos = parsedCache.data;
+          createFilterControls();
+          renderVideos();
+          return;
+        }
+      }
+
+      console.log("Fetching fresh video data...");
+      showLoadingState("creatorCards", "Loading videos...");
+
+      // Clear old cache versions
+      localStorage.removeItem("creatorVideosCache");
+      localStorage.removeItem("creatorVideosCache_v2");
+      localStorage.removeItem("creatorVideosCache_v3");
+
+      // Fetch fresh data
+      const promises = FAVORITE_CREATORS.map((creator) =>
+        fetchChannelUploads(creator.id)
+      );
+
+      const results = await Promise.allSettled(promises);
+
+      // Combine all successful results
+      const rawVideos = results
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value)
+        .flat();
+
+      // Remove duplicates based on video ID
+      const uniqueVideos = [];
+      const seenVideoIds = new Set();
+
+      rawVideos.forEach((video) => {
+        if (!seenVideoIds.has(video.videoId)) {
+          seenVideoIds.add(video.videoId);
+          uniqueVideos.push(video);
+        }
+      });
+
+      // Sort by newest first
+      allVideos = uniqueVideos.sort(
+        (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
+      );
+
+      console.log(
+        `Removed ${rawVideos.length - uniqueVideos.length} duplicate videos`
+      );
+      console.log(`Final unique video count: ${allVideos.length}`);
+
+      // Cache the results with new cache key
+      try {
+        localStorage.setItem(
+          "creatorVideosCache_v4",
+          JSON.stringify({ timestamp: Date.now(), data: allVideos })
+        );
+      } catch (error) {
+        console.warn("Could not cache video data:", error);
+      }
+
+      createFilterControls();
+      renderVideos();
+
+      if (allVideos.length === 0) {
+        showStatus("No videos found. Check your internet connection.", "error");
+      } else {
+        console.log(
+          `Loaded ${allVideos.length} videos from ${FAVORITE_CREATORS.length} creators`
+        );
+      }
+    } catch (error) {
+      console.error("Error loading videos:", error);
+      showErrorState();
+    }
+  }
+
+  function createFilterControls() {
+    const filterContainer = document.getElementById("creatorFilterControls");
+    if (!filterContainer) return;
+
+    filterContainer.innerHTML = "";
+
+    // Create checkboxes for each creator
+    FAVORITE_CREATORS.forEach((creator) => {
+      const label = document.createElement("label");
+      label.className = `creator-checkbox ${creator.category}`;
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = `creator-${creator.id}`;
+      checkbox.value = creator.id;
+
+      const span = document.createElement("span");
+      span.className = "creator-name";
+      span.textContent = creator.name;
+
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          selectedCreators.add(creator.id);
+          label.classList.add("selected");
+        } else {
+          selectedCreators.delete(creator.id);
+          label.classList.remove("selected");
+        }
+        updateFilterSummary();
+        renderVideos();
+      });
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      filterContainer.appendChild(label);
+    });
+
+    // Setup action buttons
+    const selectAllBtn = document.getElementById("selectAllBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener("click", () => {
+        const checkboxes = filterContainer.querySelectorAll(
+          "input[type='checkbox']"
+        );
+        const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = !allChecked;
+          checkbox.dispatchEvent(new Event("change"));
+        });
+
+        selectAllBtn.textContent = allChecked ? "Select All" : "Clear All";
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        filterContainer
+          .querySelectorAll("input[type='checkbox']")
+          .forEach((checkbox) => {
+            checkbox.checked = false;
+            checkbox.dispatchEvent(new Event("change"));
+          });
+        if (selectAllBtn) selectAllBtn.textContent = "Select All";
+      });
+    }
+
+    updateFilterSummary();
+  }
+
+  function updateFilterSummary() {
+    const summary = document.getElementById("filterSummary");
+    if (!summary) return;
+
+    if (selectedCreators.size === 0) {
+      summary.textContent = "Showing all creators";
+      summary.className = "filter-summary";
+    } else {
+      const selectedNames = FAVORITE_CREATORS.filter((creator) =>
+        selectedCreators.has(creator.id)
+      ).map((creator) => creator.name);
+
+      if (selectedNames.length === 1) {
+        summary.textContent = `Showing ${selectedNames[0]}`;
+      } else if (selectedNames.length === 2) {
+        summary.textContent = `Showing ${selectedNames.join(" and ")}`;
+      } else {
+        summary.textContent = `Showing ${selectedNames.length} creators`;
+      }
+      summary.className = "filter-summary active";
+    }
+  }
+
+  function renderVideos() {
+    const container = document.getElementById("creatorCards");
+    if (!container) {
+      console.error("Creator cards container not found");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    let videos = allVideos;
+
+    // Apply filtering based on selected creators
+    if (selectedCreators.size > 0) {
+      videos = videos.filter((v) => selectedCreators.has(v.channelId));
+      console.log(
+        `After filtering: ${videos.length} videos from ${selectedCreators.size} selected creators`
+      );
+    }
+
+    // Always sort by most recent first (publishedAt descending)
+    videos = videos.sort(
+      (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
+    );
+
+    if (videos.length === 0) {
+      const message =
+        selectedCreators.size > 0
+          ? "No videos found for selected creators"
+          : "No videos found";
+      container.innerHTML = `<div class="empty-state"><h3>${message}</h3><p>Try selecting different creators or check your connection</p></div>`;
+      return;
+    }
+
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+
+    // Always take exactly 10 videos (or all if less than 10 available)
+    const videosToShow = videos.slice(0, 10);
+    console.log(
+      `Showing ${videosToShow.length} videos out of ${videos.length} available`
+    );
+
+    videosToShow.forEach((video) => {
+      const card = createVideoCard(video);
+      fragment.appendChild(card);
+    });
+
+    container.appendChild(fragment);
+
+    // Update the status with video count
+    updateVideoStatus(videosToShow.length);
+  }
+
+  function updateVideoStatus(videoCount) {
+    const statusElement = document.getElementById("videoStatus");
+    if (statusElement) {
+      statusElement.textContent = `${videoCount} most recent videos`;
+    }
+  }
+
+  function createVideoCard(video) {
+    const creator = FAVORITE_CREATORS.find((c) => c.id === video.channelId);
+    const card = document.createElement("div");
+    card.className = "video-card";
+
+    card.innerHTML = `
+            <div class="video-thumbnail">
+                <img src="${video.thumbnail}" alt="Thumbnail for ${
+      video.title
+    }" loading="lazy">
+                <div class="play-overlay">▶</div>
+                <div class="channel-badge">${video.channelTitle}</div>
+            </div>
+            <div class="video-content">
+                <h4 class="video-title" title="${video.title}">${truncateText(
+      video.title,
+      60
+    )}</h4>
+                <div class="video-channel">${video.channelTitle}</div>
+                <div class="video-meta">
+                    <span class="meta-tag ${creator?.category || ""}">${
+      creator?.category === "knitting" ? "🧶 Knitting" : "🎮 Gaming"
+    }</span>
+                </div>
+            </div>
+        `;
+
+    card.addEventListener("click", () => {
+      window.open(
+        `https://www.youtube.com/watch?v=${video.videoId}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    });
+
+    // Add keyboard navigation
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("role", "button");
+    card.setAttribute(
+      "aria-label",
+      `Watch ${video.title} by ${video.channelTitle}`
+    );
+
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        card.click();
+      }
+    });
+
+    return card;
+  }
+
+  function showErrorState() {
+    const container = document.getElementById("creatorCards");
+    if (container) {
+      container.innerHTML = `
+                <div class="empty-state">
+                    <h3>Unable to load videos</h3>
+                    <p>Please check your connection and try again</p>
+                    <button onclick="loadAllVideos()" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Retry
+                    </button>
+                </div>
+            `;
+    }
+  }
+
+  // Utility function to truncate text
+  function truncateText(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + "...";
+  }
+
+  function openRandomVideo() {
+    let availableVideos = allVideos;
+
+    // Apply the same filtering logic as the main display
+    if (selectedCreators.size > 0) {
+      availableVideos = allVideos.filter((v) =>
+        selectedCreators.has(v.channelId)
+      );
+    }
+
+    if (availableVideos.length === 0) {
+      showStatus(
+        "No videos available! Try selecting some creators first.",
+        "error"
+      );
+      return;
+    }
+
+    // Get a random video from available videos
+    const randomIndex = Math.floor(Math.random() * availableVideos.length);
+    const randomVideo = availableVideos[randomIndex];
+
+    // Show which video was selected
+    const creatorName =
+      FAVORITE_CREATORS.find((c) => c.id === randomVideo.channelId)?.name ||
+      randomVideo.channelTitle;
+    showStatus(
+      `🎲 Opening "${randomVideo.title}" by ${creatorName}!`,
+      "success"
+    );
+
+    // Open the video in a new tab
+    window.open(
+      `https://www.youtube.com/watch?v=${randomVideo.videoId}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  function initializeYouTubeModule() {
+    console.log("📺 Initializing YouTube module with filtering...");
+
+    // Set up surprise me button
+    const watchLaterBtn = document.getElementById("watchLaterBtn");
+    if (watchLaterBtn) {
+      watchLaterBtn.addEventListener("click", () => {
+        openRandomVideo();
+      });
+    }
+
+    // Load videos (this will also create filter controls)
+    loadAllVideos();
+
+    console.log(
+      "✅ YouTube module initialized successfully with checkbox filtering"
+    );
+  }
+
+  // Status message utility
+  function showStatus(message, type = "info") {
+    console.log("Status:", message, type);
+    if (typeof window.AppUtils !== "undefined" && window.AppUtils.showToast) {
+      window.AppUtils.showToast(message, type);
+    }
+  }
+
+  // Loading state management
+  function showLoadingState(containerId, message = "Loading...") {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; padding: 20px; color: var(--text-muted);">
+                <div class="loading-spinner"></div>
+                <span>${message}</span>
+            </div>
+        `;
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("📺 Initializing Creators Hub...");
+
+    initializeYouTubeModule();
+    console.log("✅ Creators Hub initialized successfully!");
+  });
+
+  // Add touch feedback for mobile
+  document
+    .querySelectorAll(".back-btn, .surprise-btn, .filter-btn")
+    .forEach((element) => {
+      element.addEventListener("touchstart", function () {
+        this.style.transform = "scale(0.95)";
+      });
+
+      element.addEventListener("touchend", function () {
+        this.style.transform = "scale(1)";
+      });
+    });
+</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Living Room TV - Bean's Hub</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Cozy Living Room Theme */
+        --brick-red: #8b4513;
+        --brick-dark: #5d2e0a;
+        --wood-brown: #8b4513;
+        --wood-dark: #654321;
+        --wood-light: #daa520;
+        --tv-glow: #4a9eff;
+        --tv-glow-bright: #6bb6ff;
+        --warm-amber: #ffb366;
+        --warm-orange: #ff8533;
+        --cozy-cream: #f5f5dc;
+        --night-dark: #0a0a0a;
+        --night-darker: #050505;
+        --soft-white: #f8f8f8;
+        --muted-gold: #ccaa66;
+        --knitting-teal: #4caf50;
+        --gaming-orange: #ff6b35;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--night-darker);
+        min-height: 100vh;
+        color: var(--soft-white);
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Brick wall background */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent 49.5%,
+            rgba(139, 69, 19, 0.3) 50%,
+            transparent 50.5%
+          ),
+          linear-gradient(
+            0deg,
+            transparent 49.5%,
+            rgba(139, 69, 19, 0.3) 50%,
+            transparent 50.5%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            #2a1810 0px,
+            #3d241a 8px,
+            #2a1810 16px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            #3d241a 0px,
+            #2a1810 30px,
+            #3d241a 60px
+          );
+        opacity: 0.8;
+        z-index: -2;
+      }
+
+      /* Wood paneling accent */
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--wood-dark) 0px,
+          var(--wood-brown) 2px,
+          var(--wood-dark) 4px,
+          var(--wood-brown) 40px,
+          var(--wood-dark) 42px
+        );
+        border-top: 3px solid var(--wood-light);
+        opacity: 0.9;
+        z-index: -1;
+      }
+
+      /* TV glow overlay */
+      .tv-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(74, 158, 255, 0.1) 0%,
+          rgba(74, 158, 255, 0.05) 30%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Header - TV remote style */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: linear-gradient(
+          135deg,
+          rgba(10, 10, 10, 0.95),
+          rgba(20, 20, 20, 0.95)
+        );
+        backdrop-filter: blur(20px);
+        border-bottom: 2px solid var(--tv-glow);
+        box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+        padding: 0.75rem 1rem;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+      }
+
+      .back-btn {
+        background: linear-gradient(
+          135deg,
+          var(--wood-brown),
+          var(--wood-dark)
+        );
+        border: 2px solid var(--wood-light);
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        color: var(--cozy-cream);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.4);
+      }
+
+      .back-btn:hover {
+        background: linear-gradient(
+          135deg,
+          var(--wood-light),
+          var(--wood-brown)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(218, 165, 32, 0.5);
+      }
+
+      .page-title {
+        font-family: "Orbitron", monospace;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--tv-glow-bright);
+        text-align: center;
+        flex: 1;
+        margin: 0 1rem;
+        text-shadow: 0 0 15px var(--tv-glow);
+        animation: subtle-glow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes subtle-glow {
+        0% {
+          text-shadow: 0 0 15px var(--tv-glow);
+        }
+        100% {
+          text-shadow: 0 0 25px var(--tv-glow-bright), 0 0 35px var(--tv-glow);
+        }
+      }
+
+      /* Main content */
+      .main {
+        padding-top: 5rem;
+        padding-bottom: 140px; /* Space for wood paneling */
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+
+      .container {
+        padding: 0 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* TV Screen Frame */
+      .tv-frame {
+        background: linear-gradient(135deg, #1a1a1a, #0f0f0f, #1a1a1a);
+        border: 8px solid #2a2a2a;
+        border-radius: 20px;
+        margin: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 0 40px rgba(74, 158, 255, 0.3),
+          inset 0 0 30px rgba(0, 0, 0, 0.8);
+        position: relative;
+      }
+
+      .tv-frame::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background: linear-gradient(
+          45deg,
+          var(--tv-glow),
+          var(--tv-glow-bright),
+          var(--tv-glow)
+        );
+        border-radius: 24px;
+        z-index: -1;
+        opacity: 0.6;
+        animation: tv-pulse 4s ease-in-out infinite;
+      }
+
+      @keyframes tv-pulse {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* Filter section - Remote control style */
+      .filters-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .filter-container {
+        background: linear-gradient(
+          135deg,
+          rgba(20, 20, 20, 0.95),
+          rgba(40, 40, 40, 0.95)
+        );
+        border: 2px solid var(--tv-glow);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 0 30px rgba(74, 158, 255, 0.2),
+          inset 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .filter-title {
+        font-family: "Orbitron", monospace;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--tv-glow-bright);
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px var(--tv-glow);
+      }
+
+      .checkbox-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+        border: 1px solid rgba(74, 158, 255, 0.3);
+      }
+
+      .creator-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: var(--soft-white);
+        user-select: none;
+        padding: 0.75rem;
+        border-radius: 10px;
+        border: 2px solid rgba(74, 158, 255, 0.3);
+        transition: all 0.3s ease;
+        background: rgba(10, 10, 10, 0.6);
+      }
+
+      .creator-checkbox:hover {
+        background: rgba(74, 158, 255, 0.1);
+        border-color: var(--tv-glow);
+        box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+      }
+
+      .creator-checkbox.knitting {
+        border-color: rgba(76, 175, 80, 0.4);
+      }
+
+      .creator-checkbox.gaming {
+        border-color: rgba(255, 107, 53, 0.4);
+      }
+
+      .creator-checkbox.selected.knitting {
+        background: linear-gradient(135deg, var(--knitting-teal), #66bb6a);
+        color: white;
+        border-color: var(--knitting-teal);
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+      }
+
+      .creator-checkbox.selected.gaming {
+        background: linear-gradient(135deg, var(--gaming-orange), #ff8a65);
+        color: white;
+        border-color: var(--gaming-orange);
+        box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+      }
+
+      .creator-checkbox input {
+        transform: scale(1.3);
+        accent-color: var(--tv-glow);
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        background: linear-gradient(
+          135deg,
+          var(--wood-brown),
+          var(--wood-dark)
+        );
+        border: 2px solid var(--wood-light);
+        border-radius: 10px;
+        padding: 0.6rem 1.2rem;
+        color: var(--cozy-cream);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(139, 69, 19, 0.3);
+      }
+
+      .filter-btn:hover {
+        background: linear-gradient(
+          135deg,
+          var(--wood-light),
+          var(--wood-brown)
+        );
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+      }
+
+      .filter-summary {
+        font-size: 0.85rem;
+        color: var(--muted-gold);
+        font-style: italic;
+        margin-left: 0.75rem;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .filter-summary.active {
+        color: var(--warm-amber);
+        font-weight: 600;
+        text-shadow: 0 0 10px var(--warm-amber);
+      }
+
+      /* Videos section - TV channel grid */
+      .videos-section {
+        margin-bottom: 2rem;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0 0.5rem;
+      }
+
+      .section-title {
+        font-family: "Orbitron", monospace;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--tv-glow-bright);
+        margin: 0;
+        text-shadow: 0 0 15px var(--tv-glow);
+      }
+
+      .video-status {
+        font-size: 0.9rem;
+        color: var(--warm-amber);
+        font-weight: 500;
+      }
+
+      .videos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .video-card {
+        background: linear-gradient(
+          135deg,
+          rgba(20, 20, 20, 0.9),
+          rgba(40, 40, 40, 0.9)
+        );
+        border: 2px solid rgba(74, 158, 255, 0.3);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5),
+          0 0 15px rgba(74, 158, 255, 0.1);
+        position: relative;
+      }
+
+      .video-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(74, 158, 255, 0.1),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+
+      .video-card:hover::before {
+        opacity: 1;
+      }
+
+      .video-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7),
+          0 0 30px rgba(74, 158, 255, 0.4);
+        border-color: var(--tv-glow-bright);
+      }
+
+      .video-thumbnail {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+        background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+      }
+
+      .video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+        filter: brightness(0.9) contrast(1.1);
+      }
+
+      .video-card:hover .video-thumbnail img {
+        transform: scale(1.1);
+        filter: brightness(1.1) contrast(1.2);
+      }
+
+      .play-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.8),
+          rgba(20, 20, 20, 0.8)
+        );
+        color: var(--tv-glow-bright);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.4s ease;
+        border: 3px solid var(--tv-glow);
+        box-shadow: 0 0 20px rgba(74, 158, 255, 0.5);
+      }
+
+      .video-card:hover .play-overlay {
+        background: linear-gradient(
+          135deg,
+          var(--tv-glow),
+          var(--tv-glow-bright)
+        );
+        color: white;
+        transform: translate(-50%, -50%) scale(1.2);
+        box-shadow: 0 0 30px rgba(74, 158, 255, 0.8);
+      }
+
+      .channel-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.9),
+          rgba(20, 20, 20, 0.9)
+        );
+        color: var(--soft-white);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid var(--tv-glow);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+      }
+
+      .video-content {
+        padding: 1.25rem;
+        background: linear-gradient(
+          135deg,
+          rgba(10, 10, 10, 0.9),
+          rgba(30, 30, 30, 0.9)
+        );
+      }
+
+      .video-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--soft-white);
+        margin-bottom: 0.6rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+
+      .video-channel {
+        font-size: 0.85rem;
+        color: var(--warm-amber);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .video-meta {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .meta-tag {
+        background: linear-gradient(
+          135deg,
+          rgba(74, 158, 255, 0.2),
+          rgba(107, 182, 255, 0.2)
+        );
+        color: var(--tv-glow-bright);
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(74, 158, 255, 0.4);
+        text-shadow: 0 0 5px var(--tv-glow);
+      }
+
+      .meta-tag.knitting {
+        background: linear-gradient(
+          135deg,
+          rgba(76, 175, 80, 0.2),
+          rgba(102, 187, 106, 0.2)
+        );
+        color: var(--knitting-teal);
+        border-color: rgba(76, 175, 80, 0.4);
+        text-shadow: 0 0 5px var(--knitting-teal);
+      }
+
+      .meta-tag.gaming {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 53, 0.2),
+          rgba(255, 138, 101, 0.2)
+        );
+        color: var(--gaming-orange);
+        border-color: rgba(255, 107, 53, 0.4);
+        text-shadow: 0 0 5px var(--gaming-orange);
+      }
+
+      /* Surprise button - TV remote style */
+      .surprise-section {
+        text-align: center;
+        margin: 2rem 0;
+      }
+
+      .surprise-btn {
+        background: linear-gradient(
+          135deg,
+          var(--warm-orange),
+          var(--warm-amber),
+          var(--warm-orange)
+        );
+        border: 3px solid var(--wood-light);
+        padding: 1rem 2.5rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--night-dark);
+        font-size: 1.1rem;
+        font-family: "Orbitron", monospace;
+        transition: all 0.4s ease;
+        box-shadow: 0 6px 25px rgba(255, 181, 102, 0.4),
+          inset 0 2px 5px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .surprise-btn::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: transform 0.6s ease;
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+
+      .surprise-btn:hover::before {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+
+      .surprise-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 35px rgba(255, 181, 102, 0.6),
+          inset 0 3px 8px rgba(255, 255, 255, 0.4);
+        border-color: var(--cozy-cream);
+      }
+
+      /* Loading states */
+      .loading-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(74, 158, 255, 0.3);
+        border-top: 3px solid var(--tv-glow-bright);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--muted-gold);
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 16px;
+        border: 2px solid rgba(74, 158, 255, 0.3);
+      }
+
+      .empty-state h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+        color: var(--tv-glow-bright);
+        font-family: "Orbitron", monospace;
+      }
+
+      /* Ambient lighting effects */
+      @keyframes ambient-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(74, 158, 255, 0.2),
+            inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(74, 158, 255, 0.4),
+            inset 0 0 30px rgba(0, 0, 0, 0.7);
+        }
+      }
+
+      .tv-frame {
+        animation: ambient-pulse 6s ease-in-out infinite;
+      }
+
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        .tv-frame {
+          margin: 0.5rem;
+          padding: 1rem;
+          border-width: 4px;
+          border-radius: 16px;
+        }
+
+        .videos-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .checkbox-container {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+          max-height: 160px;
+        }
+
+        .creator-checkbox {
+          padding: 0.6rem;
+          font-size: 0.8rem;
+        }
+
+        .page-title {
+          font-size: 1.2rem;
+        }
+
+        .section-title {
+          font-size: 1.1rem;
+        }
+
+        .video-thumbnail {
+          height: 160px;
+        }
+
+        .surprise-btn {
+          padding: 0.8rem 2rem;
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0 0.5rem;
+        }
+
+        .filter-container {
+          padding: 1rem;
+        }
+
+        .video-content {
+          padding: 1rem;
+        }
+
+        .video-title {
+          font-size: 0.9rem;
+        }
+
+        .back-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+
+        .main {
+          padding-top: 4.5rem;
+        }
+      }
+
+      /* Accessibility */
+      .video-card:focus {
+        outline: 3px solid var(--tv-glow-bright);
+        outline-offset: 2px;
+      }
+
+      .creator-checkbox:focus-within {
+        box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.5);
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--tv-glow), var(--tv-glow-bright));
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(var(--tv-glow-bright), var(--warm-amber));
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tv-glow"></div>
+
+    <header class="header">
+      <div class="header-content">
+        <a href="index.html" class="back-btn">
+          <span>←</span>
+          <span>Hub</span>
+        </a>
+        <h1 class="page-title">Cozy TV Time</h1>
+        <div style="width: 90px"></div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <div class="tv-frame">
+          <!-- Filter Controls Section -->
+          <section class="filters-section">
+            <div class="filter-container">
+              <div class="filter-title">Channel Selection</div>
+              <div class="checkbox-container" id="creatorFilterControls">
+                <!-- Creator checkboxes will be dynamically inserted here -->
+              </div>
+              <div class="filter-actions">
+                <button class="filter-btn" id="selectAllBtn">
+                  All Channels
+                </button>
+                <button class="filter-btn" id="clearBtn">Clear</button>
+                <div class="filter-summary" id="filterSummary">
+                  Loading channels...
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Videos Grid -->
+          <section class="videos-section">
+            <div class="section-header">
+              <h2 class="section-title">Now Playing</h2>
+              <div class="video-status" id="videoStatus">Loading...</div>
+            </div>
+            <div class="videos-grid" id="creatorCards">
+              <div class="empty-state">
+                <div class="loading-spinner"></div>
+                <span>Tuning in to your favorite channels...</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Surprise Me Button -->
+          <section class="surprise-section">
+            <button id="watchLaterBtn" class="surprise-btn">
+              Random Video
+            </button>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Status message utility
+      function showStatus(message, type = "info") {
+        console.log("Status:", message, type);
+      }
+
+      // Loading state management
+      function showLoadingState(containerId, message = "Loading...") {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted-gold);">
+                <div class="loading-spinner"></div>
+                <span>${message}</span>
+            </div>
+        `;
+      }
+
+      // Initialize when DOM is ready
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("📺 Initializing Living Room TV...");
+
+        if (typeof initializeYouTubeModule === "function") {
+          initializeYouTubeModule();
+          console.log("✅ Living Room TV initialized successfully!");
+        } else {
+          console.error("❌ YouTube module not found");
+          document.getElementById("creatorCards").innerHTML = `
+                <div class="empty-state">
+                    <h3>📡 Signal Lost</h3>
+                    <p>Please check your connection and try again</p>
+                </div>
+            `;
+        }
+      });
+
+      // Add enhanced touch feedback for mobile
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll(".back-btn, .surprise-btn, .filter-btn")
+          .forEach((element) => {
+            element.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.95)";
+            });
+
+            element.addEventListener("touchend", function () {
+              this.style.transform = "";
+            });
+
+            element.addEventListener("touchcancel", function () {
+              this.style.transform = "";
+            });
+          });
+      });
+
+      // Add ambient sound effect simulation (visual only)
+      setInterval(() => {
+        const tvGlow = document.querySelector(".tv-glow");
+        if (tvGlow) {
+          tvGlow.style.opacity = 0.8 + Math.random() * 0.2;
+        }
+      }, 2000);
+    </script>
+  </body>
+</html>

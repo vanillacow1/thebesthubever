@@ -1,0 +1,3202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Vinyl Corner - Bean's Record Shop</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Merriweather:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Record Shop Theme - Warm Wood & Vintage Tones */
+        --primary: #8b4513; /* Saddle Brown */
+        --primary-light: #cd853f; /* Peru */
+        --primary-dark: #654321; /* Dark Brown */
+        --accent: #daa520; /* Goldenrod */
+        --background: linear-gradient(
+          135deg,
+          #2f1b14 0%,
+          #3d2817 30%,
+          #4a2c17 70%,
+          #8b4513 100%
+        );
+        --surface: rgba(139, 69, 19, 0.15);
+        --surface-hover: rgba(139, 69, 19, 0.25);
+        --text: #f5deb3; /* Wheat */
+        --text-secondary: #deb887; /* Burlywood */
+        --text-muted: #bc9a6a; /* Light Brown */
+        --border: rgba(139, 69, 19, 0.4);
+        --shadow: rgba(139, 69, 19, 0.3);
+        --wood: #8b4513;
+        --wood-light: #a0522d;
+        --vinyl-black: #1c1c1c;
+        --gold: #ffd700;
+      }
+
+      /* VINYL RECORD SLEEVE STYLING - OVERRIDE ALL PREVIOUS CARD STYLES */
+      .cards-grid .card,
+      .cards-grid .card.track-card,
+      .cards-grid .card.artist-card {
+        background: linear-gradient(145deg, #2f1b14, #3d2817) !important;
+        border: 3px solid var(--wood) !important;
+        border-radius: 3px !important;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(245, 222, 179, 0.1) !important;
+      }
+
+      .cards-grid .card::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: 20px !important;
+        height: 20px !important;
+        background: linear-gradient(
+          -45deg,
+          rgba(139, 69, 19, 0.3) 0%,
+          transparent 70%
+        ) !important;
+        clip-path: polygon(100% 0, 0 0, 100% 100%) !important;
+        z-index: 1 !important;
+      }
+
+      .cards-grid .card::after {
+        content: "" !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 8px !important;
+        background: linear-gradient(
+          180deg,
+          var(--wood-light) 0%,
+          var(--wood) 30%,
+          var(--primary-dark) 70%,
+          var(--wood) 100%
+        ) !important;
+        box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.3) !important;
+        z-index: 1 !important;
+      }
+
+      .cards-grid .card:hover {
+        transform: translateY(-8px) rotateY(2deg) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(245, 222, 179, 0.2) !important;
+        border-color: var(--gold) !important;
+      }
+
+      .cards-grid .card .card-image {
+        border-radius: 2px !important;
+        border: 1px solid rgba(139, 69, 19, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
+          inset 0 0 0 2px rgba(245, 222, 179, 0.1) !important;
+        position: relative !important;
+        z-index: 2 !important;
+      }
+
+      .cards-grid .card .card-image::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(245, 222, 179, 0.1) 50%,
+          transparent
+        ) !important;
+        transition: left 0.6s ease !important;
+        z-index: 3 !important;
+      }
+
+      .cards-grid .card:hover .card-image::before {
+        left: 100% !important;
+      }
+
+      .cards-grid .card .card-subtitle {
+        font-style: italic !important;
+      }
+
+      .cards-grid .card .card-meta {
+        border-top: 1px solid rgba(139, 69, 19, 0.2) !important;
+        padding-top: 0.7rem !important;
+        z-index: 2 !important;
+      }
+
+      /* VINYL SINGLE TRACKS */
+      .cards-grid .track-card::before {
+        height: 4px !important;
+        background: linear-gradient(
+          90deg,
+          var(--wood),
+          var(--gold),
+          var(--wood)
+        ) !important;
+        opacity: 0.6 !important;
+      }
+
+      .cards-grid .track-card .card-image {
+        width: 90px !important;
+        height: 90px !important;
+        border-radius: 50% !important;
+        border: 3px solid var(--wood-light) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      .cards-grid .track-card .card-image::after {
+        content: "" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 15px !important;
+        height: 15px !important;
+        background: radial-gradient(
+          circle,
+          var(--gold) 0%,
+          var(--wood) 70%
+        ) !important;
+        border-radius: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        border: 1px solid rgba(0, 0, 0, 0.3) !important;
+        z-index: 4 !important;
+      }
+
+      .cards-grid .track-card .track-duration {
+        background: rgba(139, 69, 19, 0.2) !important;
+        padding: 0.3rem 0.6rem !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(139, 69, 19, 0.3) !important;
+      }
+
+      /* LP ALBUM ARTISTS */
+      .cards-grid .artist-card .card-image {
+        width: 140px !important;
+        height: 140px !important;
+        border-radius: 2px !important;
+        border: 2px solid var(--wood-light) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 0 3px var(--gold) !important;
+      }
+
+      .cards-grid .artist-card .card-image::before {
+        content: "" !important;
+        position: absolute !important;
+        top: -2px !important;
+        right: -2px !important;
+        width: 25px !important;
+        height: 25px !important;
+        background: linear-gradient(
+          -45deg,
+          rgba(218, 165, 32, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        ) !important;
+        clip-path: polygon(100% 0, 0 0, 100% 100%) !important;
+        z-index: 3 !important;
+      }
+
+      .cards-grid .artist-card .card-meta {
+        border-top: 1px solid rgba(139, 69, 19, 0.2) !important;
+        padding-top: 1rem !important;
+      }
+
+      .cards-grid .artist-card .artist-popularity {
+        background: rgba(139, 69, 19, 0.2) !important;
+        padding: 0.3rem 0.6rem !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(139, 69, 19, 0.3) !important;
+      }
+
+      .cards-grid .artist-card .popularity-bar {
+        background: rgba(245, 222, 179, 0.2) !important;
+        border: 1px solid var(--wood-light) !important;
+      }
+
+      .cards-grid .artist-card .popularity-fill {
+        background: linear-gradient(90deg, var(--wood), var(--gold)) !important;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Merriweather", serif;
+        background: var(--background);
+        min-height: 100vh;
+        color: var(--text);
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Wood grain texture overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(139, 69, 19, 0.05) 0px,
+          rgba(160, 82, 45, 0.1) 2px,
+          rgba(139, 69, 19, 0.05) 4px
+        );
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(47, 27, 20, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 3px solid var(--wood);
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+      }
+
+      .back-btn {
+        background: var(--wood);
+        border: 2px solid var(--wood-light);
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .back-btn:hover {
+        background: var(--wood-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .page-title {
+        font-family: "Fredoka One", cursive;
+        font-size: 2rem;
+        color: var(--gold);
+        text-align: center;
+        flex: 1;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        letter-spacing: 1px;
+      }
+
+      /* Main Content */
+      .main {
+        padding-top: 6rem;
+        padding-bottom: 2rem;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        width: 100%;
+      }
+
+      /* Status Messages */
+      .status-message {
+        margin: 1rem 0;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 500;
+        display: none;
+        animation: slideDown 0.3s ease;
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .status-success {
+        background: rgba(34, 139, 34, 0.2);
+        color: #90ee90;
+        border-color: rgba(34, 139, 34, 0.5);
+      }
+
+      .status-error {
+        background: rgba(178, 34, 34, 0.2);
+        color: #ff6b6b;
+        border-color: rgba(178, 34, 34, 0.5);
+      }
+
+      .status-info {
+        background: var(--surface);
+        color: var(--text);
+        border-color: var(--border);
+      }
+
+      /* Connect Section */
+      .connect-section {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--surface);
+        border: 3px solid var(--wood);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.8s ease-out;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Vinyl record decoration */
+      .connect-section::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(
+          circle,
+          var(--vinyl-black) 20%,
+          transparent 20%,
+          transparent 40%,
+          var(--vinyl-black) 40%,
+          var(--vinyl-black) 45%,
+          transparent 45%
+        );
+        border-radius: 50%;
+        opacity: 0.1;
+        transform: rotate(45deg);
+      }
+
+      .connect-section::after {
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(
+          circle,
+          var(--gold) 25%,
+          transparent 25%,
+          transparent 50%,
+          var(--gold) 50%,
+          var(--gold) 55%,
+          transparent 55%
+        );
+        border-radius: 50%;
+        opacity: 0.15;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .connect-title {
+        font-family: "Fredoka One", cursive;
+        font-size: 2.2rem;
+        color: var(--gold);
+        margin-bottom: 1rem;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+        letter-spacing: 1px;
+      }
+
+      .connect-description {
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
+        line-height: 1.7;
+        font-size: 1.05rem;
+        opacity: 0.95;
+        font-weight: 300;
+      }
+
+      .connect-btn {
+        background: linear-gradient(145deg, var(--wood), var(--wood-light));
+        border: 3px solid var(--gold);
+        padding: 1.4rem 3.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--text);
+        font-size: 1.15rem;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 30px var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        font-family: "Merriweather", serif;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .connect-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .connect-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 40px var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: var(--accent);
+      }
+
+      .connect-btn:hover::before {
+        left: 100%;
+      }
+
+      .connect-btn.connected {
+        background: linear-gradient(145deg, #2f7d32, #388e3c);
+        border-color: #4caf50;
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+      }
+
+      .connect-btn.connected:hover {
+        background: linear-gradient(145deg, #388e3c, #4caf50);
+        box-shadow: 0 15px 40px rgba(76, 175, 80, 0.5);
+      }
+
+      .connect-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .connect-btn .btn-icon {
+        font-size: 1.4rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border: 3px solid rgba(245, 222, 179, 0.3);
+        border-top: 3px solid var(--gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.75rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Connected State */
+      .connected-info {
+        display: none;
+        margin-top: 1rem;
+        text-align: right;
+      }
+
+      .connected-info.visible {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+
+      .disconnect-btn {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        font-family: "Merriweather", serif;
+      }
+
+      .disconnect-btn:hover {
+        background: rgba(178, 34, 34, 0.2);
+        border-color: rgba(178, 34, 34, 0.5);
+        color: #ff6b6b;
+        transform: translateY(-2px);
+      }
+
+      /* Music Content Sections */
+      .music-content {
+        display: none;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .music-content.visible {
+        display: block;
+      }
+
+      .section {
+        margin-bottom: 3.5rem;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .section-title {
+        font-family: "Fredoka One", cursive;
+        font-size: 1.7rem;
+        color: var(--gold);
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        letter-spacing: 0.5px;
+      }
+
+      .refresh-btn {
+        background: var(--wood);
+        border: 2px solid var(--wood-light);
+        border-radius: 12px;
+        padding: 0.6rem 1rem;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 600;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .refresh-btn:hover {
+        background: var(--wood-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .refresh-btn.loading {
+        pointer-events: none;
+      }
+
+      .refresh-btn .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(245, 222, 179, 0.3);
+        border-top: 2px solid var(--gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      /* Cards Grid - Vinyl Record Styling */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 0 1rem;
+      }
+
+      /* Base card styling - vinyl record sleeve */
+      .card {
+        background: linear-gradient(145deg, #2f1b14, #3d2817) !important;
+        border: 3px solid var(--wood) !important;
+        border-radius: 3px !important; /* Sharp corners like vinyl sleeves */
+        padding: 1.8rem;
+        backdrop-filter: blur(20px);
+        transition: all 0.4s ease;
+        cursor: pointer;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(245, 222, 179, 0.1) !important;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Vinyl record sleeve corner wear effect */
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(
+          -45deg,
+          rgba(139, 69, 19, 0.3) 0%,
+          transparent 70%
+        );
+        clip-path: polygon(100% 0, 0 0, 100% 100%);
+        z-index: 1;
+      }
+
+      /* Vinyl record sleeve spine effect */
+      .card::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 8px;
+        background: linear-gradient(
+          180deg,
+          var(--wood-light) 0%,
+          var(--wood) 30%,
+          var(--primary-dark) 70%,
+          var(--wood) 100%
+        );
+        box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.3);
+        z-index: 1;
+      }
+
+      .card:hover {
+        transform: translateY(-8px) rotateY(2deg) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(245, 222, 179, 0.2) !important;
+        border-color: var(--gold) !important;
+      }
+
+      .card-image {
+        width: 100%;
+        height: 220px;
+        border-radius: 2px !important;
+        object-fit: cover;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
+          inset 0 0 0 2px rgba(245, 222, 179, 0.1) !important;
+        border: 1px solid rgba(139, 69, 19, 0.4) !important;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Vinyl record glare effect on image */
+      .card-image::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(245, 222, 179, 0.1) 50%,
+          transparent
+        );
+        transition: left 0.6s ease;
+        z-index: 3;
+      }
+
+      .card:hover .card-image::before {
+        left: 100%;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.7rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 2;
+      }
+
+      .card-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        opacity: 0.9;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-weight: 300;
+        font-style: italic;
+        position: relative;
+        z-index: 2;
+      }
+
+      .card-meta {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        opacity: 0.8;
+        margin-top: 0.7rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 400;
+        border-top: 1px solid rgba(139, 69, 19, 0.2);
+        padding-top: 0.7rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Track cards - Vinyl single styling */
+      .track-card {
+        display: flex !important;
+        align-items: center;
+        gap: 1.2rem;
+        padding: 1.5rem;
+        background: linear-gradient(145deg, #2f1b14, #3d2817) !important;
+        position: relative;
+      }
+
+      /* Vinyl single record effect */
+      .track-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--wood),
+          var(--gold),
+          var(--wood)
+        ) !important;
+        opacity: 0.6;
+        z-index: 1;
+      }
+
+      .track-card .card-image {
+        width: 90px !important;
+        height: 90px !important;
+        margin-bottom: 0 !important;
+        flex-shrink: 0;
+        border-radius: 50% !important;
+        border: 3px solid var(--wood-light) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.2) !important;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Vinyl record center label */
+      .track-card .card-image::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 15px;
+        height: 15px;
+        background: radial-gradient(circle, var(--gold) 0%, var(--wood) 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        z-index: 4;
+      }
+
+      .track-info {
+        flex: 1;
+        min-width: 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .track-duration {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        opacity: 0.8;
+        flex-shrink: 0;
+        font-weight: 600;
+        background: rgba(139, 69, 19, 0.2) !important;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        border: 1px solid rgba(139, 69, 19, 0.3);
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Artist cards - LP album styling */
+      .artist-card {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(145deg, #2f1b14, #3d2817) !important;
+      }
+
+      .artist-card .card-image {
+        width: 140px !important;
+        height: 140px !important;
+        border-radius: 2px !important; /* Square like LP covers */
+        margin: 0 auto 1.2rem !important;
+        object-fit: cover;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 0 3px var(--gold) !important;
+        border: 2px solid var(--wood-light) !important;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* LP album corner fold effect */
+      .artist-card .card-image::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 25px;
+        height: 25px;
+        background: linear-gradient(
+          -45deg,
+          rgba(218, 165, 32, 0.3) 0%,
+          rgba(139, 69, 19, 0.2) 100%
+        );
+        clip-path: polygon(100% 0, 0 0, 100% 100%);
+        z-index: 3;
+      }
+
+      .artist-card .card-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        position: relative;
+        z-index: 2;
+      }
+
+      .artist-card .card-subtitle {
+        font-size: 0.95rem;
+        opacity: 0.85;
+        font-style: italic;
+        position: relative;
+        z-index: 2;
+      }
+
+      .artist-card .card-meta {
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        border-top: 1px solid rgba(139, 69, 19, 0.2);
+        padding-top: 1rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      .artist-popularity {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        background: rgba(139, 69, 19, 0.2) !important;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        border: 1px solid rgba(139, 69, 19, 0.3);
+      }
+
+      .popularity-bar {
+        width: 45px;
+        height: 5px;
+        background: rgba(245, 222, 179, 0.2) !important;
+        border-radius: 3px;
+        overflow: hidden;
+        border: 1px solid var(--wood-light) !important;
+      }
+
+      .popularity-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--wood), var(--gold)) !important;
+        border-radius: 2px;
+        transition: width 0.4s ease;
+      }
+
+      /* Genre Analysis Panel */
+      .genre-analysis-panel {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2.5rem;
+        background: var(--surface);
+        border: 3px solid var(--wood);
+        border-radius: 20px;
+        padding: 2.5rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        margin: 0 1rem;
+      }
+
+      .genre-chart-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 320px;
+      }
+
+      #genreChartCanvas {
+        max-width: 420px;
+        max-height: 420px;
+        filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
+      }
+
+      .genre-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+
+      .genre-stats-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 0.7rem;
+        text-align: center;
+        font-family: "Fredoka One", cursive;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .genre-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(139, 69, 19, 0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .genre-item:hover {
+        background: rgba(139, 69, 19, 0.2);
+        transform: translateX(8px);
+        border-color: var(--wood-light);
+      }
+
+      .genre-color {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid var(--wood-light);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .genre-info {
+        flex: 1;
+      }
+
+      .genre-name {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.95rem;
+        text-transform: capitalize;
+        line-height: 1.3;
+      }
+
+      .genre-count {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        opacity: 0.85;
+        font-weight: 300;
+      }
+
+      .genre-percentage {
+        font-size: 0.85rem;
+        color: var(--gold);
+        font-weight: 700;
+        min-width: 50px;
+        text-align: right;
+      }
+
+      /* Genre Chart Loading/Empty States */
+      .genre-chart-loading,
+      .genre-chart-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 320px;
+        color: var(--text-muted);
+      }
+
+      .genre-chart-loading .loading-spinner {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 1.5rem;
+        border-width: 4px;
+      }
+
+      .genre-chart-empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.6;
+      }
+
+      .genre-chart-empty-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        color: var(--text);
+        font-family: "Fredoka One", cursive;
+      }
+
+      .genre-chart-empty-desc {
+        font-size: 0.95rem;
+        text-align: center;
+        line-height: 1.5;
+        opacity: 0.85;
+        font-weight: 300;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 3.5rem 1rem;
+        color: var(--text-muted);
+        opacity: 0.85;
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+      }
+
+      .empty-state-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        color: var(--text);
+        font-family: "Fredoka One", cursive;
+      }
+
+      .empty-state-description {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        max-width: 450px;
+        margin: 0 auto;
+        font-weight: 300;
+      }
+
+      /* Time Range Selector */
+      .time-range-selector {
+        display: flex;
+        gap: 0.7rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .time-range-btn {
+        background: var(--wood);
+        border: 2px solid var(--wood-light);
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .time-range-btn.active {
+        background: var(--gold);
+        border-color: var(--accent);
+        color: var(--vinyl-black);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .time-range-btn:hover:not(.active) {
+        background: var(--wood-light);
+        color: var(--text);
+        transform: translateY(-1px);
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .genre-analysis-panel {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          padding: 2rem;
+          margin: 0 0.5rem;
+        }
+
+        .genre-chart-container {
+          min-height: 280px;
+        }
+
+        #genreChartCanvas {
+          max-width: 320px;
+          max-height: 320px;
+        }
+
+        .genre-stats {
+          max-height: 350px;
+          overflow-y: auto;
+          padding-right: 0.5rem;
+        }
+
+        .page-title {
+          font-size: 1.6rem;
+        }
+
+        .connect-section {
+          padding: 2.5rem 2rem;
+        }
+
+        .connect-title {
+          font-size: 1.9rem;
+        }
+
+        .connect-btn {
+          padding: 1.2rem 2.5rem;
+          font-size: 1rem;
+          gap: 0.8rem;
+        }
+
+        .cards-grid {
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .section-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1.2rem;
+        }
+
+        .time-range-selector {
+          align-self: flex-end;
+        }
+
+        .track-card .card-image {
+          width: 70px;
+          height: 70px;
+        }
+
+        .artist-card .card-image {
+          width: 110px;
+          height: 110px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0 0.5rem;
+        }
+
+        .connect-section {
+          padding: 2rem 1.5rem;
+        }
+
+        .connect-title {
+          font-size: 1.7rem;
+        }
+
+        .connect-description {
+          font-size: 0.95rem;
+        }
+
+        .connect-btn {
+          padding: 1rem 2rem;
+          font-size: 0.95rem;
+          width: 100%;
+          max-width: 300px;
+        }
+
+        .cards-grid {
+          grid-template-columns: 1fr;
+          gap: 1.2rem;
+        }
+
+        .track-card {
+          gap: 1rem;
+        }
+
+        .track-card .card-image {
+          width: 60px;
+          height: 60px;
+        }
+
+        .artist-card .card-image {
+          width: 90px;
+          height: 90px;
+        }
+
+        .section-title {
+          font-size: 1.5rem;
+        }
+
+        .card-title {
+          font-size: 1rem;
+        }
+
+        .card-subtitle {
+          font-size: 0.85rem;
+        }
+
+        .empty-state {
+          padding: 2.5rem 0.5rem;
+        }
+
+        .genre-analysis-panel {
+          padding: 1.5rem;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .connect-title {
+          font-size: 1.5rem;
+        }
+
+        .section-title {
+          font-size: 1.3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <a href="index.html" class="back-btn">
+          <span>←</span>
+          <span>Hub</span>
+        </a>
+        <h1 class="page-title">The Record Shop</h1>
+        <div style="width: 120px"></div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message"></div>
+
+        <!-- Connect Section -->
+        <section class="connect-section" id="connectSection">
+          <h2 class="connect-title">Connect Your Collection</h2>
+          <p class="connect-description">
+            Link your Spotify account to discover your musical taste, browse
+            your top tracks like vinyl records, and explore personalized
+            recommendations in our cozy digital record shop.
+          </p>
+
+          <button id="connectSpotifyBtn" class="connect-btn">
+            <span class="btn-icon">♫</span>
+            <span>Connect to Spotify</span>
+          </button>
+
+          <!-- Connected State Info -->
+          <div id="connectedInfo" class="connected-info">
+            <button id="disconnectBtn" class="disconnect-btn">
+              Disconnect
+            </button>
+          </div>
+        </section>
+
+        <!-- Music Content (shown when connected) -->
+        <div id="musicContent" class="music-content">
+          <!-- Your Top Tracks Section -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span>Featured Albums</span>
+              </h2>
+              <div class="time-range-selector">
+                <button
+                  class="time-range-btn active"
+                  data-range="short_term"
+                  data-section="tracks"
+                >
+                  4 Weeks
+                </button>
+                <button
+                  class="time-range-btn"
+                  data-range="medium_term"
+                  data-section="tracks"
+                >
+                  6 Months
+                </button>
+                <button
+                  class="time-range-btn"
+                  data-range="long_term"
+                  data-section="tracks"
+                >
+                  All Time
+                </button>
+              </div>
+            </div>
+            <div id="topTracksGrid" class="cards-grid">
+              <!-- Top tracks will be populated here -->
+            </div>
+          </section>
+
+          <!-- Your Top Artists Section -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span>Favorite Artists</span>
+              </h2>
+              <div class="time-range-selector">
+                <button
+                  class="time-range-btn active"
+                  data-range="short_term"
+                  data-section="artists"
+                >
+                  4 Weeks
+                </button>
+                <button
+                  class="time-range-btn"
+                  data-range="medium_term"
+                  data-section="artists"
+                >
+                  6 Months
+                </button>
+                <button
+                  class="time-range-btn"
+                  data-range="long_term"
+                  data-section="artists"
+                >
+                  All Time
+                </button>
+              </div>
+            </div>
+            <div id="topArtistsGrid" class="cards-grid">
+              <!-- Top artists will be populated here -->
+            </div>
+          </section>
+
+          <!-- Genre Analysis Section -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span>Your Musical DNA</span>
+              </h2>
+              <button id="refreshGenres" class="refresh-btn">
+                <span class="refresh-icon">⟲</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+            <div class="genre-analysis-panel">
+              <div id="genreChart" class="genre-chart-container">
+                <!-- Genre chart will be populated here -->
+              </div>
+              <div id="genreStats" class="genre-stats">
+                <!-- Genre statistics will be populated here -->
+              </div>
+            </div>
+          </section>
+
+          <!-- Featured Playlists Section -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span>Your Crates</span>
+              </h2>
+              <button id="refreshPlaylists" class="refresh-btn">
+                <span class="refresh-icon">⟲</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+            <div id="featuredPlaylistsGrid" class="cards-grid">
+              <!-- Featured playlists will be populated here -->
+            </div>
+          </section>
+
+          <!-- New Releases Section -->
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title" id="newReleasesTitle">
+                <span>Fresh Arrivals</span>
+                <span
+                  id="personalizedBadge"
+                  style="
+                    display: none;
+                    font-size: 0.7rem;
+                    background: linear-gradient(
+                      135deg,
+                      var(--wood),
+                      var(--gold)
+                    );
+                    color: var(--vinyl-black);
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 15px;
+                    margin-left: 0.5rem;
+                    font-family: Merriweather, serif;
+                    font-weight: 700;
+                    border: 2px solid var(--gold);
+                  "
+                  >For You</span
+                >
+              </h2>
+              <button id="refreshNewReleases" class="refresh-btn">
+                <span class="refresh-icon">⟲</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+            <div id="newReleasesGrid" class="cards-grid">
+              <!-- New releases will be populated here -->
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Configuration
+      const CONFIG = {
+        SPOTIFY_CLIENT_ID: "10d85455cc3e4867adaa99146642e31f",
+        REDIRECT_URI: window.location.origin + window.location.pathname,
+        SPOTIFY_SCOPES:
+          "user-read-private playlist-read-private playlist-read-collaborative user-read-email user-top-read user-read-recently-played user-library-read",
+      };
+
+      // State management
+      const AppState = {
+        spotify: {
+          isConnected: false,
+          accessToken: null,
+          refreshToken: null,
+          expiresAt: null,
+          userName: null,
+        },
+        currentTimeRange: {
+          tracks: "short_term",
+          artists: "short_term",
+        },
+        data: {
+          topTracks: [],
+          topArtists: [],
+          featuredPlaylists: [],
+          newReleases: [],
+          genreData: [],
+          newReleasesPersonalized: false,
+        },
+      };
+
+      // Utility Functions
+      const Utils = {
+        generateCodeVerifier(length = 128) {
+          const chars =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+          let result = "";
+          const array = new Uint32Array(length);
+          window.crypto.getRandomValues(array);
+          for (let i = 0; i < length; i++)
+            result += chars[array[i] % chars.length];
+          return result;
+        },
+
+        async generateCodeChallenge(verifier) {
+          const data = new TextEncoder().encode(verifier);
+          const digest = await crypto.subtle.digest("SHA-256", data);
+          return btoa(String.fromCharCode(...new Uint8Array(digest)))
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=+$/, "");
+        },
+
+        showStatus(message, type = "info") {
+          const statusEl = document.getElementById("statusMessage");
+          if (statusEl) {
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = "block";
+
+            if (type !== "error") {
+              setTimeout(() => (statusEl.style.display = "none"), 4000);
+            }
+          }
+        },
+
+        formatDuration(ms) {
+          const minutes = Math.floor(ms / 60000);
+          const seconds = Math.floor((ms % 60000) / 1000);
+          return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+        },
+
+        formatArtists(artists) {
+          return artists.map((artist) => artist.name).join(", ");
+        },
+
+        formatReleaseDate(dateString) {
+          try {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 7) {
+              return diffDays === 1 ? "1 day ago" : `${diffDays} days ago`;
+            } else if (diffDays <= 30) {
+              const weeks = Math.floor(diffDays / 7);
+              return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+            } else if (diffDays <= 365) {
+              const months = Math.floor(diffDays / 30);
+              return months === 1 ? "1 month ago" : `${months} months ago`;
+            } else {
+              return date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              });
+            }
+          } catch {
+            return dateString;
+          }
+        },
+
+        formatFollowers(count) {
+          if (count >= 1000000) {
+            return `${(count / 1000000).toFixed(1)}M`;
+          } else if (count >= 1000) {
+            return `${(count / 1000).toFixed(1)}K`;
+          }
+          return count?.toString() || "0";
+        },
+
+        formatGenres(genres) {
+          if (!genres || genres.length === 0) return "Various genres";
+          return genres
+            .slice(0, 2)
+            .map((genre) =>
+              genre
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")
+            )
+            .join(", ");
+        },
+
+        openSpotifyUrl(url) {
+          if (url) {
+            window.open(url, "_blank");
+          }
+        },
+      };
+
+      // API Service
+      const ApiService = {
+        async fetchSpotify(endpoint, options = {}) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+          try {
+            const response = await fetch(
+              `https://api.spotify.com/v1${endpoint}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${AppState.spotify.accessToken}`,
+                  ...options.headers,
+                },
+                signal: controller.signal,
+                ...options,
+              }
+            );
+
+            clearTimeout(timeoutId);
+
+            if (response.status === 401) {
+              console.warn("Spotify token expired, clearing auth");
+              Utils.showStatus(
+                "Spotify session expired. Please reconnect.",
+                "error"
+              );
+              Auth.clearStoredAuth();
+              throw new Error("Authentication expired");
+            }
+
+            if (response.status === 403) {
+              console.warn("Spotify API access denied - possibly scope issue");
+              throw new Error("Access denied - missing required permissions");
+            }
+
+            if (response.status === 429) {
+              console.warn("Spotify rate limit hit");
+              const retryAfter = response.headers.get("Retry-After");
+              throw new Error(
+                `Rate limited. Try again in ${retryAfter || "60"} seconds.`
+              );
+            }
+
+            if (!response.ok) {
+              let errorMessage = `Spotify API error: ${response.status}`;
+              try {
+                const errorData = await response.json();
+                if (errorData.error?.message) {
+                  errorMessage = errorData.error.message;
+                }
+              } catch {
+                // Can't parse error response, use generic message
+              }
+              throw new Error(errorMessage);
+            }
+
+            return await response.json();
+          } catch (error) {
+            clearTimeout(timeoutId);
+
+            if (error.name === "AbortError") {
+              throw new Error(
+                "Request timed out - check your connection and try again"
+              );
+            }
+
+            throw error;
+          }
+        },
+
+        async fetchTopTracks(timeRange = "medium_term", limit = 50) {
+          return await this.fetchSpotify(
+            `/me/top/tracks?time_range=${timeRange}&limit=${limit}`
+          );
+        },
+
+        async fetchTopArtists(timeRange = "medium_term", limit = 50) {
+          return await this.fetchSpotify(
+            `/me/top/artists?time_range=${timeRange}&limit=${limit}`
+          );
+        },
+
+        async fetchUserPlaylists(limit = 50, offset = 0) {
+          try {
+            const userPlaylists = await this.fetchSpotify(
+              `/me/playlists?limit=${limit}&offset=${offset}`
+            );
+            return { playlists: userPlaylists };
+          } catch (error) {
+            console.error("Error fetching user playlists:", error);
+            throw error;
+          }
+        },
+
+        async fetchNewReleases(limit = 12, offset = 0) {
+          const currentYear = new Date().getFullYear();
+          const market = "US";
+
+          try {
+            const topArtists = await this.fetchSpotify(
+              "/me/top/artists?limit=20&time_range=medium_term"
+            );
+            if (topArtists.items && topArtists.items.length > 0) {
+              const artistNames = topArtists.items
+                .slice(0, 5)
+                .map((artist) => `"${artist.name.replace(/"/g, "")}"`);
+              const artistQuery = artistNames.join(" OR ");
+
+              const artistReleases = await this.fetchSpotify(
+                `/search?q=(${encodeURIComponent(
+                  artistQuery
+                )}) year:${currentYear}&type=album&limit=20&market=${market}`
+              );
+
+              if (artistReleases.albums?.items?.length > 0) {
+                return {
+                  albums: {
+                    items: artistReleases.albums.items,
+                    isPersonalized: true,
+                  },
+                };
+              }
+            }
+          } catch (error) {
+            console.warn("Artist-based search failed:", error);
+          }
+
+          try {
+            const recentReleases = await this.fetchSpotify(
+              `/search?q=year:${currentYear}&type=album&limit=30&market=${market}`
+            );
+
+            if (recentReleases.albums?.items?.length > 0) {
+              return { albums: recentReleases.albums };
+            }
+          } catch (error) {
+            console.warn("Recent releases search failed:", error);
+          }
+
+          try {
+            const browseData = await this.fetchSpotify(
+              `/browse/new-releases?limit=${limit}&offset=${offset}&market=${market}`
+            );
+            return browseData;
+          } catch (error) {
+            console.warn("Browse new releases with market failed:", error);
+          }
+
+          try {
+            return await this.fetchSpotify(
+              `/browse/new-releases?limit=${limit}&offset=${offset}`
+            );
+          } catch (error) {
+            console.warn("Browse new releases without market failed:", error);
+          }
+
+          try {
+            const newMusicSearch = await this.fetchSpotify(
+              `/search?q=tag:new&type=album&limit=${limit}&market=${market}`
+            );
+            if (newMusicSearch.albums?.items?.length > 0) {
+              return { albums: newMusicSearch.albums };
+            }
+          } catch (error) {
+            console.warn("New music search failed:", error);
+          }
+
+          try {
+            const savedTracks = await this.fetchSpotify("/me/tracks?limit=50");
+            if (savedTracks.items && savedTracks.items.length > 0) {
+              const recentAlbums = savedTracks.items
+                .filter((item) => item.track && item.track.album)
+                .map((item) => item.track.album)
+                .filter(
+                  (album, index, self) =>
+                    index === self.findIndex((a) => a.id === album.id)
+                )
+                .slice(0, limit);
+
+              return {
+                albums: {
+                  items: recentAlbums,
+                  isPersonalized: true,
+                },
+              };
+            }
+          } catch (error) {
+            console.warn("Saved tracks fallback failed:", error);
+          }
+
+          return { albums: { items: [] } };
+        },
+      };
+
+      // Authentication Module
+      const Auth = {
+        async login() {
+          try {
+            Utils.showStatus("Connecting to Spotify...", "info");
+            const btn = document.getElementById("connectSpotifyBtn");
+            if (btn) {
+              btn.disabled = true;
+              btn.innerHTML =
+                '<div class="loading-spinner"></div>Connecting...';
+            }
+
+            const verifier = Utils.generateCodeVerifier();
+            sessionStorage.setItem("spotify_verifier", verifier);
+
+            const challenge = await Utils.generateCodeChallenge(verifier);
+
+            const url = `https://accounts.spotify.com/authorize?response_type=code&client_id=${
+              CONFIG.SPOTIFY_CLIENT_ID
+            }&scope=${encodeURIComponent(
+              CONFIG.SPOTIFY_SCOPES
+            )}&redirect_uri=${encodeURIComponent(
+              CONFIG.REDIRECT_URI
+            )}&code_challenge_method=S256&code_challenge=${challenge}`;
+
+            window.location.href = url;
+          } catch (error) {
+            console.error("Login error:", error);
+            Utils.showStatus(
+              "Failed to connect to Spotify. Please try again.",
+              "error"
+            );
+            UI.updateInterface();
+          }
+        },
+
+        async handleCallback() {
+          const params = new URLSearchParams(window.location.search);
+          const code = params.get("code");
+          const error = params.get("error");
+          const errorDescription = params.get("error_description");
+
+          console.log("Handling OAuth callback:", {
+            code: !!code,
+            error,
+            errorDescription,
+          });
+
+          if (error) {
+            let errorMessage = "Spotify connection failed.";
+            if (error === "access_denied") {
+              errorMessage = "Spotify connection was cancelled.";
+            } else if (errorDescription) {
+              errorMessage = `Spotify error: ${errorDescription}`;
+            }
+            Utils.showStatus(errorMessage, "error");
+            window.history.replaceState(
+              {},
+              document.title,
+              CONFIG.REDIRECT_URI
+            );
+            return;
+          }
+
+          if (!code) return;
+
+          try {
+            Utils.showStatus("Completing Spotify connection...", "info");
+            const verifier = sessionStorage.getItem("spotify_verifier");
+
+            if (!verifier) {
+              console.error("Missing PKCE verifier in sessionStorage");
+              throw new Error("Session expired. Please try connecting again.");
+            }
+
+            const body = new URLSearchParams({
+              grant_type: "authorization_code",
+              code: code,
+              redirect_uri: CONFIG.REDIRECT_URI,
+              client_id: CONFIG.SPOTIFY_CLIENT_ID,
+              code_verifier: verifier,
+            });
+
+            console.log("Making token request to Spotify...");
+            const res = await fetch("https://accounts.spotify.com/api/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: body.toString(),
+            });
+
+            let errorData;
+            try {
+              errorData = await res.json();
+            } catch (jsonError) {
+              console.error("Failed to parse token response:", jsonError);
+              throw new Error(`Token request failed with status ${res.status}`);
+            }
+
+            if (!res.ok) {
+              console.error("Token request failed:", errorData);
+              throw new Error(
+                `Token request failed: ${res.status} - ${
+                  errorData.error_description ||
+                  errorData.error ||
+                  "Unknown error"
+                }`
+              );
+            }
+
+            console.log("Token request successful, setting up session...");
+            const expiresAt =
+              Date.now() + (errorData.expires_in || 3600) * 1000;
+
+            AppState.spotify = {
+              accessToken: errorData.access_token,
+              refreshToken: errorData.refresh_token,
+              expiresAt: expiresAt,
+              isConnected: true,
+              userName: null,
+            };
+
+            try {
+              sessionStorage.setItem(
+                "spotify_access_token",
+                errorData.access_token
+              );
+              if (errorData.refresh_token) {
+                sessionStorage.setItem(
+                  "spotify_refresh_token",
+                  errorData.refresh_token
+                );
+              }
+              sessionStorage.setItem(
+                "spotify_expires_at",
+                expiresAt.toString()
+              );
+            } catch (storageError) {
+              console.warn(
+                "Failed to store tokens in sessionStorage:",
+                storageError
+              );
+            }
+
+            try {
+              console.log("Fetching user profile...");
+              const userData = await ApiService.fetchSpotify("/me");
+              AppState.spotify.userName =
+                userData.display_name || userData.id || "User";
+              try {
+                sessionStorage.setItem(
+                  "spotify_user_name",
+                  AppState.spotify.userName
+                );
+              } catch (storageError) {
+                console.warn("Failed to store username:", storageError);
+              }
+              console.log("User profile loaded:", AppState.spotify.userName);
+            } catch (userError) {
+              console.warn("Failed to get user info:", userError);
+              AppState.spotify.userName = "Music Lover";
+            }
+
+            window.history.replaceState(
+              {},
+              document.title,
+              CONFIG.REDIRECT_URI
+            );
+
+            Utils.showStatus(
+              `Welcome to the record shop, ${AppState.spotify.userName}!`,
+              "success"
+            );
+
+            UI.updateInterface();
+
+            try {
+              console.log("Loading music data...");
+              await MusicData.loadAllData();
+              console.log("Music data loaded successfully");
+            } catch (dataError) {
+              console.error("Failed to load some music data:", dataError);
+              Utils.showStatus(
+                "Connected! Some features may load slowly. Please wait...",
+                "info"
+              );
+              setTimeout(
+                () => MusicData.loadTopTracks().catch(console.warn),
+                1000
+              );
+              setTimeout(
+                () => MusicData.loadTopArtists().catch(console.warn),
+                1500
+              );
+              setTimeout(
+                () => MusicData.loadUserPlaylists().catch(console.warn),
+                2000
+              );
+              setTimeout(
+                () => MusicData.loadGenreAnalysis().catch(console.warn),
+                2500
+              );
+              setTimeout(
+                () => MusicData.loadNewReleases().catch(console.warn),
+                3000
+              );
+            }
+          } catch (error) {
+            console.error("Callback error:", error);
+            Utils.showStatus(
+              `Failed to complete Spotify connection: ${error.message}. Please try again.`,
+              "error"
+            );
+            window.history.replaceState(
+              {},
+              document.title,
+              CONFIG.REDIRECT_URI
+            );
+
+            const connectBtn = document.getElementById("connectSpotifyBtn");
+            if (connectBtn) {
+              connectBtn.innerHTML = `<span class="btn-icon">♫</span><span>Connect to Spotify</span>`;
+              connectBtn.classList.remove("connected");
+              connectBtn.disabled = false;
+            }
+          }
+        },
+
+        clearStoredAuth() {
+          [
+            "spotify_access_token",
+            "spotify_refresh_token",
+            "spotify_expires_at",
+            "spotify_user_name",
+            "spotify_verifier",
+          ].forEach((key) => sessionStorage.removeItem(key));
+
+          AppState.spotify = {
+            isConnected: false,
+            accessToken: null,
+            refreshToken: null,
+            expiresAt: null,
+            userName: null,
+          };
+
+          UI.updateInterface();
+        },
+
+        checkStoredAuth() {
+          const token = sessionStorage.getItem("spotify_access_token");
+          const expiresAt = sessionStorage.getItem("spotify_expires_at");
+          const userName = sessionStorage.getItem("spotify_user_name");
+
+          if (token && expiresAt) {
+            if (Date.now() < parseInt(expiresAt)) {
+              AppState.spotify = {
+                accessToken: token,
+                expiresAt: parseInt(expiresAt),
+                userName: userName,
+                isConnected: true,
+                refreshToken: sessionStorage.getItem("spotify_refresh_token"),
+              };
+
+              Utils.showStatus(
+                `Welcome back to the record shop, ${
+                  userName || "music lover"
+                }!`,
+                "success"
+              );
+              UI.updateInterface();
+              MusicData.loadAllData();
+            } else {
+              Utils.showStatus(
+                "Spotify session expired. Please reconnect.",
+                "error"
+              );
+              this.clearStoredAuth();
+            }
+          }
+        },
+      };
+
+      // Music Data Management (continuing with the same logic but updated messaging)
+      const MusicData = {
+        async loadAllData() {
+          console.log("Starting to browse the record collection...");
+          UI.showLoadingStates();
+
+          const promises = [
+            this.loadTopTracks().catch((error) => {
+              console.error("Featured albums failed:", error);
+              Utils.showStatus(
+                "Couldn't load your featured albums. Your music history might be private.",
+                "error"
+              );
+            }),
+
+            new Promise((resolve) => setTimeout(resolve, 300)).then(() =>
+              this.loadTopArtists().catch((error) => {
+                console.error("Favorite artists failed:", error);
+                Utils.showStatus(
+                  "Couldn't load your favorite artists. Your music history might be private.",
+                  "error"
+                );
+              })
+            ),
+
+            new Promise((resolve) => setTimeout(resolve, 600)).then(() =>
+              this.loadGenreAnalysis().catch((error) => {
+                console.error("Musical DNA analysis failed:", error);
+                Utils.showStatus(
+                  "Musical DNA analysis couldn't be loaded.",
+                  "error"
+                );
+              })
+            ),
+
+            new Promise((resolve) => setTimeout(resolve, 900)).then(() =>
+              this.loadUserPlaylists().catch((error) => {
+                console.error("Your crates failed:", error);
+                Utils.showStatus("Couldn't load your music crates.", "error");
+              })
+            ),
+
+            new Promise((resolve) => setTimeout(resolve, 1200)).then(() =>
+              this.loadNewReleases().catch((error) => {
+                console.error("Fresh arrivals failed:", error);
+                Utils.showStatus("Fresh arrivals couldn't be loaded.", "error");
+              })
+            ),
+          ];
+
+          try {
+            await Promise.allSettled(promises);
+            console.log("Finished browsing the record collection");
+          } catch (error) {
+            console.error("Error in loadAllData:", error);
+          } finally {
+            UI.hideLoadingStates();
+          }
+        },
+
+        async loadTopTracks(timeRange = AppState.currentTimeRange.tracks) {
+          try {
+            console.log(`Loading featured albums for ${timeRange}...`);
+            const data = await ApiService.fetchTopTracks(timeRange, 20);
+            AppState.data.topTracks = data.items || [];
+            UI.renderTopTracks();
+            console.log(
+              `Loaded ${AppState.data.topTracks.length} featured albums`
+            );
+          } catch (error) {
+            console.error("Error loading featured albums:", error);
+            AppState.data.topTracks = [];
+            UI.renderTopTracks([]);
+
+            if (
+              error.message.includes("Access denied") ||
+              error.message.includes("403")
+            ) {
+              Utils.showStatus(
+                "Featured albums unavailable - check your Spotify privacy settings.",
+                "error"
+              );
+            } else if (error.message.includes("timed out")) {
+              Utils.showStatus(
+                "Loading featured albums is taking longer than usual...",
+                "info"
+              );
+            }
+          }
+        },
+
+        async loadTopArtists(timeRange = AppState.currentTimeRange.artists) {
+          try {
+            console.log(`Loading favorite artists for ${timeRange}...`);
+            const data = await ApiService.fetchTopArtists(timeRange, 50);
+            AppState.data.topArtists = data.items || [];
+            UI.renderTopArtists(AppState.data.topArtists.slice(0, 20));
+            console.log(
+              `Loaded ${AppState.data.topArtists.length} favorite artists (showing 20 in shop)`
+            );
+          } catch (error) {
+            console.error("Error loading favorite artists:", error);
+            AppState.data.topArtists = [];
+            UI.renderTopArtists([]);
+
+            if (
+              error.message.includes("Access denied") ||
+              error.message.includes("403")
+            ) {
+              Utils.showStatus(
+                "Favorite artists unavailable - check your Spotify privacy settings.",
+                "error"
+              );
+            } else if (error.message.includes("timed out")) {
+              Utils.showStatus(
+                "Loading favorite artists is taking longer than usual...",
+                "info"
+              );
+            }
+          }
+        },
+
+        async loadGenreAnalysis() {
+          try {
+            console.log("Analyzing your musical DNA from favorite artists...");
+
+            let artists = AppState.data.topArtists;
+            if (!artists || artists.length === 0) {
+              console.log(
+                "No favorite artists data, fetching fresh data for musical DNA analysis..."
+              );
+              const data = await ApiService.fetchTopArtists("medium_term", 50);
+              artists = data.items || [];
+            }
+
+            if (artists.length === 0) {
+              AppState.data.genreData = [];
+              UI.renderGenreAnalysis();
+              return;
+            }
+
+            const genreCount = {};
+            const genreArtists = {};
+
+            artists.forEach((artist) => {
+              if (artist.genres && artist.genres.length > 0) {
+                const artistWeight = Math.max(
+                  1,
+                  (artist.popularity || 50) / 20
+                );
+
+                artist.genres.forEach((genre) => {
+                  const cleanGenre = this.normalizeGenre(genre);
+
+                  if (!genreArtists[cleanGenre]) {
+                    genreArtists[cleanGenre] = new Set();
+                  }
+                  genreArtists[cleanGenre].add(artist.name);
+
+                  genreCount[cleanGenre] =
+                    (genreCount[cleanGenre] || 0) + artistWeight;
+                });
+              }
+            });
+
+            const groupedGenres = this.groupRelatedGenres(
+              genreCount,
+              genreArtists
+            );
+
+            const totalWeight = Object.values(groupedGenres).reduce(
+              (sum, data) => sum + data.weight,
+              0
+            );
+
+            const genreData = Object.entries(groupedGenres)
+              .map(([genre, data]) => ({
+                genre,
+                count: data.artistCount,
+                weight: data.weight,
+                percentage: ((data.weight / totalWeight) * 100).toFixed(1),
+                artists: Array.from(data.artists).slice(0, 5),
+              }))
+              .sort((a, b) => b.weight - a.weight)
+              .slice(0, 10);
+
+            AppState.data.genreData = genreData;
+            UI.renderGenreAnalysis();
+
+            console.log(
+              `Analyzed ${artists.length} artists with ${genreData.length} genre groups for musical DNA`
+            );
+          } catch (error) {
+            console.error("Error analyzing musical DNA:", error);
+            AppState.data.genreData = [];
+            UI.renderGenreAnalysis();
+
+            if (
+              error.message.includes("Access denied") ||
+              error.message.includes("403")
+            ) {
+              Utils.showStatus(
+                "Musical DNA analysis unavailable - check your Spotify privacy settings.",
+                "error"
+              );
+            }
+          }
+        },
+
+        normalizeGenre(genre) {
+          let normalized = genre.toLowerCase().trim();
+          normalized = normalized
+            .replace(
+              /^(modern|contemporary|alternative|indie|neo|new|old|classic)\s+/,
+              ""
+            )
+            .replace(/\s+(music|sound)$/, "")
+            .replace(
+              /\s+(rock|pop|hip hop|rap|electronic|jazz|blues|folk|country|metal)$/,
+              " $1"
+            )
+            .replace(/\s+/g, " ")
+            .trim();
+          return normalized;
+        },
+
+        groupRelatedGenres(genreCount, genreArtists) {
+          const grouped = {};
+          const processed = new Set();
+
+          const genreGroups = {
+            rock: [
+              "rock",
+              "alternative rock",
+              "indie rock",
+              "classic rock",
+              "hard rock",
+              "punk rock",
+              "garage rock",
+              "post-rock",
+            ],
+            pop: [
+              "pop",
+              "indie pop",
+              "dream pop",
+              "synth pop",
+              "electropop",
+              "art pop",
+              "bedroom pop",
+            ],
+            "hip hop": [
+              "hip hop",
+              "rap",
+              "trap",
+              "conscious hip hop",
+              "boom bap",
+              "gangsta rap",
+            ],
+            electronic: [
+              "electronic",
+              "techno",
+              "house",
+              "ambient",
+              "edm",
+              "dubstep",
+              "drum and bass",
+              "synthwave",
+            ],
+            "r&b": ["r&b", "soul", "neo soul", "contemporary r&b", "funk"],
+            indie: ["indie", "indie folk", "indie rock", "indie pop"],
+            folk: [
+              "folk",
+              "indie folk",
+              "folk rock",
+              "americana",
+              "singer-songwriter",
+            ],
+            jazz: ["jazz", "smooth jazz", "fusion", "bebop", "acid jazz"],
+            country: ["country", "alt-country", "country rock", "bluegrass"],
+            metal: [
+              "metal",
+              "heavy metal",
+              "death metal",
+              "black metal",
+              "metalcore",
+            ],
+            blues: ["blues", "delta blues", "electric blues", "blues rock"],
+            reggae: ["reggae", "dancehall", "dub", "ska"],
+          };
+
+          Object.entries(genreCount).forEach(([genre, weight]) => {
+            if (processed.has(genre)) return;
+
+            let groupKey = genre;
+            let foundGroup = false;
+
+            for (const [groupName, keywords] of Object.entries(genreGroups)) {
+              if (keywords.some((keyword) => genre.includes(keyword))) {
+                groupKey = groupName;
+                foundGroup = true;
+                break;
+              }
+            }
+
+            if (!grouped[groupKey]) {
+              grouped[groupKey] = {
+                weight: 0,
+                artistCount: 0,
+                artists: new Set(),
+              };
+            }
+
+            grouped[groupKey].weight += weight;
+
+            if (genreArtists[genre]) {
+              genreArtists[genre].forEach((artist) => {
+                grouped[groupKey].artists.add(artist);
+              });
+              grouped[groupKey].artistCount = grouped[groupKey].artists.size;
+            }
+
+            processed.add(genre);
+
+            if (foundGroup) {
+              const groupKeywords = genreGroups[groupKey];
+              Object.entries(genreCount).forEach(
+                ([otherGenre, otherWeight]) => {
+                  if (
+                    !processed.has(otherGenre) &&
+                    groupKeywords.some((keyword) =>
+                      otherGenre.includes(keyword)
+                    )
+                  ) {
+                    grouped[groupKey].weight += otherWeight;
+                    if (genreArtists[otherGenre]) {
+                      genreArtists[otherGenre].forEach((artist) => {
+                        grouped[groupKey].artists.add(artist);
+                      });
+                      grouped[groupKey].artistCount =
+                        grouped[groupKey].artists.size;
+                    }
+                    processed.add(otherGenre);
+                  }
+                }
+              );
+            }
+          });
+
+          const totalWeight = Object.values(grouped).reduce(
+            (sum, data) => sum + data.weight,
+            0
+          );
+          const filtered = {};
+
+          Object.entries(grouped).forEach(([genre, data]) => {
+            if (data.weight / totalWeight >= 0.02 || data.artistCount >= 2) {
+              filtered[genre] = data;
+            }
+          });
+
+          return filtered;
+        },
+
+        async loadUserPlaylists() {
+          try {
+            console.log("Loading your music crates...");
+            const data = await ApiService.fetchUserPlaylists(50, 0);
+            AppState.data.featuredPlaylists = data.playlists?.items || [];
+            UI.renderFeaturedPlaylists();
+            console.log(
+              `Loaded ${AppState.data.featuredPlaylists.length} music crates`
+            );
+          } catch (error) {
+            console.error("Error loading your music crates:", error);
+            AppState.data.featuredPlaylists = [];
+            UI.renderFeaturedPlaylists();
+
+            if (
+              error.message.includes("Access denied") ||
+              error.message.includes("403")
+            ) {
+              Utils.showStatus(
+                "Can't access your music crates - check your Spotify privacy settings.",
+                "error"
+              );
+            } else if (error.message.includes("timed out")) {
+              Utils.showStatus(
+                "Loading music crates is taking longer than usual...",
+                "info"
+              );
+            } else {
+              Utils.showStatus(
+                "Couldn't load your music crates. Please try refreshing.",
+                "error"
+              );
+            }
+          }
+        },
+
+        async loadNewReleases() {
+          try {
+            const data = await ApiService.fetchNewReleases(50);
+            let albums = data.albums?.items || [];
+            const isPersonalized = data.albums?.isPersonalized || false;
+
+            if (albums.length === 0) {
+              AppState.data.newReleases = [];
+              AppState.data.newReleasesPersonalized = false;
+              UI.renderNewReleases();
+              return;
+            }
+
+            const currentDate = new Date();
+
+            albums = albums
+              .filter((album) => {
+                if (
+                  !album.release_date ||
+                  !album.images ||
+                  album.images.length === 0
+                ) {
+                  return false;
+                }
+
+                if (isPersonalized) {
+                  try {
+                    const releaseDate = new Date(album.release_date);
+                    const fiveYearsAgo = new Date();
+                    fiveYearsAgo.setFullYear(currentDate.getFullYear() - 5);
+                    return releaseDate >= fiveYearsAgo;
+                  } catch {
+                    return true;
+                  }
+                } else {
+                  try {
+                    const releaseDate = new Date(album.release_date);
+                    const threeYearsAgo = new Date();
+                    threeYearsAgo.setFullYear(currentDate.getFullYear() - 3);
+                    return releaseDate >= threeYearsAgo;
+                  } catch {
+                    return true;
+                  }
+                }
+              })
+              .sort((a, b) => {
+                try {
+                  const dateA = new Date(a.release_date);
+                  const dateB = new Date(b.release_date);
+                  return dateB - dateA;
+                } catch {
+                  return 0;
+                }
+              })
+              .slice(0, 12);
+
+            AppState.data.newReleases = albums;
+            AppState.data.newReleasesPersonalized = isPersonalized;
+            UI.renderNewReleases();
+          } catch (error) {
+            console.error("Error loading fresh arrivals:", error);
+            AppState.data.newReleasesPersonalized = false;
+            UI.renderNewReleases([]);
+          }
+        },
+      };
+
+      // UI Management
+      const UI = {
+        updateInterface() {
+          const connectBtn = document.getElementById("connectSpotifyBtn");
+          const connectedInfo = document.getElementById("connectedInfo");
+          const connectSection = document.getElementById("connectSection");
+          const musicContent = document.getElementById("musicContent");
+
+          if (AppState.spotify.isConnected && AppState.spotify.userName) {
+            // Hide the entire connect section when connected
+            if (connectSection) {
+              connectSection.style.display = "none";
+            }
+
+            if (musicContent) {
+              musicContent.classList.add("visible");
+            }
+          } else {
+            // Show the connect section when not connected
+            if (connectSection) {
+              connectSection.style.display = "block";
+            }
+
+            if (connectBtn) {
+              connectBtn.innerHTML = `<span class="btn-icon">♫</span><span>Connect to Spotify</span>`;
+              connectBtn.classList.remove("connected");
+              connectBtn.disabled = false;
+            }
+
+            if (connectedInfo) {
+              connectedInfo.classList.remove("visible");
+            }
+
+            if (musicContent) {
+              musicContent.classList.remove("visible");
+            }
+          }
+        },
+
+        renderTopTracks(tracks = AppState.data.topTracks) {
+          const grid = document.getElementById("topTracksGrid");
+          if (!grid) return;
+
+          if (!tracks || tracks.length === 0) {
+            grid.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">♫</div>
+                <div class="empty-state-title">No Featured Albums Found</div>
+                <div class="empty-state-description">
+                  Your listening history might be too short or private. Keep listening to discover your featured albums in our record shop!
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          grid.innerHTML = tracks
+            .map(
+              (track) => `
+            <div class="card track-card" onclick="Utils.openSpotifyUrl('${
+              track.external_urls?.spotify
+            }')">
+              <img 
+                src="${
+                  track.album?.images?.[0]?.url ||
+                  track.album?.images?.[1]?.url ||
+                  ""
+                }" 
+                alt="${track.name}"
+                class="card-image"
+                loading="lazy"
+              />
+              <div class="track-info">
+                <div class="card-title">${track.name}</div>
+                <div class="card-subtitle">${Utils.formatArtists(
+                  track.artists || []
+                )}</div>
+                <div class="card-meta">
+                  <span>${track.album?.name || ""}</span>
+                  <span class="track-duration">${Utils.formatDuration(
+                    track.duration_ms || 0
+                  )}</span>
+                </div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        },
+
+        renderTopArtists(artists = AppState.data.topArtists) {
+          const grid = document.getElementById("topArtistsGrid");
+          if (!grid) return;
+
+          if (!artists || artists.length === 0) {
+            grid.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">★</div>
+                <div class="empty-state-title">No Favorite Artists Found</div>
+                <div class="empty-state-description">
+                  Your listening history might be too short or private. Keep discovering new artists to build your favorites in our record shop!
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          grid.innerHTML = artists
+            .map(
+              (artist) => `
+            <div class="card artist-card" onclick="Utils.openSpotifyUrl('${
+              artist.external_urls?.spotify
+            }')">
+              <img 
+                src="${
+                  artist.images?.[0]?.url ||
+                  artist.images?.[1]?.url ||
+                  artist.images?.[2]?.url ||
+                  ""
+                }" 
+                alt="${artist.name}"
+                class="card-image"
+                loading="lazy"
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzMzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI3MCIgZmlsbD0iIzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjNzc3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='"
+              />
+              <div class="card-title">${artist.name}</div>
+              <div class="card-subtitle">${Utils.formatGenres(
+                artist.genres
+              )}</div>
+              <div class="card-meta">
+                <div class="artist-popularity">
+                  <span>Heat ${artist.popularity || 0}%</span>
+                  <div class="popularity-bar">
+                    <div class="popularity-fill" style="width: ${
+                      artist.popularity || 0
+                    }%"></div>
+                  </div>
+                </div>
+                <span>Fans ${Utils.formatFollowers(
+                  artist.followers?.total || 0
+                )} followers</span>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        },
+
+        renderGenreAnalysis(genreData = AppState.data.genreData) {
+          const chartContainer = document.getElementById("genreChart");
+          const statsContainer = document.getElementById("genreStats");
+
+          if (!chartContainer || !statsContainer) return;
+
+          if (!genreData || genreData.length === 0) {
+            chartContainer.innerHTML = `
+              <div class="genre-chart-empty">
+                <div class="genre-chart-empty-icon">♪</div>
+                <div class="genre-chart-empty-title">No Musical DNA Data</div>
+                <div class="genre-chart-empty-desc">
+                  Your listening history might be too short or your favorite artists don't have genre information. 
+                  Keep listening to build your musical DNA profile!
+                </div>
+              </div>
+            `;
+
+            statsContainer.innerHTML = `
+              <div class="genre-stats-title">Musical DNA</div>
+              <div style="text-align: center; padding: 2rem; color: var(--text-muted); opacity: 0.8;">
+                No musical DNA data to display
+              </div>
+            `;
+            return;
+          }
+
+          // Warm record shop colors
+          const colors = [
+            "#8B4513", // Saddle Brown
+            "#CD853F", // Peru
+            "#DAA520", // Goldenrod
+            "#D2691E", // Chocolate
+            "#B8860B", // Dark Goldenrod
+            "#A0522D", // Sienna
+            "#DEB887", // Burlywood
+            "#F4A460", // Sandy Brown
+            "#BC8F8F", // Rosy Brown
+            "#8FBC8F", // Dark Sea Green
+            "#CD5C5C", // Indian Red
+            "#F5DEB3", // Wheat
+            "#D3D3D3", // Light Gray
+            "#708090", // Slate Gray
+            "#556B2F", // Dark Olive Green
+          ];
+
+          this.createPieChart(chartContainer, genreData, colors);
+
+          statsContainer.innerHTML = `
+            <div class="genre-stats-title">Musical DNA</div>
+            ${genreData
+              .map(
+                (item, index) => `
+              <div class="genre-item">
+                <div class="genre-color" style="background-color: ${
+                  colors[index % colors.length]
+                }"></div>
+                <div class="genre-info">
+                  <div class="genre-name">${item.genre}</div>
+                  <div class="genre-count">${item.count} artist${
+                  item.count !== 1 ? "s" : ""
+                }</div>
+                </div>
+                <div class="genre-percentage">${item.percentage}%</div>
+              </div>
+            `
+              )
+              .join("")}
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+              Based on ${AppState.data.topArtists?.length || 0} favorite artists
+            </div>
+          `;
+        },
+
+        createPieChart(container, data, colors) {
+          const canvas = document.createElement("canvas");
+          canvas.id = "genreChartCanvas";
+          canvas.width = 380;
+          canvas.height = 380;
+
+          container.innerHTML = "";
+          container.appendChild(canvas);
+
+          const ctx = canvas.getContext("2d");
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const radius = Math.min(centerX, centerY) - 25;
+
+          const total = data.reduce(
+            (sum, item) => sum + (item.weight || item.count),
+            0
+          );
+          let currentAngle = -Math.PI / 2;
+
+          data.forEach((item, index) => {
+            const value = item.weight || item.count;
+            const sliceAngle = (value / total) * 2 * Math.PI;
+            const color = colors[index % colors.length];
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(
+              centerX,
+              centerY,
+              radius,
+              currentAngle,
+              currentAngle + sliceAngle
+            );
+            ctx.closePath();
+
+            const gradient = ctx.createRadialGradient(
+              centerX,
+              centerY,
+              0,
+              centerX,
+              centerY,
+              radius
+            );
+            gradient.addColorStop(0, this.lightenColor(color, 25));
+            gradient.addColorStop(1, color);
+
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            ctx.strokeStyle = "rgba(139, 69, 19, 0.3)";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            currentAngle += sliceAngle;
+          });
+
+          // Wood grain center circle
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius * 0.35, 0, 2 * Math.PI);
+          ctx.fillStyle = "rgba(47, 27, 20, 0.9)";
+          ctx.fill();
+
+          // Gold border for center
+          ctx.strokeStyle = "#DAA520";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          // Center text
+          ctx.fillStyle = "#FFD700";
+          ctx.font = "bold 18px Fredoka One";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Your", centerX, centerY - 12);
+          ctx.fillText("Musical", centerX, centerY + 2);
+          ctx.fillText("DNA", centerX, centerY + 16);
+        },
+
+        lightenColor(color, percent) {
+          const num = parseInt(color.replace("#", ""), 16);
+          const amt = Math.round(2.55 * percent);
+          const R = (num >> 16) + amt;
+          const G = ((num >> 8) & 0x00ff) + amt;
+          const B = (num & 0x0000ff) + amt;
+          return (
+            "#" +
+            (
+              0x1000000 +
+              (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+              (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+              (B < 255 ? (B < 1 ? 0 : B) : 255)
+            )
+              .toString(16)
+              .slice(1)
+          );
+        },
+
+        renderFeaturedPlaylists(playlists = AppState.data.featuredPlaylists) {
+          const grid = document.getElementById("featuredPlaylistsGrid");
+          if (!grid) return;
+
+          if (!playlists || playlists.length === 0) {
+            grid.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">♪</div>
+                <div class="empty-state-title">No Music Crates Found</div>
+                <div class="empty-state-description">
+                  You don't have any music crates yet! Create some playlists in Spotify to see them in our record shop.
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          grid.innerHTML = playlists
+            .map(
+              (playlist) => `
+            <div class="card" onclick="Utils.openSpotifyUrl('${
+              playlist.external_urls?.spotify
+            }')">
+              <img 
+                src="${
+                  playlist.images?.[0]?.url || playlist.images?.[1]?.url || ""
+                }" 
+                alt="${playlist.name}"
+                class="card-image"
+                loading="lazy"
+                onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjIyMCIgZmlsbD0iIzMzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjIwIiBoZWlnaHQ9IjIyMCIgZmlsbD0iIzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjNzc3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='"
+              />
+              <div class="card-title">${playlist.name || "Untitled Crate"}</div>
+              <div class="card-subtitle">${
+                playlist.description || "Curated music collection"
+              }</div>
+              <div class="card-meta">
+                <span>Curated by ${playlist.owner?.display_name || "You"}</span>
+                <span>${
+                  playlist.tracks?.total || playlist.track_count || 0
+                } tracks</span>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        },
+
+        renderNewReleases(releases = AppState.data.newReleases) {
+          const grid = document.getElementById("newReleasesGrid");
+          const personalizedBadge =
+            document.getElementById("personalizedBadge");
+
+          if (!grid) return;
+
+          if (personalizedBadge) {
+            if (AppState.data.newReleasesPersonalized) {
+              personalizedBadge.style.display = "inline-block";
+            } else {
+              personalizedBadge.style.display = "none";
+            }
+          }
+
+          if (!releases || releases.length === 0) {
+            grid.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">♫</div>
+                <div class="empty-state-title">No Fresh Arrivals</div>
+                <div class="empty-state-description">
+                  ${
+                    AppState.data.newReleasesPersonalized
+                      ? "No personalized fresh arrivals found. We'll keep looking for music that matches your taste!"
+                      : "Fresh arrivals couldn't be loaded. Try refreshing or check your connection."
+                  }
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          grid.innerHTML = releases
+            .map(
+              (album) => `
+            <div class="card" onclick="Utils.openSpotifyUrl('${
+              album.external_urls?.spotify
+            }')">
+              <img 
+                src="${album.images?.[0]?.url || album.images?.[1]?.url || ""}" 
+                alt="${album.name}"
+                class="card-image"
+                loading="lazy"
+              />
+              <div class="card-title">${album.name}</div>
+              <div class="card-subtitle">${Utils.formatArtists(
+                album.artists || []
+              )}</div>
+              <div class="card-meta">
+                <span>${album.album_type || "Album"}</span>
+                <span>Arrived ${Utils.formatReleaseDate(
+                  album.release_date || ""
+                )}</span>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        },
+
+        showLoadingStates() {
+          const sections = [
+            "topTracksGrid",
+            "topArtistsGrid",
+            "genreChart",
+            "featuredPlaylistsGrid",
+            "newReleasesGrid",
+          ];
+
+          sections.forEach((sectionId) => {
+            const element = document.getElementById(sectionId);
+            if (element) {
+              if (sectionId === "genreChart") {
+                element.innerHTML = `
+                  <div class="genre-chart-loading">
+                    <div class="loading-spinner"></div>
+                    <div class="genre-chart-empty-title">Analyzing Your Musical DNA</div>
+                    <div class="genre-chart-empty-desc">
+                      Processing your favorite artists and genres...
+                    </div>
+                  </div>
+                `;
+              } else {
+                element.innerHTML = `
+                  <div class="empty-state">
+                    <div class="loading-spinner" style="width: 50px; height: 50px; margin: 0 auto 1.5rem; border-width: 4px;"></div>
+                    <div class="empty-state-title">Loading...</div>
+                    <div class="empty-state-description">
+                      Browsing the record collection for you
+                    </div>
+                  </div>
+                `;
+              }
+            }
+          });
+
+          const genreStats = document.getElementById("genreStats");
+          if (genreStats) {
+            genreStats.innerHTML = `
+              <div class="genre-stats-title">Musical DNA</div>
+              <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                <div>Analyzing musical DNA...</div>
+              </div>
+            `;
+          }
+        },
+
+        hideLoadingStates() {
+          console.log("Finished browsing all sections of the record shop");
+        },
+
+        async setRefreshButtonLoading(buttonId, isLoading) {
+          const btn = document.getElementById(buttonId);
+          if (!btn) return;
+
+          if (isLoading) {
+            btn.classList.add("loading");
+            const icon = btn.querySelector(".refresh-icon");
+            if (icon) {
+              icon.innerHTML = '<div class="spinner"></div>';
+            }
+          } else {
+            btn.classList.remove("loading");
+            const icon = btn.querySelector(".refresh-icon");
+            if (icon) {
+              icon.textContent = "⟲";
+            }
+          }
+        },
+      };
+
+      // Event Handlers
+      function setupEventListeners() {
+        const connectBtn = document.getElementById("connectSpotifyBtn");
+        if (connectBtn) {
+          connectBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (AppState.spotify.isConnected) {
+              Utils.showStatus("Already connected to Spotify!", "success");
+            } else {
+              Auth.login();
+            }
+          });
+        }
+
+        const disconnectBtn = document.getElementById("disconnectBtn");
+        if (disconnectBtn) {
+          disconnectBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (confirm("Are you sure you want to leave the record shop?")) {
+              Auth.clearStoredAuth();
+              Utils.showStatus("You've left the record shop", "info");
+            }
+          });
+        }
+
+        // Handle time range buttons for both tracks and artists
+        document.querySelectorAll(".time-range-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const range = e.target.dataset.range;
+            const section = e.target.dataset.section;
+
+            if (!range || !section) return;
+
+            // Update active state for the correct section
+            const sectionButtons = document.querySelectorAll(
+              `.time-range-btn[data-section="${section}"]`
+            );
+            sectionButtons.forEach((b) => b.classList.remove("active"));
+            e.target.classList.add("active");
+
+            // Update state and load data
+            if (section === "tracks") {
+              if (range === AppState.currentTimeRange.tracks) return;
+              AppState.currentTimeRange.tracks = range;
+              await MusicData.loadTopTracks(range);
+            } else if (section === "artists") {
+              if (range === AppState.currentTimeRange.artists) return;
+              AppState.currentTimeRange.artists = range;
+              await MusicData.loadTopArtists(range);
+              // Refresh genre analysis when artists change
+              setTimeout(() => MusicData.loadGenreAnalysis(), 500);
+            }
+          });
+        });
+
+        const refreshPlaylists = document.getElementById("refreshPlaylists");
+        if (refreshPlaylists) {
+          refreshPlaylists.addEventListener("click", async (e) => {
+            e.preventDefault();
+            UI.setRefreshButtonLoading("refreshPlaylists", true);
+            await MusicData.loadUserPlaylists();
+            UI.setRefreshButtonLoading("refreshPlaylists", false);
+          });
+        }
+
+        const refreshNewReleases =
+          document.getElementById("refreshNewReleases");
+        if (refreshNewReleases) {
+          refreshNewReleases.addEventListener("click", async (e) => {
+            e.preventDefault();
+            UI.setRefreshButtonLoading("refreshNewReleases", true);
+            await MusicData.loadNewReleases();
+            UI.setRefreshButtonLoading("refreshNewReleases", false);
+          });
+        }
+
+        const refreshGenres = document.getElementById("refreshGenres");
+        if (refreshGenres) {
+          refreshGenres.addEventListener("click", async (e) => {
+            e.preventDefault();
+            UI.setRefreshButtonLoading("refreshGenres", true);
+            await MusicData.loadGenreAnalysis();
+            UI.setRefreshButtonLoading("refreshGenres", false);
+          });
+        }
+      }
+
+      // Initialize the application
+      function initializeRecordShop() {
+        console.log("Opening The Vinyl Corner record shop...");
+        console.log("User Agent:", navigator.userAgent);
+        console.log("Window size:", window.innerWidth, "x", window.innerHeight);
+        console.log("Local storage available:", !!window.localStorage);
+        console.log("Session storage available:", !!window.sessionStorage);
+
+        if (window.innerWidth < 768) {
+          console.log("Mobile browsing detected");
+        }
+
+        window.addEventListener("error", (event) => {
+          console.error("Shop error:", event.error);
+          Utils.showStatus(
+            "Something went wrong in the record shop. Please refresh the page.",
+            "error"
+          );
+        });
+
+        window.addEventListener("unhandledrejection", (event) => {
+          console.error("Unhandled promise rejection:", event.reason);
+        });
+
+        setupEventListeners();
+
+        try {
+          Auth.checkStoredAuth();
+          Auth.handleCallback();
+        } catch (initError) {
+          console.error("Record shop initialization error:", initError);
+          Utils.showStatus(
+            "Failed to open the record shop. Please refresh the page.",
+            "error"
+          );
+        }
+
+        console.log("The Vinyl Corner is now open for business!");
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeRecordShop);
+      } else {
+        initializeRecordShop();
+      }
+    </script>
+  </body>
+</html>

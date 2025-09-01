@@ -1,0 +1,3870 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bean's Cozy Games 💛</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* 90s Arcade Theme */
+        --primary: #ff6b9d;
+        --primary-light: #ffa8d3;
+        --primary-dark: #d63384;
+        --accent: #00d4ff;
+        --background: #1a0d2e;
+        --surface: rgba(255, 107, 157, 0.12);
+        --surface-hover: rgba(255, 107, 157, 0.2);
+        --text: #ffffff;
+        --text-secondary: #e6d7ff;
+        --text-muted: #b19cd9;
+        --border: rgba(255, 107, 157, 0.3);
+        --shadow: rgba(255, 107, 157, 0.3);
+        --card-bg: linear-gradient(135deg, #2a1f3d 0%, #3d2c5a 100%);
+        --card-text: #ffffff;
+        --button-bg: linear-gradient(135deg, #ff6b9d, #00d4ff);
+        --button-text: #ffffff;
+        --neon-pink: #ff6b9d;
+        --neon-cyan: #00d4ff;
+        --neon-purple: #a855f7;
+        --carpet-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b9d' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Orbitron", monospace;
+        background: var(--carpet-pattern),
+          linear-gradient(
+            45deg,
+            #1a0d2e 0%,
+            #2d1b4e 25%,
+            #3d2a5f 50%,
+            #2d1b4e 75%,
+            #1a0d2e 100%
+          );
+        background-size: 60px 60px, 100% 100%;
+        min-height: 100vh;
+        color: var(--text);
+        overflow-x: hidden;
+        position: relative;
+        font-weight: 400;
+      }
+
+      /* Animated background elements */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 20%,
+            rgba(255, 107, 157, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(0, 212, 255, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 60%,
+            rgba(168, 85, 247, 0.08) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        animation: backgroundPulse 8s ease-in-out infinite alternate;
+      }
+
+      @keyframes backgroundPulse {
+        0% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Header */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: linear-gradient(
+          135deg,
+          rgba(26, 13, 46, 0.95),
+          rgba(45, 27, 78, 0.95)
+        );
+        backdrop-filter: blur(20px);
+        border-bottom: 2px solid var(--neon-pink);
+        box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+        padding: 1rem;
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+      }
+
+      #hubBtn {
+        background: linear-gradient(
+          135deg,
+          var(--neon-pink),
+          var(--neon-purple)
+        );
+        border: 2px solid var(--neon-cyan);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(255, 107, 157, 0.4);
+      }
+
+      #hubBtn:hover {
+        box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .page-title {
+        font-family: "Pacifico", cursive;
+        font-size: 1.8rem;
+        background: linear-gradient(
+          135deg,
+          var(--neon-pink),
+          var(--neon-cyan),
+          var(--neon-purple)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        flex: 1;
+        margin: 0 1rem;
+        text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        animation: titleGlow 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        0% {
+          filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5));
+        }
+        100% {
+          filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+        }
+      }
+
+      /* Main content */
+      main {
+        padding-top: 5rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+        margin: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Controls Section - Arcade Cabinet Style */
+      .controls-section {
+        margin-bottom: 2rem;
+      }
+
+      .controls-container {
+        background: linear-gradient(
+          135deg,
+          rgba(45, 27, 78, 0.9),
+          rgba(61, 44, 90, 0.9)
+        );
+        border: 3px solid var(--neon-pink);
+        border-radius: 20px;
+        padding: 1.5rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 30px rgba(255, 107, 157, 0.4),
+          inset 0 0 20px rgba(168, 85, 247, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .controls-container::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+          45deg,
+          var(--neon-pink),
+          var(--neon-cyan),
+          var(--neon-purple),
+          var(--neon-pink)
+        );
+        border-radius: 20px;
+        z-index: -1;
+        animation: borderRotate 4s linear infinite;
+      }
+
+      @keyframes borderRotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .toggle-buttons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .toggle-buttons button {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        border: 2px solid var(--neon-cyan);
+        background: linear-gradient(
+          135deg,
+          rgba(26, 13, 46, 0.8),
+          rgba(45, 27, 78, 0.8)
+        );
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .toggle-buttons button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .toggle-buttons button:hover::before {
+        left: 100%;
+      }
+
+      .toggle-buttons button.active {
+        background: linear-gradient(
+          135deg,
+          var(--neon-pink),
+          var(--neon-purple)
+        );
+        border-color: var(--neon-cyan);
+        color: var(--button-text);
+        font-weight: 700;
+        box-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+      }
+
+      .toggle-buttons button:hover:not(.active) {
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        transform: translateY(-2px);
+      }
+
+      /* Search Section */
+      .search-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .search-container {
+        max-width: 500px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 0.85rem 1.2rem;
+        border-radius: 25px;
+        border: 2px solid var(--neon-cyan);
+        background: rgba(26, 13, 46, 0.9);
+        color: var(--text);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      #searchInput:focus {
+        outline: none;
+        border-color: var(--neon-pink);
+        box-shadow: 0 0 25px rgba(255, 107, 157, 0.6);
+        transform: translateY(-1px);
+      }
+
+      #searchInput::placeholder {
+        color: var(--text-muted);
+      }
+
+      .clear-btn {
+        position: absolute;
+        right: 12px;
+        background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+      }
+
+      .clear-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+      }
+
+      /* Genre Section */
+      .genre-section {
+        margin-top: 1rem;
+      }
+
+      .genre-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(
+          135deg,
+          rgba(26, 13, 46, 0.8),
+          rgba(61, 44, 90, 0.8)
+        );
+        border: 2px solid var(--neon-purple);
+        border-radius: 12px;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+      }
+
+      .genre-toggle:hover {
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        transform: translateY(-1px);
+      }
+
+      .toggle-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+        color: var(--neon-cyan);
+      }
+
+      .genre-toggle.expanded .toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      /* Genre Filters */
+      .genre-filters {
+        display: flex;
+        .recommendation-source {
+          background: linear-gradient(
+            135deg,
+            rgba(26, 13, 46, 0.8),
+            rgba(61, 44, 90, 0.8)
+          );
+          border: 2px solid var(--neon-pink);
+          border-radius: 15px;
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+          position: relative;
+          box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
+        }
+
+        .recommendation-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1rem;
+          gap: 0.75rem;
+        }
+
+        .source-game-thumb {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          object-fit: cover;
+          border: 2px solid var(--neon-cyan);
+          box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        .source-info {
+          flex: 1;
+        }
+
+        .source-game-name {
+          font-weight: 600;
+          color: var(--text);
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        .recommendation-count {
+          color: var(--text-secondary);
+          font-size: 0.85rem;
+          margin: 0;
+        }
+
+        .toggle-recommendations {
+          background: linear-gradient(
+            135deg,
+            var(--neon-purple),
+            var(--neon-pink)
+          );
+          border: 2px solid var(--neon-cyan);
+          color: var(--button-text);
+          padding: 0.4rem 0.8rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 0.8rem;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .toggle-recommendations:hover {
+          box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+          transform: scale(1.05);
+        }
+
+        .recommendations-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+          gap: 1rem;
+          opacity: 1;
+          max-height: none;
+          transition: all 0.3s ease;
+          overflow: hidden;
+        }
+
+        .recommendations-grid.collapsed {
+          opacity: 0;
+          max-height: 0;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Load More Button */
+        .load-more-section {
+          text-align: center;
+          margin: 2rem 0;
+        }
+
+        .load-more-btn {
+          background: linear-gradient(
+            135deg,
+            var(--neon-pink),
+            var(--neon-purple)
+          );
+          color: var(--button-text);
+          border: 2px solid var(--neon-cyan);
+          padding: 1rem 2rem;
+          border-radius: 16px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+          font-size: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .load-more-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Modal - Arcade Cabinet Style */
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(
+              ellipse at center,
+              rgba(26, 13, 46, 0.9) 0%,
+              rgba(0, 0, 0, 0.95) 100%
+            ),
+            var(--carpet-pattern);
+          background-size: auto, 40px 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          padding: 1rem;
+          z-index: 1000;
+          backdrop-filter: blur(15px);
+        }
+
+        .modal.show {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .modal-content {
+          background: linear-gradient(
+              135deg,
+              #2a1f3d 0%,
+              #1a0d2e 50%,
+              #2a1f3d 100%
+            ),
+            radial-gradient(
+              circle at 30% 30%,
+              rgba(255, 107, 157, 0.1) 0%,
+              transparent 50%
+            ),
+            radial-gradient(
+              circle at 70% 70%,
+              rgba(0, 212, 255, 0.1) 0%,
+              transparent 50%
+            );
+          border: 4px solid var(--neon-pink);
+          border-radius: 25px 25px 15px 15px;
+          padding: 0;
+          max-width: 750px;
+          width: 100%;
+          max-height: 90vh;
+          transform: scale(0.8);
+          transition: transform 0.3s ease;
+          text-align: left;
+          box-shadow: 0 0 50px rgba(255, 107, 157, 0.6),
+            inset 0 0 30px rgba(168, 85, 247, 0.2),
+            0 20px 60px rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(20px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Cabinet bezel effect */
+        .modal-content::before {
+          content: "";
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          bottom: 8px;
+          border: 2px solid var(--neon-cyan);
+          border-radius: 20px 20px 10px 10px;
+          pointer-events: none;
+          box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Cabinet screen bezel */
+        .modal-content::after {
+          content: "";
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          right: 15px;
+          height: 3px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            var(--neon-purple),
+            var(--neon-pink),
+            var(--neon-cyan),
+            transparent
+          );
+          border-radius: 2px;
+          pointer-events: none;
+          animation: cabinetScanline 2s linear infinite;
+        }
+
+        @keyframes cabinetScanline {
+          0% {
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.3;
+          }
+        }
+
+        .modal.show .modal-content {
+          transform: scale(1);
+        }
+
+        .modal-header {
+          background: linear-gradient(
+            135deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(26, 13, 46, 0.9)
+          );
+          border-bottom: 3px solid var(--neon-cyan);
+          padding: 1.5rem 2rem 1rem;
+          border-radius: 20px 20px 0 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          z-index: 3;
+        }
+
+        .modal-title {
+          font-size: 1rem;
+          font-weight: 700;
+          background: linear-gradient(
+            135deg,
+            var(--neon-pink),
+            var(--neon-cyan)
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-family: "Press Start 2P", monospace;
+          line-height: 1.3;
+          flex: 1;
+          margin-right: 1rem;
+        }
+
+        .close-modal {
+          background: linear-gradient(135deg, #ff6b6b, #ff5252);
+          color: white;
+          border: 2px solid var(--neon-cyan);
+          border-radius: 8px;
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+          font-family: "Press Start 2P", monospace;
+          font-size: 0.8rem;
+          font-weight: bold;
+          box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .close-modal:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 25px rgba(255, 107, 107, 0.7);
+        }
+
+        .modal-body {
+          color: var(--text);
+          line-height: 1.8;
+          padding: 1.5rem 2rem;
+          position: relative;
+          z-index: 3;
+          max-height: 60vh;
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: var(--neon-pink) transparent;
+          font-family: "Orbitron", monospace;
+          font-size: 0.9rem;
+        }
+
+        .modal-body::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+          background: rgba(26, 13, 46, 0.5);
+          border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+          background: linear-gradient(
+            180deg,
+            var(--neon-pink),
+            var(--neon-purple)
+          );
+          border-radius: 3px;
+        }
+
+        .modal-body p {
+          margin-bottom: 1rem;
+        }
+
+        .modal-body span {
+          font-weight: 700;
+          color: var(--neon-cyan);
+          font-family: "Press Start 2P", monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .description-container {
+          margin-top: 1.5rem;
+          padding-top: 1.5rem;
+          border-top: 2px solid var(--neon-purple);
+          position: relative;
+        }
+
+        .description-container::before {
+          content: "> GAME INFO";
+          position: absolute;
+          top: -0.8rem;
+          left: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(26, 13, 46, 0.9)
+          );
+          color: var(--neon-purple);
+          font-family: "Press Start 2P", monospace;
+          font-size: 0.6rem;
+          padding: 0.2rem 0.5rem;
+          border: 1px solid var(--neon-purple);
+          border-radius: 4px;
+        }
+
+        .recommendations {
+          margin-top: 2rem;
+          padding: 1.5rem 2rem 2rem;
+          border-top: 3px solid var(--neon-pink);
+          background: linear-gradient(
+            135deg,
+            rgba(26, 13, 46, 0.8),
+            rgba(45, 27, 78, 0.8)
+          );
+          position: relative;
+          z-index: 3;
+        }
+
+        .recommendations::before {
+          content: "> SIMILAR GAMES";
+          position: absolute;
+          top: -0.8rem;
+          left: 2rem;
+          background: linear-gradient(
+            135deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(26, 13, 46, 0.9)
+          );
+          color: var(--neon-pink);
+          font-family: "Press Start 2P", monospace;
+          font-size: 0.6rem;
+          padding: 0.2rem 0.5rem;
+          border: 1px solid var(--neon-pink);
+          border-radius: 4px;
+        }
+
+        .recommendations h4 {
+          margin-bottom: 1.5rem;
+          background: linear-gradient(
+            135deg,
+            var(--neon-pink),
+            var(--neon-cyan)
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-size: 0.9rem;
+          font-family: "Press Start 2P", monospace;
+          text-align: center;
+          line-height: 1.4;
+        }
+
+        .rec-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 1rem;
+        }
+
+        .rec-card {
+          background: linear-gradient(
+            135deg,
+            rgba(26, 13, 46, 0.8),
+            rgba(45, 27, 78, 0.8)
+          );
+          border: 2px solid var(--neon-cyan);
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .rec-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 0 25px rgba(255, 107, 157, 0.4);
+          border-color: var(--neon-pink);
+        }
+
+        .rec-card img {
+          width: 100%;
+          height: 90px;
+          object-fit: cover;
+          filter: saturate(1.2);
+        }
+
+        .rec-card-content {
+          padding: 0.75rem;
+          background: linear-gradient(
+            180deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(61, 44, 90, 0.9)
+          );
+        }
+
+        .rec-card-title {
+          font-size: 0.85rem;
+          margin: 0;
+          color: var(--text);
+          text-align: center;
+          line-height: 1.3;
+          font-weight: 500;
+        }
+
+        /* Search Results Info */
+        .search-results-info {
+          text-align: center;
+          margin-bottom: 1.5rem;
+          color: var(--text-secondary);
+          font-style: italic;
+          font-size: 0.9rem;
+          background: linear-gradient(
+            135deg,
+            rgba(26, 13, 46, 0.8),
+            rgba(45, 27, 78, 0.8)
+          );
+          padding: 0.75rem 1rem;
+          border-radius: 12px;
+          border: 2px solid var(--neon-purple);
+          box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .no-search-results {
+          text-align: center;
+          padding: 3rem 1rem;
+          color: var(--text-muted);
+        }
+
+        .no-search-results h3 {
+          background: linear-gradient(
+            135deg,
+            var(--neon-pink),
+            var(--neon-cyan)
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-bottom: 1rem;
+          font-family: "Pacifico", cursive;
+          font-size: 1.5rem;
+        }
+
+        .recommendations-info {
+          text-align: center;
+          padding: 2rem 1rem;
+          color: var(--text-secondary);
+          background: linear-gradient(
+            135deg,
+            rgba(26, 13, 46, 0.6),
+            rgba(61, 44, 90, 0.6)
+          );
+          border-radius: 12px;
+          margin: 1rem 0;
+          border: 2px dashed var(--neon-cyan);
+          box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .recommendations-info h3 {
+          background: linear-gradient(
+            135deg,
+            var(--neon-cyan),
+            var(--neon-purple)
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-family: "Pacifico", cursive;
+        }
+
+        /* Hidden sections */
+        .section.hidden {
+          display: none;
+        }
+
+        /* Animations */
+        @keyframes twinkle {
+          0% {
+            transform: scale(1);
+          }
+          25% {
+            transform: scale(1.2);
+          }
+          50% {
+            transform: scale(0.9);
+          }
+          75% {
+            transform: scale(1.1);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Section styling */
+        .section {
+          margin-bottom: 3rem;
+        }
+
+        h2 {
+          margin: 1.5rem 0 1.5rem;
+          font-size: 1.8rem;
+          background: linear-gradient(
+            135deg,
+            var(--neon-pink),
+            var(--neon-cyan)
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-align: center;
+          font-family: "Pacifico", cursive;
+          text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+          filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1.5rem;
+          justify-items: center;
+        }
+
+        .card {
+          background: var(--card-bg);
+          border: 2px solid var(--neon-cyan);
+          border-radius: 15px;
+          box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          transition: all 0.3s ease;
+          animation: slideIn 0.5s ease forwards;
+          cursor: pointer;
+          width: 100%;
+          position: relative;
+          backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 0 30px rgba(255, 107, 157, 0.5),
+            0 0 15px rgba(0, 212, 255, 0.4);
+          border-color: var(--neon-pink);
+        }
+
+        .card::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            var(--neon-pink),
+            var(--neon-cyan),
+            transparent
+          );
+          animation: cardScanline 3s linear infinite;
+        }
+
+        @keyframes cardScanline {
+          0% {
+            left: -100%;
+          }
+          100% {
+            left: 100%;
+          }
+        }
+
+        .card img {
+          width: 100%;
+          height: 160px;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+          filter: saturate(1.2) contrast(1.1);
+        }
+
+        .card:hover img {
+          transform: scale(1.05);
+          filter: saturate(1.4) contrast(1.2);
+        }
+
+        .card-content {
+          padding: 1rem;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          text-align: center;
+          background: linear-gradient(
+            180deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(61, 44, 90, 0.9)
+          );
+        }
+
+        .card-title {
+          font-size: 1rem;
+          margin: 0 0 0.5rem 0;
+          color: var(--text);
+          flex-grow: 1;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+
+        .fav-btn {
+          background: var(--button-bg);
+          border: 2px solid var(--neon-cyan);
+          color: var(--button-text);
+          padding: 0.6rem 0.8rem;
+          border-radius: 12px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: all 0.3s ease;
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
+        }
+
+        .fav-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+        }
+
+        .fav-btn.faved {
+          background: linear-gradient(135deg, #ffb347, #ff8c42);
+          color: white;
+          animation: twinkle 0.7s ease;
+          box-shadow: 0 0 20px rgba(255, 179, 71, 0.6);
+        }
+
+        .remove-btn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: linear-gradient(135deg, #ff6b6b, #ff5252);
+          border: none;
+          color: white;
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          opacity: 0;
+          transition: all 0.3s ease;
+          z-index: 10;
+          box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .card:hover .remove-btn {
+          opacity: 1;
+        }
+
+        .remove-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 20px rgba(255, 107, 107, 0.7);
+        }
+
+        /* Favorites Section - Game Shelf Style */
+        .favorites-section {
+          background: linear-gradient(
+            135deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(61, 44, 90, 0.9)
+          );
+          border: 3px solid var(--neon-purple);
+          border-radius: 20px;
+          padding: 2rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+
+        .favorites-section h2 {
+          color: var(--neon-purple);
+          margin-top: 0;
+        }
+
+        /* Move cartridge styles to the very end to override everything */
+
+        /* Cartridge label/sticker area */
+        .section.favorites-section .grid .card img {
+          position: absolute !important;
+          top: 15px !important;
+          left: 8px !important;
+          right: 8px !important;
+          width: calc(100% - 16px) !important;
+          height: 80px !important;
+          object-fit: cover !important;
+          border-radius: 4px !important;
+          border: 2px solid var(--neon-cyan) !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 15px rgba(0, 212, 255, 0.3) !important;
+          filter: saturate(1.3) contrast(1.1) !important;
+          z-index: 3 !important;
+          transition: all 0.3s ease !important;
+        }
+
+        .section.favorites-section .grid .card:hover img {
+          border-color: var(--neon-pink) !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 20px rgba(255, 107, 157, 0.5) !important;
+          filter: saturate(1.5) contrast(1.2) !important;
+          transform: none !important;
+          scale: 1 !important;
+        }
+
+        /* Cartridge title */
+        .section.favorites-section .grid .card .card-content {
+          position: absolute !important;
+          bottom: 35px !important;
+          left: 8px !important;
+          right: 8px !important;
+          width: calc(100% - 16px) !important;
+          padding: 0.5rem !important;
+          background: linear-gradient(
+            135deg,
+            rgba(0, 0, 0, 0.9),
+            rgba(26, 13, 46, 0.9)
+          ) !important;
+          border-radius: 4px !important;
+          text-align: center !important;
+          border: 1px solid var(--neon-purple) !important;
+          box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          z-index: 4 !important;
+          flex-grow: 0 !important;
+        }
+
+        .section.favorites-section .grid .card .card-content .card-title {
+          font-size: 0.6rem !important;
+          line-height: 1.2 !important;
+          color: var(--text) !important;
+          font-family: "Press Start 2P", monospace !important;
+          margin: 0 !important;
+          text-shadow: 0 0 5px rgba(255, 107, 157, 0.5) !important;
+          overflow: hidden !important;
+          display: -webkit-box !important;
+          -webkit-line-clamp: 3 !important;
+          -webkit-box-orient: vertical !important;
+          flex-grow: 0 !important;
+        }
+
+        /* Remove button for cartridges */
+        .section.favorites-section .grid .card .remove-btn {
+          position: absolute !important;
+          top: 2px !important;
+          right: 2px !important;
+          background: linear-gradient(135deg, #ff6b6b, #ff5252) !important;
+          border: 1px solid var(--neon-cyan) !important;
+          color: white !important;
+          border-radius: 4px !important;
+          width: 20px !important;
+          height: 20px !important;
+          cursor: pointer !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-weight: bold !important;
+          font-size: 0.7rem !important;
+          opacity: 0 !important;
+          transition: all 0.3s ease !important;
+          z-index: 15 !important;
+          box-shadow: 0 0 10px rgba(255, 107, 107, 0.4) !important;
+        }
+
+        .section.favorites-section .grid .card:hover .remove-btn {
+          opacity: 1 !important;
+        }
+
+        .section.favorites-section .grid .card .remove-btn:hover {
+          transform: scale(1.1) !important;
+          box-shadow: 0 0 15px rgba(255, 107, 107, 0.7) !important;
+        }
+
+        /* Empty shelf message */
+        .favorites-section p {
+          text-align: center;
+          color: var(--text-muted);
+          font-family: "Press Start 2P", monospace;
+          font-size: 0.8rem;
+          line-height: 1.4;
+          padding: 2rem;
+        }
+
+        /* Recommendations Section */
+        .recommendations-section {
+          background: linear-gradient(
+            135deg,
+            rgba(45, 27, 78, 0.9),
+            rgba(61, 44, 90, 0.9)
+          );
+          border: 3px solid var(--neon-cyan);
+          border-radius: 20px;
+          padding: 2rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .recommendations-section h2 {
+          color: var(--neon-cyan);
+          margin-top: 0;
+        }
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        max-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        transition: all 0.4s ease;
+        opacity: 1;
+        padding-right: 0.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+
+      .genre-filters::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .genre-filters::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .genre-filters::-webkit-scrollbar-thumb {
+        background-color: var(--border);
+        border-radius: 2px;
+      }
+
+      .genre-filters::-webkit-scrollbar-thumb:hover {
+        background-color: var(--primary);
+      }
+
+      .genre-filters.collapsed {
+        max-height: 0;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .genre-filters button {
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .genre-filters button.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        border-color: var(--primary-light);
+        color: var(--button-text);
+        font-weight: 600;
+      }
+
+      .genre-filters button:hover:not(.active) {
+        background: var(--surface-hover);
+        transform: translateY(-1px);
+      }
+
+      /* Section styling */
+      .section {
+        margin-bottom: 3rem;
+      }
+
+      h2 {
+        margin: 1.5rem 0 1.5rem;
+        font-size: 1.8rem;
+        color: var(--primary-light);
+        text-align: center;
+        font-family: "Pacifico", cursive;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        justify-items: center;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 4px 8px var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        animation: slideIn 0.5s ease forwards;
+        cursor: pointer;
+        width: 100%;
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+
+      .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 8px 25px var(--shadow);
+      }
+
+      .card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover img {
+        transform: scale(1.05);
+      }
+
+      .card-content {
+        padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+      }
+
+      .card-title {
+        font-size: 1rem;
+        margin: 0 0 0.5rem 0;
+        color: var(--card-text);
+        flex-grow: 1;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .fav-btn {
+        background: var(--button-bg);
+        border: none;
+        color: var(--button-text);
+        padding: 0.6rem 0.8rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .fav-btn:hover {
+        transform: scale(1.05);
+        background: var(--primary-dark);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .fav-btn.faved {
+        background: #ffb347;
+        color: white;
+        animation: twinkle 0.7s ease;
+      }
+
+      .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ff6b6b;
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+
+      .card:hover .remove-btn {
+        opacity: 1;
+      }
+
+      .remove-btn:hover {
+        background: #ff5252;
+        transform: scale(1.1);
+      }
+
+      /* Favorites Section */
+      .favorites-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .favorites-section h2 {
+        color: var(--primary-light);
+        margin-top: 0;
+      }
+
+      /* Recommendations Section */
+      .recommendations-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .recommendations-section h2 {
+        color: var(--primary-light);
+        margin-top: 0;
+      }
+
+      .recommendation-source {
+        background: rgba(250, 218, 94, 0.15);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+      }
+
+      .recommendation-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+      }
+
+      .source-game-thumb {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid var(--border);
+      }
+
+      .source-info {
+        flex: 1;
+      }
+
+      .source-game-name {
+        font-weight: 600;
+        color: var(--text);
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .recommendation-count {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin: 0;
+      }
+
+      .toggle-recommendations {
+        background: var(--button-bg);
+        border: none;
+        color: var(--button-text);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-recommendations:hover {
+        background: var(--primary-dark);
+        transform: scale(1.05);
+      }
+
+      .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+        opacity: 1;
+        max-height: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .recommendations-grid.collapsed {
+        opacity: 0;
+        max-height: 0;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Load More Button */
+      .load-more-section {
+        text-align: center;
+        margin: 2rem 0;
+      }
+
+      .load-more-btn {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: var(--button-text);
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px var(--shadow);
+        font-size: 1rem;
+      }
+
+      .load-more-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px var(--shadow);
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        padding: 1rem;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 700px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        text-align: left;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--card-text);
+        font-family: "Pacifico", cursive;
+      }
+
+      .close-modal {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 1.2rem;
+      }
+
+      .close-modal:hover {
+        transform: scale(1.1);
+        background: #ff5252;
+      }
+
+      .modal-body {
+        color: var(--card-text);
+        line-height: 1.6;
+      }
+
+      .modal-body p {
+        margin-bottom: 0.75rem;
+      }
+
+      .modal-body span {
+        font-weight: 600;
+        color: #555;
+      }
+
+      .description-container {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .recommendations {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--border);
+      }
+
+      .recommendations h4 {
+        margin-bottom: 1.5rem;
+        color: var(--card-text);
+        font-size: 1.3rem;
+        font-family: "Pacifico", cursive;
+        text-align: center;
+      }
+
+      .rec-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+      }
+
+      .rec-card {
+        background: rgba(250, 218, 94, 0.1);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .rec-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary);
+      }
+
+      .rec-card img {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+      }
+
+      .rec-card-content {
+        padding: 0.75rem;
+      }
+
+      .rec-card-title {
+        font-size: 0.85rem;
+        margin: 0;
+        color: var(--card-text);
+        text-align: center;
+        line-height: 1.3;
+        font-weight: 500;
+      }
+
+      /* Search Results Info */
+      .search-results-info {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        font-size: 0.9rem;
+        background: var(--surface);
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .no-search-results {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+      }
+
+      .no-search-results h3 {
+        color: var(--primary-light);
+        margin-bottom: 1rem;
+        font-family: "Pacifico", cursive;
+        font-size: 1.5rem;
+      }
+
+      .recommendations-info {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-muted);
+        background: rgba(250, 218, 94, 0.05);
+        border-radius: 12px;
+        margin: 1rem 0;
+        border: 1px dashed var(--border);
+      }
+
+      /* Hidden sections */
+      .section.hidden {
+        display: none;
+      }
+
+      /* Animations */
+      @keyframes twinkle {
+        0% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.2);
+        }
+        50% {
+          transform: scale(0.9);
+        }
+        75% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header {
+          padding: 0.6rem;
+        }
+
+        .page-title {
+          font-size: 1.3rem;
+        }
+
+        #hubBtn {
+          padding: 0.4rem 0.7rem;
+          font-size: 0.8rem;
+        }
+
+        main {
+          padding-top: 4rem;
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+        }
+
+        .controls-container {
+          padding: 1rem;
+        }
+
+        .toggle-buttons {
+          flex-direction: row;
+          gap: 0.3rem;
+          justify-content: center;
+        }
+
+        .toggle-buttons button {
+          flex: 1;
+          min-width: 0;
+          padding: 0.7rem 0.5rem;
+          font-size: 0.8rem;
+          text-align: center;
+        }
+
+        #searchInput {
+          padding: 0.8rem 1rem;
+          font-size: 1rem;
+          border-radius: 25px;
+        }
+
+        .genre-toggle {
+          padding: 0.6rem 0.8rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.6rem;
+        }
+
+        .toggle-icon {
+          font-size: 0.7rem;
+        }
+
+        .genre-filters {
+          justify-content: flex-start;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding-bottom: 0.5rem;
+          padding-right: 0.25rem;
+          gap: 0.4rem;
+          max-height: 100px;
+          scrollbar-width: thin;
+        }
+
+        .genre-filters::-webkit-scrollbar {
+          width: 3px;
+        }
+
+        .genre-filters::-webkit-scrollbar {
+          display: none;
+        }
+
+        .genre-filters button {
+          flex-shrink: 0;
+          font-size: 0.8rem;
+          padding: 0.5rem 0.75rem;
+          white-space: nowrap;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 1rem;
+        }
+
+        .card img {
+          height: 120px;
+        }
+
+        .card-content {
+          padding: 0.75rem;
+        }
+
+        .card-title {
+          font-size: 0.9rem;
+          line-height: 1.2;
+        }
+
+        .fav-btn {
+          padding: 0.5rem 0.6rem;
+          font-size: 0.8rem;
+          margin-top: 0.4rem;
+        }
+
+        .modal-content {
+          padding: 1.25rem;
+          margin: 0.5rem;
+          max-height: 90vh;
+          border-radius: 16px;
+        }
+
+        .modal-title {
+          font-size: 1.3rem;
+        }
+
+        .close-modal {
+          width: 32px;
+          height: 32px;
+          font-size: 1rem;
+        }
+
+        .rec-grid {
+          grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .rec-card img {
+          height: 70px;
+        }
+
+        .rec-card-content {
+          padding: 0.5rem;
+        }
+
+        .rec-card-title {
+          font-size: 0.75rem;
+        }
+
+        /* Cartridge adjustments for mobile */
+        .favorites-section .card {
+          width: 100px !important;
+          height: 150px !important;
+        }
+
+        .favorites-section .card img {
+          height: 65px !important;
+          top: 12px !important;
+          left: 6px !important;
+          right: 6px !important;
+          width: calc(100% - 12px) !important;
+        }
+
+        .favorites-section .card-content {
+          bottom: 28px !important;
+          left: 6px !important;
+          right: 6px !important;
+          width: calc(100% - 12px) !important;
+          padding: 0.4rem !important;
+        }
+
+        .favorites-section .card-title {
+          font-size: 0.5rem !important;
+        }
+
+        .favorites-section .remove-btn {
+          width: 18px !important;
+          height: 18px !important;
+          font-size: 0.6rem !important;
+        }
+
+        .recommendation-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+          text-align: left;
+        }
+
+        .source-game-thumb {
+          width: 32px;
+          height: 32px;
+        }
+
+        .source-game-name {
+          font-size: 0.9rem;
+        }
+
+        .recommendation-count {
+          font-size: 0.8rem;
+        }
+
+        .toggle-recommendations {
+          padding: 0.4rem 0.7rem;
+          font-size: 0.75rem;
+        }
+
+        .load-more-btn {
+          padding: 0.8rem 1.5rem;
+          font-size: 0.9rem;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+          margin: 1rem 0 1.25rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header {
+          padding: 0.5rem;
+        }
+
+        .page-title {
+          font-size: 1.1rem;
+          margin: 0 0.5rem;
+        }
+
+        #hubBtn {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.75rem;
+        }
+
+        main {
+          padding-top: 3.5rem;
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+
+        .controls-container,
+        .favorites-section,
+        .recommendations-section {
+          padding: 0.75rem;
+          margin: 0.5rem 0;
+          border-radius: 12px;
+        }
+
+        .toggle-buttons button {
+          padding: 0.6rem 0.3rem;
+          font-size: 0.75rem;
+        }
+
+        #searchInput {
+          padding: 0.7rem 0.9rem;
+          font-size: 0.95rem;
+        }
+
+        .clear-btn {
+          width: 22px;
+          height: 22px;
+          right: 8px;
+        }
+
+        .genre-filters button {
+          padding: 0.45rem 0.65rem;
+          font-size: 0.75rem;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .card {
+          border-radius: 16px;
+        }
+
+        .card img {
+          height: 100px;
+        }
+
+        .card-content {
+          padding: 0.6rem;
+        }
+
+        .card-title {
+          font-size: 0.85rem;
+          margin-bottom: 0.4rem;
+        }
+
+        .fav-btn {
+          padding: 0.4rem 0.5rem;
+          font-size: 0.75rem;
+          border-radius: 8px;
+        }
+
+        .modal-content {
+          padding: 1rem;
+          margin: 0.25rem;
+          border-radius: 12px;
+        }
+
+        .modal-title {
+          font-size: 1.2rem;
+        }
+
+        .modal-body {
+          font-size: 0.9rem;
+        }
+
+        .rec-grid {
+          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+          gap: 0.6rem;
+        }
+
+        .rec-card {
+          border-radius: 8px;
+        }
+
+        .rec-card img {
+          height: 60px;
+        }
+
+        .rec-card-content {
+          padding: 0.4rem;
+        }
+
+        .rec-card-title {
+          font-size: 0.7rem;
+          line-height: 1.2;
+        }
+
+        .recommendations-grid {
+          grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+          gap: 0.6rem;
+        }
+
+        .recommendation-source {
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+          border-radius: 10px;
+        }
+
+        .source-game-thumb {
+          width: 28px;
+          height: 28px;
+        }
+
+        .source-game-name {
+          font-size: 0.85rem;
+        }
+
+        .recommendation-count {
+          font-size: 0.75rem;
+        }
+
+        .toggle-recommendations {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.7rem;
+        }
+
+        .load-more-btn {
+          padding: 0.7rem 1.25rem;
+          font-size: 0.85rem;
+          border-radius: 12px;
+        }
+
+        .search-results-info,
+        .recommendations-info {
+          padding: 0.6rem 0.8rem;
+          font-size: 0.85rem;
+          border-radius: 10px;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+          margin: 0.75rem 0 1rem;
+        }
+
+        .remove-btn {
+          width: 24px;
+          height: 24px;
+          top: 6px;
+          right: 6px;
+        }
+      }
+
+      /* Touch-friendly improvements */
+      @media (hover: none) and (pointer: coarse) {
+        .card:hover,
+        .rec-card:hover {
+          transform: none;
+        }
+
+        .card:active {
+          transform: scale(0.98);
+        }
+
+        .rec-card:active {
+          transform: translateY(-2px) scale(0.98);
+        }
+
+        button:hover {
+          transform: none;
+        }
+
+        button:active {
+          transform: scale(0.96);
+        }
+
+        .fav-btn:active,
+        .toggle-recommendations:active,
+        .load-more-btn:active {
+          transform: scale(0.94);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <button id="hubBtn">← Hub</button>
+        <h1 class="page-title">Bean's Arcade</h1>
+        <div style="width: 80px"></div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Controls Section -->
+      <section class="controls-section">
+        <div class="controls-container">
+          <!-- Toggle Buttons -->
+          <div class="toggle-buttons">
+            <button id="popularBtn" class="active">Popular</button>
+            <button id="newBtn">New Releases</button>
+            <button id="recommendationsBtn">Recommendations</button>
+          </div>
+
+          <!-- Search Section -->
+          <div class="search-section" id="searchSection">
+            <div class="search-container">
+              <div class="search-box">
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search games by name, genre, or tags..."
+                />
+                <button
+                  id="clearSearch"
+                  class="clear-btn"
+                  style="display: none"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Genre Filters -->
+          <div class="genre-section">
+            <button class="genre-toggle" id="genreToggle">
+              <span>Genres</span>
+              <span class="toggle-icon">▼</span>
+            </button>
+            <div class="genre-filters collapsed" id="genreFilters"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Games Section -->
+      <section class="section" id="gamesSection">
+        <h2 id="gamesHeader">Games</h2>
+        <div id="games" class="grid"></div>
+        <div class="load-more-section">
+          <button class="load-more-btn" id="loadMoreBtn">Load More</button>
+        </div>
+      </section>
+
+      <!-- Recommendations Section -->
+      <section
+        class="section recommendations-section hidden"
+        id="recommendationsSection"
+      >
+        <h2>Game Recommendations</h2>
+        <div id="recommendationsContainer">
+          <div class="recommendations-info">
+            <h3>Build Your Recommendations</h3>
+            <p>
+              Add games to your favorites to get personalized recommendations
+              based on your taste!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Favorites Section -->
+      <section class="section favorites-section">
+        <h2>My Shelf</h2>
+        <div id="favorites" class="grid"></div>
+      </section>
+    </main>
+
+    <!-- Game Details Modal -->
+    <div class="modal" id="gameModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalTitle"></h3>
+          <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="recommendations">
+          <h4>Recommended Games</h4>
+          <div class="rec-grid" id="recommendations"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_KEY = "d64e5c79233e4efd952462ec52f24869";
+      let page = 1;
+      let favorites = JSON.parse(localStorage.getItem("gameFavorites")) || [];
+      let activeGenres = new Set();
+      let ordering = "-added"; // Popular by default
+      let allGamesCache = []; // for recommendations - will store games with their tags
+      let gameDetailsCache = {}; // Cache for detailed game info including tags
+      let searchQuery = ""; // Current search query
+      let isSearchMode = false; // Track if we're in search mode
+      let currentView = "popular"; // Track current view: popular, new, recommendations
+
+      const gamesEl = document.getElementById("games");
+      const favEl = document.getElementById("favorites");
+      const loadMoreBtn = document.getElementById("loadMoreBtn");
+      const modal = document.getElementById("gameModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalBody = document.getElementById("modalBody");
+      const closeModal = document.getElementById("closeModal");
+      const hubBtn = document.getElementById("hubBtn");
+      const genreFilters = document.getElementById("genreFilters");
+      const recommendationsEl = document.getElementById("recommendations");
+      const popularBtn = document.getElementById("popularBtn");
+      const newBtn = document.getElementById("newBtn");
+      const recommendationsBtn = document.getElementById("recommendationsBtn");
+      const gamesHeader = document.getElementById("gamesHeader");
+      const searchInput = document.getElementById("searchInput");
+      const clearSearch = document.getElementById("clearSearch");
+      const gamesSection = document.getElementById("gamesSection");
+      const recommendationsSection = document.getElementById(
+        "recommendationsSection"
+      );
+      const recommendationsContainer = document.getElementById(
+        "recommendationsContainer"
+      );
+      const searchSection = document.getElementById("searchSection");
+      const genreToggle = document.getElementById("genreToggle");
+
+      // Genre toggle functionality
+      genreToggle.addEventListener("click", () => {
+        const isCollapsed = genreFilters.classList.contains("collapsed");
+        genreFilters.classList.toggle("collapsed");
+        genreToggle.classList.toggle("expanded");
+
+        if (isCollapsed) {
+          genreToggle.querySelector("span").textContent = "Hide Genres";
+        } else {
+          genreToggle.querySelector("span").textContent = "Genres";
+        }
+      });
+
+      hubBtn.addEventListener("click", () => (location.href = "index.html"));
+      closeModal.addEventListener("click", () =>
+        modal.classList.remove("show")
+      );
+      loadMoreBtn.addEventListener("click", () => {
+        if (!isSearchMode && currentView !== "recommendations") {
+          page++;
+          if (currentView === "new") {
+            fetchRecentGames();
+          } else {
+            fetchGames();
+          }
+        }
+      });
+
+      popularBtn.addEventListener("click", () => {
+        currentView = "popular";
+        ordering = "-added";
+        page = 1;
+        exitSearchMode();
+        showGamesView();
+        updateToggle();
+        fetchGames(true);
+      });
+
+      newBtn.addEventListener("click", () => {
+        currentView = "new";
+        ordering = "-added"; // Use popularity ordering for recent games
+        page = 1;
+        exitSearchMode();
+        showGamesView();
+        updateToggle();
+        fetchRecentGames(true);
+      });
+
+      recommendationsBtn.addEventListener("click", () => {
+        currentView = "recommendations";
+        exitSearchMode();
+        showRecommendationsView();
+        updateToggle();
+        generateRecommendations();
+      });
+
+      // Search functionality
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim();
+        if (query.length > 0 && currentView !== "recommendations") {
+          searchQuery = query;
+          clearSearch.style.display = "block";
+          performSearch();
+        } else if (currentView !== "recommendations") {
+          clearSearchAndReturn();
+        }
+      });
+
+      clearSearch.addEventListener("click", () => {
+        clearSearchAndReturn();
+      });
+
+      function showGamesView() {
+        gamesSection.classList.remove("hidden");
+        recommendationsSection.classList.add("hidden");
+        searchSection.style.display = "block";
+      }
+
+      function showRecommendationsView() {
+        gamesSection.classList.add("hidden");
+        recommendationsSection.classList.remove("hidden");
+        searchSection.style.display = "none";
+      }
+
+      function clearSearchAndReturn() {
+        searchInput.value = "";
+        clearSearch.style.display = "none";
+        searchQuery = "";
+        exitSearchMode();
+        if (currentView === "popular" || currentView === "new") {
+          fetchGames(true);
+        }
+      }
+
+      function enterSearchMode() {
+        isSearchMode = true;
+        gamesHeader.textContent = `Search Results`;
+        loadMoreBtn.style.display = "none"; // Hide load more in search
+      }
+
+      function exitSearchMode() {
+        isSearchMode = false;
+        gamesHeader.textContent = "Games";
+        loadMoreBtn.style.display = "block";
+      }
+
+      async function performSearch() {
+        enterSearchMode();
+
+        // Search through cached games first (already filtered during caching)
+        const cachedResults = searchInCache(searchQuery);
+
+        if (cachedResults.length > 0) {
+          displaySearchResults(cachedResults);
+        }
+
+        // Also search via API for fresh results
+        try {
+          const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(
+            searchQuery
+          )}&page_size=30`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          // Filter out games without valid background images
+          const gamesWithImages = data.results.filter(
+            (game) =>
+              game.background_image &&
+              game.background_image.trim() !== "" &&
+              !game.background_image.includes("placeholder")
+          );
+
+          // Add new games to cache
+          for (const game of gamesWithImages) {
+            if (!allGamesCache.some((cached) => cached.id === game.id)) {
+              allGamesCache.push(game);
+            }
+            // Pre-fetch details
+            if (!gameDetailsCache[game.id]) {
+              fetchGameDetails(game.id);
+            }
+          }
+
+          // Combine and deduplicate results
+          const allResults = [...cachedResults];
+          gamesWithImages.forEach((game) => {
+            if (!allResults.some((r) => r.id === game.id)) {
+              allResults.push(game);
+            }
+          });
+
+          displaySearchResults(allResults);
+        } catch (error) {
+          console.error("Search failed:", error);
+          displaySearchResults(cachedResults);
+        }
+      }
+
+      function searchInCache(query) {
+        const queryLower = query.toLowerCase();
+        return allGamesCache.filter((game) => {
+          // Search in game name
+          if (game.name.toLowerCase().includes(queryLower)) return true;
+
+          // Search in genres
+          if (
+            game.genres &&
+            game.genres.some((g) =>
+              (g.name || g).toLowerCase().includes(queryLower)
+            )
+          )
+            return true;
+
+          // Search in cached tags if available
+          const gameDetails = gameDetailsCache[game.id];
+          if (gameDetails && gameDetails.tags) {
+            if (
+              gameDetails.tags.some((tag) =>
+                tag.toLowerCase().includes(queryLower)
+              )
+            )
+              return true;
+          }
+
+          return false;
+        });
+      }
+
+      function displaySearchResults(results) {
+        gamesEl.innerHTML = "";
+
+        if (results.length === 0) {
+          gamesEl.innerHTML = `
+            <div class="no-search-results">
+              <h3>No games found</h3>
+              <p>Try searching for different keywords or check your spelling.</p>
+            </div>`;
+          return;
+        }
+
+        // Add search info
+        const searchInfo = document.createElement("div");
+        searchInfo.className = "search-results-info";
+        searchInfo.innerHTML = `Found ${results.length} games matching "${searchQuery}"`;
+        gamesEl.appendChild(searchInfo);
+
+        // Display results
+        results.slice(0, 20).forEach((game) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const imageUrl =
+            game.background_image ||
+            `https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}`;
+
+          card.innerHTML = `
+            <img src="${imageUrl}" alt="${game.name}"
+                 onerror="this.src='https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+                   game.name
+                 )}'; this.onerror=null;">
+            <div class="card-content">
+              <h3 class="card-title">${game.name}</h3>
+              <button class="fav-btn" data-id="${game.id}">★</button>
+            </div>`;
+
+          const favBtn = card.querySelector(".fav-btn");
+          favBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleFavorite(game);
+          });
+
+          card.addEventListener("click", () => showModal(game));
+          gamesEl.appendChild(card);
+        });
+
+        updateFavButtons();
+      }
+
+      function updateToggle() {
+        popularBtn.classList.toggle("active", currentView === "popular");
+        newBtn.classList.toggle("active", currentView === "new");
+        recommendationsBtn.classList.toggle(
+          "active",
+          currentView === "recommendations"
+        );
+      }
+
+      // Generate comprehensive recommendations based on favorites
+      async function generateRecommendations() {
+        if (favorites.length === 0) {
+          recommendationsContainer.innerHTML = `
+            <div class="recommendations-info">
+              <h3>Build Your Recommendations</h3>
+              <p>Add games to your favorites to get personalized recommendations based on your taste!</p>
+            </div>`;
+          return;
+        }
+
+        recommendationsContainer.innerHTML = `
+          <div class="recommendations-info">
+            <h3>Generating Recommendations...</h3>
+            <p>Analyzing your ${favorites.length} favorite games to find perfect matches!</p>
+          </div>`;
+
+        // Ensure all favorite games have detailed info
+        for (const game of favorites) {
+          if (!gameDetailsCache[game.id]) {
+            await fetchGameDetails(game.id);
+          }
+        }
+
+        // Calculate tag frequencies for weighting
+        const tagFrequencies = calculateTagFrequencies();
+        const totalGames = Object.keys(gameDetailsCache).length;
+
+        // Aggregate scores for all games across all favorites
+        const gameScores = new Map();
+
+        // Generate recommendations for each favorite game
+        for (const favoriteGame of favorites) {
+          const currentGameData = gameDetailsCache[favoriteGame.id];
+
+          if (
+            !currentGameData ||
+            !currentGameData.tags ||
+            currentGameData.tags.length === 0
+          ) {
+            continue;
+          }
+
+          // Get all other games with details and valid images
+          const gamesWithDetails = allGamesCache
+            .filter(
+              (g) =>
+                g.id !== favoriteGame.id &&
+                !favorites.some((f) => f.id === g.id) &&
+                g.background_image &&
+                g.background_image.trim() !== "" &&
+                !g.background_image.includes("placeholder")
+            )
+            .map((game) => ({
+              ...game,
+              details: gameDetailsCache[game.id],
+            }))
+            .filter((game) => game.details && game.details.tags);
+
+          // Calculate similarity scores
+          gamesWithDetails.forEach((game) => {
+            const similarity = calculateAdvancedSimilarity(
+              currentGameData,
+              game.details,
+              tagFrequencies,
+              totalGames
+            );
+
+            // Filter games that meet minimum criteria
+            if (
+              similarity.totalScore >= 0.03 &&
+              (similarity.matchingTagsCount > 0 ||
+                similarity.breakdown.genreScore > 0 ||
+                similarity.breakdown.devPubScore > 0) &&
+              similarity.genreCompatibility >= 0.15
+            ) {
+              // Additional filtering for over-popular games
+              if (similarity.popularityPenalty < 0.5) {
+                const needsStrongerConnection =
+                  similarity.breakdown.genreScore > 0.15 ||
+                  similarity.breakdown.devPubScore > 0.05 ||
+                  similarity.highValueMatches > 1;
+                if (!needsStrongerConnection) return;
+              }
+
+              // Aggregate scores for this game
+              if (!gameScores.has(game.id)) {
+                gameScores.set(game.id, {
+                  game: game,
+                  totalScore: 0,
+                  maxScore: 0,
+                  sourceCount: 0,
+                  matchingTagsCount: similarity.matchingTagsCount,
+                  highValueMatches: similarity.highValueMatches,
+                  genreCompatibility: similarity.genreCompatibility,
+                  popularityPenalty: similarity.popularityPenalty,
+                  breakdown: similarity.breakdown,
+                  sources: [],
+                });
+              }
+
+              const existing = gameScores.get(game.id);
+              existing.totalScore += similarity.totalScore;
+              existing.maxScore = Math.max(
+                existing.maxScore,
+                similarity.totalScore
+              );
+              existing.sourceCount++;
+              existing.matchingTagsCount = Math.max(
+                existing.matchingTagsCount,
+                similarity.matchingTagsCount
+              );
+              existing.highValueMatches = Math.max(
+                existing.highValueMatches,
+                similarity.highValueMatches
+              );
+              existing.sources.push(favoriteGame.name);
+            }
+          });
+        }
+
+        // Convert to array and calculate final scores
+        const compiledRecommendations = Array.from(gameScores.values()).map(
+          (item) => ({
+            ...item.game,
+            // Weighted score combining total similarity and max similarity, boosted by multiple sources
+            finalScore:
+              (item.totalScore * 0.6 + item.maxScore * 0.4) *
+              Math.min(1 + (item.sourceCount - 1) * 0.3, 2.0),
+            totalScore: item.totalScore,
+            maxScore: item.maxScore,
+            sourceCount: item.sourceCount,
+            matchingTagsCount: item.matchingTagsCount,
+            highValueMatches: item.highValueMatches,
+            genreCompatibility: item.genreCompatibility,
+            popularityPenalty: item.popularityPenalty,
+            breakdown: item.breakdown,
+            sources: item.sources,
+          })
+        );
+
+        // Sort by final score and get top recommendations
+        const topRecommendations = compiledRecommendations
+          .sort((a, b) => {
+            // Prioritize games recommended by multiple favorites
+            if (
+              a.sourceCount !== b.sourceCount &&
+              (a.sourceCount > 1 || b.sourceCount > 1)
+            ) {
+              return b.sourceCount - a.sourceCount;
+            }
+
+            // Then by high-value matches
+            if (
+              a.highValueMatches !== b.highValueMatches &&
+              (a.highValueMatches > 0 || b.highValueMatches > 0)
+            ) {
+              return b.highValueMatches - a.highValueMatches;
+            }
+
+            // Then by final weighted score
+            if (Math.abs(a.finalScore - b.finalScore) > 0.05) {
+              return b.finalScore - a.finalScore;
+            }
+
+            // Then by matching tags count
+            if (a.matchingTagsCount !== b.matchingTagsCount) {
+              return b.matchingTagsCount - a.matchingTagsCount;
+            }
+
+            // Add some randomization for variety
+            return Math.random() - 0.5;
+          })
+          .slice(0, 20); // Get top 20 recommendations
+
+        displayCompiledRecommendations(topRecommendations);
+      }
+
+      function displayCompiledRecommendations(recommendations) {
+        recommendationsContainer.innerHTML = "";
+
+        if (recommendations.length === 0) {
+          recommendationsContainer.innerHTML = `
+            <div class="recommendations-info">
+              <h3>No Recommendations Found</h3>
+              <p>We couldn't find similar games in our current database. Try adding more favorites or browsing for new games!</p>
+            </div>`;
+          return;
+        }
+
+        // Add summary info
+        const summaryInfo = document.createElement("div");
+        summaryInfo.className = "recommendations-info";
+        summaryInfo.innerHTML = `
+          <h3>Your Personal Recommendations</h3>
+          <p>Found ${recommendations.length} games based on your ${favorites.length} favorites. Games recommended by multiple favorites are prioritized.</p>
+        `;
+        recommendationsContainer.appendChild(summaryInfo);
+
+        // Create grid for all recommendations
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        grid.style.marginTop = "1.5rem";
+
+        recommendations.forEach((game) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          // Create tooltip with recommendation details
+          const sourceText =
+            game.sources.length > 3
+              ? `${game.sources.slice(0, 3).join(", ")} and ${
+                  game.sources.length - 3
+                } more`
+              : game.sources.join(", ");
+
+          const tooltipInfo = `Recommended based on: ${sourceText} | Score: ${game.finalScore.toFixed(
+            3
+          )} | Sources: ${game.sourceCount} | Tags: ${game.matchingTagsCount}`;
+
+          const imageUrl =
+            game.background_image ||
+            `https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}`;
+
+          card.innerHTML = `
+            <img src="${imageUrl}" alt="${game.name}" 
+                 onerror="this.src='https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+                   game.name
+                 )}'; this.onerror=null;">
+            <div class="card-content">
+              <h3 class="card-title" title="${tooltipInfo}">${game.name}</h3>
+              <button class="fav-btn" data-id="${game.id}">★</button>
+            </div>
+            ${
+              game.sourceCount > 1
+                ? `<div style="position: absolute; top: 8px; left: 8px; background: var(--primary); color: var(--button-text); border-radius: 12px; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;">${game.sourceCount}x</div>`
+                : ""
+            }
+          `;
+
+          const favBtn = card.querySelector(".fav-btn");
+          favBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleFavorite(game);
+          });
+
+          card.addEventListener("click", () => showModal(game));
+          grid.appendChild(card);
+        });
+
+        recommendationsContainer.appendChild(grid);
+        updateFavButtons();
+      }
+
+      // Fetch genres and add custom cozy tags
+      const cozyTags = [
+        { id: "life-sim", name: "Life Sim", slug: "life-sim" },
+        { id: "city-builder", name: "City Builder", slug: "city-builder" },
+        { id: "management", name: "Management", slug: "management" },
+        { id: "casual", name: "Casual", slug: "casual" },
+        { id: "relaxing", name: "Relaxing", slug: "relaxing" },
+        { id: "cozy", name: "Cozy", slug: "cozy" },
+        { id: "crafting", name: "Crafting", slug: "crafting" },
+        { id: "cooking", name: "Cooking", slug: "cooking" },
+      ];
+
+      const excludedGenres = [
+        "shooter",
+        "fighting",
+        "action",
+        "racing",
+        "sports",
+        "educational",
+      ];
+
+      fetch(`https://api.rawg.io/api/genres?key=${API_KEY}`)
+        .then((r) => r.json())
+        .then((data) => {
+          // Filter out intense genres and add cozy ones
+          const cozyGenres = data.results.filter(
+            (genre) => !excludedGenres.includes(genre.slug.toLowerCase())
+          );
+
+          // Add traditional cozy genres first
+          [...cozyGenres, ...cozyTags].forEach((genre) => {
+            const btn = document.createElement("button");
+            btn.textContent = genre.name;
+            btn.dataset.id = genre.id;
+            btn.dataset.isTag = cozyTags.includes(genre) ? "true" : "false";
+            btn.addEventListener("click", () => {
+              if (currentView === "recommendations") return;
+
+              if (activeGenres.has(genre.id)) activeGenres.delete(genre.id);
+              else activeGenres.add(genre.id);
+              btn.classList.toggle("active");
+              page = 1;
+              exitSearchMode();
+
+              if (currentView === "new") {
+                fetchRecentGames(true);
+              } else {
+                fetchGames(true);
+              }
+            });
+            genreFilters.appendChild(btn);
+          });
+        });
+
+      async function fetchRecentGames(reset = false) {
+        if (reset) gamesEl.innerHTML = "";
+
+        const now = new Date();
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+
+        const startDate = oneMonthAgo.toISOString().split("T")[0];
+        const endDate = now.toISOString().split("T")[0];
+
+        let params = [];
+        let tagParams = [];
+
+        // Separate genres and tags
+        Array.from(activeGenres).forEach((id) => {
+          const btn = document.querySelector(`[data-id="${id}"]`);
+          if (btn && btn.dataset.isTag === "true") {
+            tagParams.push(`tags=${id}`);
+          } else {
+            params.push(`genres=${id}`);
+          }
+        });
+
+        const allParams = [...params, ...tagParams].join("&");
+        const queryParams = allParams ? `&${allParams}` : "";
+
+        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=20&page=${page}&dates=${startDate},${endDate}&ordering=-added${queryParams}`;
+
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+
+          const gamesWithImages = data.results.filter(
+            (game) =>
+              game.background_image &&
+              game.background_image.trim() !== "" &&
+              !game.background_image.includes("placeholder")
+          );
+
+          for (const game of gamesWithImages) {
+            if (!allGamesCache.some((ag) => ag.id === game.id)) {
+              allGamesCache.push(game);
+            }
+            if (!gameDetailsCache[game.id]) {
+              fetchGameDetails(game.id);
+            }
+          }
+
+          displayGames(gamesWithImages, gamesEl, true, reset);
+
+          if (!isSearchMode) {
+            gamesHeader.textContent = `New Releases (Past Month)`;
+          }
+        } catch (error) {
+          console.error("Failed to fetch recent games:", error);
+          fetchGames(reset);
+        }
+      }
+
+      async function fetchGames(reset = false) {
+        if (reset) gamesEl.innerHTML = "";
+
+        let params = [];
+        let tagParams = [];
+
+        // Separate genres and tags
+        Array.from(activeGenres).forEach((id) => {
+          const btn = document.querySelector(`[data-id="${id}"]`);
+          if (btn && btn.dataset.isTag === "true") {
+            tagParams.push(`tags=${id}`);
+          } else {
+            params.push(`genres=${id}`);
+          }
+        });
+
+        const allParams = [...params, ...tagParams].join("&");
+        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=20&page=${page}&ordering=${ordering}&${allParams}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const gamesWithImages = data.results.filter(
+          (game) =>
+            game.background_image &&
+            game.background_image.trim() !== "" &&
+            !game.background_image.includes("placeholder")
+        );
+
+        for (const game of gamesWithImages) {
+          if (!allGamesCache.some((ag) => ag.id === game.id)) {
+            allGamesCache.push(game);
+          }
+          if (!gameDetailsCache[game.id]) {
+            fetchGameDetails(game.id);
+          }
+        }
+
+        displayGames(gamesWithImages, gamesEl, true, reset);
+
+        if (!isSearchMode) {
+          gamesHeader.textContent =
+            currentView === "popular" ? "Popular Games" : "Games";
+        }
+      }
+
+      // Fetch detailed game info including tags
+      async function fetchGameDetails(gameId) {
+        try {
+          const res = await fetch(
+            `https://api.rawg.io/api/games/${gameId}?key=${API_KEY}`
+          );
+          const data = await res.json();
+          gameDetailsCache[gameId] = {
+            ...data,
+            tags: data.tags ? data.tags.map((t) => t.name) : [],
+          };
+        } catch (error) {
+          console.error(`Failed to fetch details for game ${gameId}:`, error);
+          gameDetailsCache[gameId] = { tags: [] };
+        }
+      }
+
+      function displayGames(games, container, allowFav = false, reset = false) {
+        if (reset) container.innerHTML = "";
+        games.forEach((game) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          // Create a placeholder image URL if none exists
+          const imageUrl =
+            game.background_image ||
+            `https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}`;
+
+          card.innerHTML = `
+            <img src="${imageUrl}" alt="${game.name}" 
+                 onerror="this.src='https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+                   game.name
+                 )}'; this.onerror=null;">
+            <div class="card-content">
+              <h3 class="card-title">${game.name}</h3>
+              ${
+                allowFav
+                  ? `              <button class="fav-btn" data-id="${game.id}">★</button>`
+                  : ""
+              }
+            </div>`;
+          if (container === favEl) {
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "×";
+            removeBtn.className = "remove-btn";
+            removeBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              toggleFavorite(game);
+            });
+            card.appendChild(removeBtn);
+          }
+          container.appendChild(card);
+          if (allowFav && container !== favEl) {
+            const favBtn = card.querySelector(".fav-btn");
+            favBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              toggleFavorite(game);
+            });
+          }
+          card.addEventListener("click", () => showModal(game));
+        });
+        updateFavButtons();
+      }
+
+      function toggleFavorite(game) {
+        const idx = favorites.findIndex((f) => f.id === game.id);
+        if (idx > -1) favorites.splice(idx, 1);
+        else favorites.push(game);
+        localStorage.setItem("gameFavorites", JSON.stringify(favorites));
+        renderFavorites();
+        updateFavButtons();
+
+        // Regenerate recommendations if we're in recommendations view
+        if (currentView === "recommendations") {
+          generateRecommendations();
+        }
+      }
+
+      function renderFavorites() {
+        favEl.innerHTML = "";
+        if (favorites.length === 0) {
+          favEl.innerHTML =
+            "<p>No cartridges on your shelf yet. Add some games to start your collection!</p>";
+          return;
+        }
+
+        // Apply cartridge grid styling directly
+        favEl.style.display = "flex";
+        favEl.style.flexWrap = "wrap";
+        favEl.style.justifyContent = "center";
+        favEl.style.gap = "1rem";
+        favEl.style.alignItems = "flex-end";
+
+        favorites.forEach((game) => {
+          const cartridge = document.createElement("div");
+          cartridge.className = "card";
+
+          // Apply cartridge styling directly via JavaScript
+          cartridge.style.width = "120px";
+          cartridge.style.height = "180px";
+          cartridge.style.background =
+            "linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 50%, #1a1a1a 100%)";
+          cartridge.style.border = "2px solid #00d4ff";
+          cartridge.style.borderRadius = "8px 8px 4px 4px";
+          cartridge.style.position = "relative";
+          cartridge.style.transform = "perspective(100px) rotateX(5deg)";
+          cartridge.style.transition = "all 0.3s ease";
+          cartridge.style.overflow = "hidden";
+          cartridge.style.boxShadow =
+            "0 8px 16px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 212, 255, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)";
+          cartridge.style.flexShrink = "0";
+          cartridge.style.display = "block";
+
+          const imageUrl =
+            game.background_image ||
+            `https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}`;
+
+          cartridge.innerHTML = `
+            <div class="cartridge-connector" style="
+              position: absolute;
+              top: -4px;
+              left: 20%;
+              right: 20%;
+              width: 60%;
+              height: 8px;
+              background: linear-gradient(135deg, #666, #333);
+              border-radius: 2px 2px 0 0;
+              border: 1px solid #555;
+              box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
+              z-index: 5;
+            "></div>
+            <img src="${imageUrl}" alt="${game.name}" style="
+              position: absolute;
+              top: 15px;
+              left: 8px;
+              right: 8px;
+              width: calc(100% - 16px);
+              height: 80px;
+              object-fit: cover;
+              border-radius: 4px;
+              border: 2px solid #00d4ff;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 212, 255, 0.3);
+              filter: saturate(1.3) contrast(1.1);
+              z-index: 3;
+            " onerror="this.src='https://via.placeholder.com/400x300/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}'; this.onerror=null;">
+            <div class="card-content" style="
+              position: absolute;
+              bottom: 35px;
+              left: 8px;
+              right: 8px;
+              width: calc(100% - 16px);
+              padding: 0.5rem;
+              background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(26, 13, 46, 0.9));
+              border-radius: 4px;
+              text-align: center;
+              border: 1px solid #a855f7;
+              box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2);
+              z-index: 4;
+            ">
+              <h3 class="card-title" style="
+                font-size: 0.6rem;
+                line-height: 1.2;
+                color: #ffffff;
+                font-family: 'Press Start 2P', monospace;
+                margin: 0;
+                text-shadow: 0 0 5px rgba(255, 107, 157, 0.5);
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+              ">${game.name}</h3>
+            </div>
+            <div class="cartridge-pins" style="
+              position: absolute;
+              bottom: 8px;
+              left: 8px;
+              right: 8px;
+              width: calc(100% - 16px);
+              height: 20px;
+              background: repeating-linear-gradient(90deg, #333 0px, #333 2px, #555 2px, #555 4px);
+              border-radius: 2px;
+              opacity: 0.8;
+              z-index: 2;
+            "></div>
+            <button class="remove-btn" style="
+              position: absolute;
+              top: 2px;
+              right: 2px;
+              background: linear-gradient(135deg, #ff6b6b, #ff5252);
+              border: 1px solid #00d4ff;
+              color: white;
+              border-radius: 4px;
+              width: 20px;
+              height: 20px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 0.7rem;
+              opacity: 0;
+              transition: all 0.3s ease;
+              z-index: 25;
+              box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+            ">×</button>
+          `;
+
+          // Add hover effects via JavaScript
+          cartridge.addEventListener("mouseenter", () => {
+            cartridge.style.transform =
+              "perspective(100px) rotateX(0deg) translateY(-10px) scale(1)";
+            cartridge.style.boxShadow =
+              "0 15px 30px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 157, 0.5)";
+            cartridge.style.borderColor = "#ff6b9d";
+            const img = cartridge.querySelector("img");
+            if (img) {
+              img.style.borderColor = "#ff6b9d";
+              img.style.boxShadow =
+                "0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 157, 0.5)";
+              img.style.filter = "saturate(1.5) contrast(1.2)";
+            }
+            const removeBtn = cartridge.querySelector(".remove-btn");
+            if (removeBtn) removeBtn.style.opacity = "1";
+          });
+
+          cartridge.addEventListener("mouseleave", () => {
+            cartridge.style.transform = "perspective(100px) rotateX(5deg)";
+            cartridge.style.boxShadow =
+              "0 8px 16px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 212, 255, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)";
+            cartridge.style.borderColor = "#00d4ff";
+            const img = cartridge.querySelector("img");
+            if (img) {
+              img.style.borderColor = "#00d4ff";
+              img.style.boxShadow =
+                "0 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 212, 255, 0.3)";
+              img.style.filter = "saturate(1.3) contrast(1.1)";
+            }
+            const removeBtn = cartridge.querySelector(".remove-btn");
+            if (removeBtn) removeBtn.style.opacity = "0";
+          });
+
+          const removeBtn = cartridge.querySelector(".remove-btn");
+          removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleFavorite(game);
+          });
+
+          cartridge.addEventListener("click", () => showModal(game));
+          favEl.appendChild(cartridge);
+        });
+      }
+
+      function updateFavButtons() {
+        document.querySelectorAll(".fav-btn").forEach((b) => {
+          const id = Number(b.dataset.id);
+          if (favorites.some((f) => f.id === id)) b.classList.add("faved");
+          else b.classList.remove("faved");
+        });
+      }
+
+      async function showModal(game) {
+        modal.classList.add("show");
+
+        // Ensure we have detailed game info
+        if (!gameDetailsCache[game.id]) {
+          await fetchGameDetails(game.id);
+        }
+
+        const data = gameDetailsCache[game.id];
+        modalTitle.textContent = data.name || game.name;
+
+        const description = data.description_raw || "N/A";
+        const developers = data.developers
+          ? data.developers.map((d) => d.name).join(", ")
+          : "N/A";
+        const publishers = data.publishers
+          ? data.publishers.map((p) => p.name).join(", ")
+          : "N/A";
+        const platforms = data.platforms
+          ? data.platforms.map((p) => p.platform.name).join(", ")
+          : "N/A";
+        const genres = data.genres
+          ? data.genres.map((g) => g.name).join(", ")
+          : "N/A";
+        const released = data.released || "N/A";
+        const rating = data.rating || "N/A";
+
+        modalBody.innerHTML = `
+          <p><span>Released:</span> ${released}</p>
+          <p><span>Rating:</span> ${rating}</p>
+          <p><span>Genres:</span> ${genres}</p>
+          <p><span>Platforms:</span> ${platforms}</p>
+          <p><span>Developers:</span> ${developers}</p>
+          <p><span>Publishers:</span> ${publishers}</p>
+          <div class="description-container"><p>${description}</p></div>
+        `;
+
+        showRecommendations(game);
+      }
+
+      // Calculate tag frequency across all games for better recommendations
+      function calculateTagFrequencies() {
+        const tagCounts = {};
+        Object.values(gameDetailsCache).forEach((game) => {
+          if (game.tags) {
+            game.tags.forEach((tag) => {
+              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+          }
+        });
+        return tagCounts;
+      }
+
+      // Categorize tags by importance and type
+      function categorizeTag(tag) {
+        const genreTags = [
+          "Action",
+          "Adventure",
+          "RPG",
+          "Strategy",
+          "Simulation",
+          "Sports",
+          "Racing",
+          "Puzzle",
+          "Platformer",
+          "Fighting",
+          "Shooter",
+          "Horror",
+          "Survival",
+        ];
+        const mechanicTags = [
+          "Turn-Based",
+          "Real-Time",
+          "Card Game",
+          "Board Game",
+          "Tower Defense",
+          "City Builder",
+          "Base Building",
+          "Crafting",
+          "Roguelike",
+          "Metroidvania",
+          "Soulslike",
+          "Management",
+          "Farming Sim",
+        ];
+        const themeTags = [
+          "Sci-fi",
+          "Fantasy",
+          "Medieval",
+          "Post-apocalyptic",
+          "Cyberpunk",
+          "Steampunk",
+          "Military",
+          "Space",
+          "Zombies",
+          "Pirates",
+        ];
+        const moodTags = [
+          "Dark",
+          "Atmospheric",
+          "Cute",
+          "Relaxing",
+          "Difficult",
+          "Casual",
+          "Hardcore",
+          "Cozy",
+          "Peaceful",
+        ];
+
+        // Specific high-value tags that should strongly influence recommendations
+        const specificTags = [
+          "Soulslike",
+          "Roguelike",
+          "Metroidvania",
+          "City Builder",
+          "Farming Sim",
+          "Colony Sim",
+          "Life Sim",
+          "Dating Sim",
+          "Visual Novel",
+          "Bullet Hell",
+          "Tower Defense",
+        ];
+
+        const tagLower = tag.toLowerCase();
+
+        if (specificTags.some((s) => tagLower.includes(s.toLowerCase())))
+          return { type: "specific", weight: 2.0 };
+        if (genreTags.some((g) => tagLower.includes(g.toLowerCase())))
+          return { type: "genre", weight: 1.2 };
+        if (mechanicTags.some((m) => tagLower.includes(m.toLowerCase())))
+          return { type: "mechanic", weight: 1.5 };
+        if (themeTags.some((t) => tagLower.includes(t.toLowerCase())))
+          return { type: "theme", weight: 0.7 };
+        if (moodTags.some((m) => tagLower.includes(m.toLowerCase())))
+          return { type: "mood", weight: 1.0 };
+        return { type: "other", weight: 0.4 };
+      }
+
+      // Define genre incompatibilities - only the most obvious mismatches
+      function getPopularityPenalty(game) {
+        // Games that appear too frequently in recommendations due to having many broad tags
+        const overPopularGames = [
+          "Grand Theft Auto V",
+          "GTA V",
+          "Grand Theft Auto: San Andreas",
+          "Borderlands 2",
+          "Borderlands 3",
+          "Borderlands",
+          "The Elder Scrolls V: Skyrim",
+          "Skyrim",
+          "Call of Duty",
+          "Counter-Strike",
+          "CS:GO",
+          "Counter-Strike: Global Offensive",
+          "Minecraft",
+          "Terraria",
+          "Garry's Mod",
+          "Team Fortress 2",
+          "Fallout: New Vegas",
+          "Fallout 4",
+          "The Witcher 3",
+        ];
+
+        const gameName = game.name || "";
+        const isOverPopular = overPopularGames.some(
+          (popular) =>
+            gameName.toLowerCase().includes(popular.toLowerCase()) ||
+            popular.toLowerCase().includes(gameName.toLowerCase())
+        );
+
+        if (isOverPopular) {
+          return 0.3; // Significant penalty for over-popular games
+        }
+
+        // Also penalize games with excessive number of tags (likely to be over-broad)
+        const tagCount = (game.tags || []).length;
+        if (tagCount > 20) {
+          return 0.5; // Moderate penalty for games with too many tags
+        }
+
+        return 1.0; // No penalty
+      }
+
+      function getGenreCompatibility(genre1, genre2) {
+        const highlyIncompatiblePairs = [
+          ["Shooter", "Simulation"],
+          ["Fighting", "Simulation"],
+          ["Sports", "Horror"],
+          ["Racing", "Horror"],
+        ];
+
+        const g1 = genre1.toLowerCase();
+        const g2 = genre2.toLowerCase();
+
+        for (const [incomp1, incomp2] of highlyIncompatiblePairs) {
+          if (
+            (g1.includes(incomp1.toLowerCase()) &&
+              g2.includes(incomp2.toLowerCase())) ||
+            (g1.includes(incomp2.toLowerCase()) &&
+              g2.includes(incomp1.toLowerCase()))
+          ) {
+            return 0.3; // Moderate penalty, not severe
+          }
+        }
+
+        return 1.0; // Compatible
+      }
+
+      // Calculate comprehensive similarity score with strict genre filtering
+      function calculateAdvancedSimilarity(
+        currentGame,
+        candidateGame,
+        tagFrequencies,
+        totalGames
+      ) {
+        const current = currentGame;
+        const candidate = candidateGame;
+
+        let totalScore = 0;
+        let factors = [];
+
+        // PRE-FILTER: Check genre compatibility
+        const currentGenres = (current.genres || []).map((g) => g.name || g);
+        const candidateGenres = (candidate.genres || []).map(
+          (g) => g.name || g
+        );
+
+        let genreCompatibilityMultiplier = 1.0;
+        if (currentGenres.length > 0 && candidateGenres.length > 0) {
+          let totalCompatibility = 0;
+          let pairs = 0;
+
+          for (const cg of currentGenres) {
+            for (const candg of candidateGenres) {
+              totalCompatibility += getGenreCompatibility(cg, candg);
+              pairs++;
+            }
+          }
+
+          genreCompatibilityMultiplier =
+            pairs > 0 ? totalCompatibility / pairs : 0.1;
+
+          // If genres are highly incompatible, severely reduce the score
+          if (genreCompatibilityMultiplier < 0.3) {
+            genreCompatibilityMultiplier = 0.05;
+          }
+        }
+
+        // 1. ENHANCED TAG SIMILARITY (35% of score)
+        const currentTagsSet = new Set(current.tags || []);
+        const candidateTags = candidate.tags || [];
+        let weightedTagScore = 0;
+        let matchingTags = 0;
+        let highValueMatches = 0; // Count of specific/important tag matches
+
+        candidateTags.forEach((tag) => {
+          if (currentTagsSet.has(tag)) {
+            matchingTags++;
+            const frequency = tagFrequencies[tag] || 1;
+            const rarity = Math.log(totalGames / frequency);
+            const category = categorizeTag(tag);
+            const tagScore = rarity * category.weight;
+            weightedTagScore += tagScore;
+
+            if (category.type === "specific" || category.type === "mechanic") {
+              highValueMatches++;
+            }
+          }
+        });
+
+        // Boost score if we have high-value tag matches
+        const highValueBonus = highValueMatches > 0 ? 1.5 : 1.0;
+        const normalizedTagScore =
+          candidateTags.length > 0
+            ? (weightedTagScore / Math.sqrt(candidateTags.length)) *
+              0.35 *
+              highValueBonus
+            : 0;
+        totalScore += normalizedTagScore;
+        factors.push({ name: "tags", score: normalizedTagScore, weight: 0.35 });
+
+        // 2. BALANCED GENRE SIMILARITY (30% of score) - Reduced from 35%
+        const currentGenresSet = new Set(currentGenres);
+        const genreMatches = candidateGenres.filter((g) =>
+          currentGenresSet.has(g)
+        ).length;
+        const genreScore =
+          candidateGenres.length > 0 && currentGenres.length > 0
+            ? (genreMatches /
+                Math.max(currentGenresSet.size, candidateGenres.length)) *
+              0.3
+            : 0;
+        totalScore += genreScore;
+        factors.push({ name: "genres", score: genreScore, weight: 0.3 });
+
+        // 3. DEVELOPER/PUBLISHER SIMILARITY (20% of score)
+        const currentDevs = new Set(
+          (current.developers || []).map((d) => d.name || d)
+        );
+        const candidateDevs = (candidate.developers || []).map(
+          (d) => d.name || d
+        );
+        const currentPubs = new Set(
+          (current.publishers || []).map((p) => p.name || p)
+        );
+        const candidatePubs = (candidate.publishers || []).map(
+          (p) => p.name || p
+        );
+
+        const devMatches = candidateDevs.some((d) => currentDevs.has(d))
+          ? 1
+          : 0;
+        const pubMatches = candidatePubs.some((p) => currentPubs.has(p))
+          ? 1
+          : 0;
+        const devPubScore = devMatches * 0.15 + pubMatches * 0.05;
+        totalScore += devPubScore;
+        factors.push({ name: "dev/pub", score: devPubScore, weight: 0.2 });
+
+        // 4. RATING SIMILARITY (6% of score)
+        const currentRating = current.rating || 0;
+        const candidateRating = candidate.rating || 0;
+        if (currentRating > 0 && candidateRating > 0) {
+          const ratingDiff = Math.abs(currentRating - candidateRating);
+          const ratingScore = Math.max(0, 1 - ratingDiff / 5) * 0.06;
+          totalScore += ratingScore;
+          factors.push({ name: "rating", score: ratingScore, weight: 0.06 });
+        }
+
+        // 5. RELEASE DATE PROXIMITY (2% of score) - Reduced
+        const currentYear = current.released
+          ? new Date(current.released).getFullYear()
+          : 0;
+        const candidateYear = candidate.released
+          ? new Date(candidate.released).getFullYear()
+          : 0;
+        if (currentYear > 0 && candidateYear > 0) {
+          const yearDiff = Math.abs(currentYear - candidateYear);
+          const yearScore = Math.max(0, 1 - yearDiff / 20) * 0.02;
+          totalScore += yearScore;
+          factors.push({ name: "year", score: yearScore, weight: 0.02 });
+        }
+
+        // 6. PLATFORM SIMILARITY (2% of score) - Reduced
+        const currentPlatforms = new Set(
+          (current.platforms || []).map((p) => p.platform?.name || p.name || p)
+        );
+        const candidatePlatforms = (candidate.platforms || []).map(
+          (p) => p.platform?.name || p.name || p
+        );
+        const platformMatches = candidatePlatforms.filter((p) =>
+          currentPlatforms.has(p)
+        ).length;
+        const platformScore =
+          candidatePlatforms.length > 0
+            ? (platformMatches / candidatePlatforms.length) * 0.02
+            : 0;
+        totalScore += platformScore;
+        factors.push({ name: "platforms", score: platformScore, weight: 0.02 });
+
+        // Apply genre compatibility multiplier AND popularity penalty to final score
+        const popularityPenalty = getPopularityPenalty(candidate);
+        totalScore *= genreCompatibilityMultiplier * popularityPenalty;
+
+        return {
+          totalScore,
+          matchingTagsCount: matchingTags,
+          highValueMatches: highValueMatches,
+          genreCompatibility: genreCompatibilityMultiplier,
+          popularityPenalty: popularityPenalty,
+          factors: factors,
+          breakdown: {
+            tagScore: normalizedTagScore,
+            genreScore: genreScore,
+            devPubScore: devPubScore,
+            ratingScore: factors.find((f) => f.name === "rating")?.score || 0,
+            yearScore: factors.find((f) => f.name === "year")?.score || 0,
+            platformScore: platformScore,
+            genreCompatibility: genreCompatibilityMultiplier,
+            popularityPenalty: popularityPenalty,
+          },
+        };
+      }
+
+      async function showRecommendations(currentGame) {
+        recommendationsEl.innerHTML = "<p>Loading recommendations...</p>";
+
+        // Ensure we have the current game's details
+        if (!gameDetailsCache[currentGame.id]) {
+          await fetchGameDetails(currentGame.id);
+        }
+
+        const currentGameData = gameDetailsCache[currentGame.id];
+
+        if (!currentGameData.tags || currentGameData.tags.length === 0) {
+          recommendationsEl.innerHTML =
+            '<p class="no-recommendations">No recommendations available for this game.</p>';
+          return;
+        }
+
+        // Wait for all game details to be fetched, filtering for games with valid images
+        const gameDetailsPromises = allGamesCache
+          .filter(
+            (g) =>
+              g.id !== currentGame.id &&
+              g.background_image &&
+              g.background_image.trim() !== "" &&
+              !g.background_image.includes("placeholder")
+          )
+          .map(async (game) => {
+            if (!gameDetailsCache[game.id]) {
+              await fetchGameDetails(game.id);
+            }
+            return {
+              ...game,
+              details: gameDetailsCache[game.id],
+            };
+          });
+
+        const gamesWithDetails = await Promise.all(gameDetailsPromises);
+
+        // Calculate tag frequencies for weighting
+        const tagFrequencies = calculateTagFrequencies();
+        const totalGames = Object.keys(gameDetailsCache).length;
+
+        // Calculate advanced similarity scores
+        const gamesWithScores = gamesWithDetails.map((game) => {
+          const similarity = calculateAdvancedSimilarity(
+            currentGameData,
+            game.details,
+            tagFrequencies,
+            totalGames
+          );
+
+          return {
+            ...game,
+            ...similarity,
+          };
+        });
+
+        // Smart filtering - prevent over-popular games from dominating
+        const recommended = gamesWithScores
+          .filter((game) => {
+            // 1. Basic score threshold
+            if (game.totalScore < 0.03) return false;
+
+            // 2. Must have some meaningful connection
+            if (
+              game.matchingTagsCount === 0 &&
+              game.breakdown.genreScore === 0 &&
+              game.breakdown.devPubScore === 0
+            ) {
+              return false;
+            }
+
+            // 3. Block truly incompatible genres
+            if (game.genreCompatibility < 0.15) return false;
+
+            // 4. Additional filtering for over-popular games
+            if (game.popularityPenalty < 0.5) {
+              // Over-popular games need stronger connections to appear
+              const needsStrongerConnection =
+                game.breakdown.genreScore > 0.15 || // Must share genres
+                game.breakdown.devPubScore > 0.05 || // OR same developer
+                game.highValueMatches > 1; // OR multiple specific tag matches
+
+              if (!needsStrongerConnection) return false;
+            }
+
+            return true;
+          })
+          .sort((a, b) => {
+            // BALANCED SORTING:
+
+            // 1. Prioritize high-value matches, but don't require them
+            if (
+              a.highValueMatches !== b.highValueMatches &&
+              (a.highValueMatches > 0 || b.highValueMatches > 0)
+            ) {
+              return b.highValueMatches - a.highValueMatches;
+            }
+
+            // 2. Then by total similarity score (main factor)
+            if (Math.abs(a.totalScore - b.totalScore) > 0.03) {
+              return b.totalScore - a.totalScore;
+            }
+
+            // 3. Then by number of matching tags
+            if (a.matchingTagsCount !== b.matchingTagsCount) {
+              return b.matchingTagsCount - a.matchingTagsCount;
+            }
+
+            // 4. Then by genre score
+            if (
+              Math.abs(a.breakdown.genreScore - b.breakdown.genreScore) > 0.02
+            ) {
+              return b.breakdown.genreScore - a.breakdown.genreScore;
+            }
+
+            // 5. Add randomization for variety
+            return Math.random() - 0.5;
+          })
+          .slice(0, 10) // Get more candidates
+          .sort(() => Math.random() - 0.5) // Shuffle for freshness
+          .slice(0, 5); // Final 5
+
+        recommendationsEl.innerHTML = "";
+
+        if (recommended.length === 0) {
+          recommendationsEl.innerHTML =
+            '<p class="no-recommendations">No similar games found in current results.</p>';
+          return;
+        }
+
+        recommended.forEach((game, index) => {
+          const card = document.createElement("div");
+          card.className = "rec-card";
+
+          // Enhanced similarity info including popularity penalty
+          const similarityInfo = `Score: ${game.totalScore.toFixed(
+            3
+          )} | Pop: ${game.popularityPenalty.toFixed(2)} | HV: ${
+            game.highValueMatches
+          } | Genre: ${game.breakdown.genreScore.toFixed(2)} | Tags: ${
+            game.matchingTagsCount
+          }`;
+
+          const imageUrl =
+            game.background_image ||
+            `https://via.placeholder.com/280x180/fada5e/333333?text=${encodeURIComponent(
+              game.name
+            )}`;
+
+          card.innerHTML = `
+            <img src="${imageUrl}" alt="${game.name}" 
+                 onerror="this.src='https://via.placeholder.com/280x180/fada5e/333333?text=${encodeURIComponent(
+                   game.name
+                 )}'; this.onerror=null;">
+            <div class="rec-card-content">
+              <h4 class="rec-card-title" title="${similarityInfo}">${
+            game.name
+          }</h4>
+            </div>`;
+          card.addEventListener("click", (e) => {
+            e.stopPropagation();
+            showModal(game);
+          });
+          recommendationsEl.appendChild(card);
+        });
+      }
+
+      // Initialize the app
+      renderFavorites();
+      fetchGames(true);
+    </script>
+  </body>
+</html>
