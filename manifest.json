@@ -1,15 +1,17 @@
 {
   "name": "Beanhub",
   "short_name": "Beanhub",
-  "description": "A cozy hub for Bean’s games, music, trivia, and more!",
+  "description": "A cozy hub for Bean's games, music, trivia, and more!",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#f29f46",
   "orientation": "portrait",
-  "icons": {
-    "src": "icon-180x180.png",
-    "sizes": "180x180",
-    "type": "image/png"
-  }
+  "icons": [
+    {
+      "src": "icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
 }
